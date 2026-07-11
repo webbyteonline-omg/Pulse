@@ -5,10 +5,10 @@ import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   CalendarDays,
-  GraduationCap,
   LayoutDashboard,
   LogOut,
-  Settings,
+  UserRound,
+  Users,
   Wallet,
 } from "lucide-react";
 import { PulseLogo } from "@/components/auth/AuthCard";
@@ -17,12 +17,31 @@ import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
 
 export const NAV_ITEMS = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/attendance", label: "Attendance", icon: GraduationCap },
-  { href: "/academic", label: "Academic", icon: CalendarDays },
-  { href: "/finance", label: "Finance", icon: Wallet },
-  { href: "/settings", label: "Settings", icon: Settings },
+  { href: "/dashboard", label: "Home", icon: LayoutDashboard, match: ["/dashboard"] },
+  {
+    href: "/academic",
+    label: "Academic",
+    icon: CalendarDays,
+    match: ["/academic", "/attendance", "/timetable"],
+  },
+  { href: "/finance", label: "Finance", icon: Wallet, match: ["/finance"] },
+  {
+    href: "/friends",
+    label: "Friends",
+    icon: Users,
+    match: ["/friends", "/polls", "/leaderboard"],
+  },
+  {
+    href: "/profile",
+    label: "Profile",
+    icon: UserRound,
+    match: ["/profile", "/settings"],
+  },
 ] as const;
+
+export function isNavActive(pathname: string, match: readonly string[]): boolean {
+  return match.some((m) => pathname === m || pathname.startsWith(`${m}/`));
+}
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -44,8 +63,8 @@ export function Sidebar() {
       </div>
 
       <nav className="flex-1 px-3 space-y-1" aria-label="Main">
-        {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
-          const active = pathname === href || pathname.startsWith(`${href}/`);
+        {NAV_ITEMS.map(({ href, label, icon: Icon, match }) => {
+          const active = isNavActive(pathname, match);
           return (
             <Link
               key={href}

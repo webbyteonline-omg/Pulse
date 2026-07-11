@@ -3,6 +3,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
 import { isNetworkError, queueInsert } from "@/lib/outbox";
+import { logActivity } from "@/lib/activityLog";
+import { isRateLimitError } from "./useFriends";
 import { useAuthStore } from "@/store/authStore";
 import type { Budget, Expense, ExpenseCategory, ExpenseSource } from "@/lib/supabase/types";
 
@@ -93,10 +95,13 @@ export function useAddExpense() {
       const row = { ...input, user_id: user.id };
       try {
         const { error } = await supabase.from("expenses").insert(row);
-        if (error) throw error;
+        if (error) throw new Error(isRateLimitError(error) ?? error.message);
+        logActivity("expense_added", "expense", {
+          newValue: { amount: input.amount, merchant: input.merchant ?? undefined },
+        });
       } catch (err) {
         if (isNetworkError(err)) {
-          await queueInsert("expenses", row);
+          await queueInsert("expenses", row, `Expense ₹${input.amount}`);
           return;
         }
         throw err;
@@ -113,6 +118,7 @@ export function useDeleteExpense() {
       const supabase = getSupabaseBrowser();
       const { error } = await supabase.from("expenses").delete().eq("id", id);
       if (error) throw error;
+      logActivity("expense_deleted", "expense", { entityId: id });
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: financeKeys.allExpenses }),
   });
@@ -132,6 +138,7 @@ export function useSetBudget(month: number, year: number) {
           { onConflict: "user_id,month,year,category" }
         );
       if (error) throw error;
+      logActivity("budget_changed", "budget", { newValue: { category, amount } });
     },
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: financeKeys.budgets(month, year) }),

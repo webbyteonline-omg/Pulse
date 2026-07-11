@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
+import { logActivity } from "@/lib/activityLog";
 import { useAuthStore } from "@/store/authStore";
 import type { AcademicEvent, EventType } from "@/lib/supabase/types";
 import type { ParsedCalendarEvent } from "@/lib/schemas";
@@ -46,6 +47,7 @@ export function useCreateEvent() {
         .from("academic_events")
         .insert({ ...input, user_id: user.id });
       if (error) throw error;
+      logActivity("event_added", "academic_event", { newValue: { title: input.title } });
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: academicKeys.events }),
   });
@@ -58,6 +60,7 @@ export function useDeleteEvent() {
       const supabase = getSupabaseBrowser();
       const { error } = await supabase.from("academic_events").delete().eq("id", id);
       if (error) throw error;
+      logActivity("event_deleted", "academic_event", { entityId: id });
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: academicKeys.events }),
   });
@@ -84,6 +87,7 @@ export function useImportEvents() {
         const { error } = await supabase.from("academic_events").insert(rows.slice(i, i + 100));
         if (error) throw error;
       }
+      logActivity("events_imported", "academic_event", { newValue: { count: rows.length } });
       return rows.length;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: academicKeys.events }),

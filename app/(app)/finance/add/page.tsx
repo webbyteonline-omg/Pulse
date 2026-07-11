@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/Input";
 import { SMSParser } from "@/components/finance/SMSParser";
 import { ScreenshotParser } from "@/components/finance/ScreenshotParser";
 import { useAddExpense } from "@/hooks/useFinance";
+import { encryptJSON } from "@/lib/encryption";
 import { expenseSchema } from "@/lib/schemas";
 import { ALL_CATEGORIES, CATEGORY_META, todayIST } from "@/lib/utils";
 import type { ParsedSMS } from "@/lib/smsParser";
@@ -66,7 +67,11 @@ export default function AddExpensePage() {
       return;
     }
     try {
-      await addExpense.mutateAsync(parsed.data);
+      // Private notes are E2E-encrypted on-device before they leave the phone
+      const payload = parsed.data.note
+        ? { ...parsed.data, note: `enc:${await encryptJSON(parsed.data.note)}` }
+        : parsed.data;
+      await addExpense.mutateAsync(payload);
       setSaved(true);
       setTimeout(() => router.push("/finance"), 900);
     } catch (err) {
@@ -193,10 +198,11 @@ export default function AddExpensePage() {
           />
           <Input label="Date" type="date" value={date} onChange={(e) => setDate(e.target.value)} max={todayIST()} />
           <Input
-            label="Note (optional)"
+            label="Note (optional) 🔒"
             placeholder="Split with roommates"
             value={note}
             onChange={(e) => setNote(e.target.value)}
+            hint="Notes are encrypted on your device — not even the server can read them"
           />
 
           {errors.form && (

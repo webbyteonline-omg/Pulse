@@ -1,9 +1,31 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Trash2 } from "lucide-react";
+import { Lock, Trash2 } from "lucide-react";
+import { decryptJSON } from "@/lib/encryption";
 import { CATEGORY_META, formatDate, formatINR } from "@/lib/utils";
 import type { Expense } from "@/lib/supabase/types";
+
+/** Decrypt "enc:"-prefixed private notes on-device. */
+function useDecryptedNote(note: string | null): { text: string | null; encrypted: boolean } {
+  const encrypted = !!note?.startsWith("enc:");
+  const [text, setText] = useState<string | null>(encrypted ? null : note);
+  useEffect(() => {
+    let mounted = true;
+    if (encrypted && note) {
+      void decryptJSON<string>(note.slice(4)).then((value) => {
+        if (mounted) setText(value ?? "(locked — key missing)");
+      });
+    } else {
+      setText(note);
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [note, encrypted]);
+  return { text, encrypted };
+}
 
 export function ExpenseItem({
   expense,
@@ -15,6 +37,7 @@ export function ExpenseItem({
   index?: number;
 }) {
   const meta = CATEGORY_META[expense.category ?? "others"];
+  const { text: note, encrypted } = useDecryptedNote(expense.note);
   return (
     <motion.div
       layout
@@ -35,9 +58,15 @@ export function ExpenseItem({
         <p className="text-sm font-semibold truncate">
           {expense.merchant || meta.label}
         </p>
-        <p className="text-[11px] text-ink-dim">
+        <p className="text-[11px] text-ink-dim flex items-center gap-1 flex-wrap">
           {formatDate(expense.date)}
-          {expense.note ? ` · ${expense.note}` : ""}
+          {note && (
+            <>
+              {" · "}
+              {encrypted && <Lock className="h-2.5 w-2.5 inline shrink-0" aria-label="Encrypted note" />}
+              <span className="truncate max-w-[140px]">{note}</span>
+            </>
+          )}
           {expense.source && expense.source !== "manual" ? ` · via ${expense.source}` : ""}
         </p>
       </div>

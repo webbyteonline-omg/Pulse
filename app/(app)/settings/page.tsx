@@ -1,26 +1,44 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { Check, Download, LogOut, Trash2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { Check, ChevronRight, Download, KeyRound, ListChecks, Lock, LogOut, MapPin, Trash2, Upload } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 import { Toggle } from "@/components/ui/Toggle";
+import { ThemeSelector } from "@/components/ui/ThemeSelector";
 import { useAllExpenses } from "@/hooks/useFinance";
 import { usePushNotifications } from "@/hooks/useNotifications";
+import { useMyProfile, useUpdateProfile } from "@/hooks/useProfile";
+import { exportKeyFile, hasKey, importKeyFile } from "@/lib/encryption";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
 import { downloadCSV } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
-import { useSettingsStore, type NotificationPrefs } from "@/store/settingsStore";
+import { useSettingsStore, type NotificationPrefs, type PrivacyPrefs } from "@/store/settingsStore";
 
 const NOTIFICATION_ITEMS: Array<{ key: keyof NotificationPrefs; label: string; desc: string }> = [
   { key: "examReminders", label: "Exam & event reminders", desc: "3 days and 1 day before" },
   { key: "attendanceWarnings", label: "Attendance warnings", desc: "When a subject drops below required %" },
   { key: "budgetWarnings", label: "Budget alerts", desc: "When a category crosses 80%" },
+  { key: "friendActivity", label: "Friend activity", desc: "Friend requests and new polls" },
   { key: "emailBackup", label: "Email backup", desc: "Also send reminders by email" },
+];
+
+const PRIVACY_ITEMS: Array<{
+  key: keyof PrivacyPrefs;
+  profileKey: "privacy_steps" | "privacy_location" | "privacy_attendance" | "privacy_finance" | "privacy_friends_only";
+  label: string;
+  desc: string;
+}> = [
+  { key: "steps", profileKey: "privacy_steps", label: "Share steps & mood", desc: "Friends see your daily steps + mood average" },
+  { key: "location", profileKey: "privacy_location", label: "Share location area", desc: 'Only "In Campus" / "Outside Campus" — never coordinates' },
+  { key: "attendance", profileKey: "privacy_attendance", label: "Share attendance %", desc: "Shown on your profile and leaderboard" },
+  { key: "finance", profileKey: "privacy_finance", label: "Share budget health", desc: "% of budget left — never amounts" },
+  { key: "profileFriendsOnly", profileKey: "privacy_friends_only", label: "Only friends see my profile", desc: "Hide your profile from search by strangers" },
 ];
 
 function SectionTitle({ children, id }: { children: React.ReactNode; id?: string }) {
@@ -40,6 +58,8 @@ export default function SettingsPage() {
   const settings = useSettingsStore();
   const push = usePushNotifications();
   const expensesQuery = useAllExpenses();
+  const profileQuery = useMyProfile();
+  const updateProfile = useUpdateProfile();
 
   const [name, setName] = useState(displayName);
   const [nameSaved, setNameSaved] = useState(false);
@@ -48,18 +68,33 @@ export default function SettingsPage() {
   const [deleteText, setDeleteText] = useState("");
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [keyExists, setKeyExists] = useState(false);
+  const [keyMessage, setKeyMessage] = useState<string | null>(null);
+  const keyFileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    void hasKey().then(setKeyExists);
+  }, []);
+
+  const profile = profileQuery.data;
+
+  const setPrivacy = (item: (typeof PRIVACY_ITEMS)[number], value: boolean) => {
+    settings.setPrivacyPref(item.key, value);
+    updateProfile.mutate({ [item.profileKey]: value });
+  };
 
   const saveName = async () => {
     if (!name.trim() || name.trim() === displayName) return;
     setSavingName(true);
     const supabase = getSupabaseBrowser();
     const { data, error } = await supabase.auth.updateUser({ data: { name: name.trim() } });
-    setSavingName(false);
     if (!error && data.user) {
       setUser(data.user);
+      updateProfile.mutate({ display_name: name.trim() });
       setNameSaved(true);
       setTimeout(() => setNameSaved(false), 1500);
     }
+    setSavingName(false);
   };
 
   const logout = async () => {
@@ -74,10 +109,23 @@ export default function SettingsPage() {
       amount: e.amount,
       category: e.category ?? "others",
       merchant: e.merchant ?? "",
-      note: e.note ?? "",
+      note: e.note?.startsWith("enc:") ? "(encrypted)" : (e.note ?? ""),
       source: e.source ?? "manual",
     }));
     downloadCSV(`pulse-expenses-${new Date().toISOString().slice(0, 10)}.csv`, rows);
+  };
+
+  const setCampusHere = () => {
+    navigator.geolocation?.getCurrentPosition(
+      (pos) => {
+        settings.setCampusCenter({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          radiusM: 800,
+        });
+      },
+      () => setKeyMessage("Couldn't read your location — allow location access and retry.")
+    );
   };
 
   const deleteAccount = async () => {
@@ -102,6 +150,10 @@ export default function SettingsPage() {
     <div>
       <Header title="Settings" />
 
+      {/* Theme */}
+      <SectionTitle>Theme</SectionTitle>
+      <ThemeSelector />
+
       {/* Profile */}
       <SectionTitle>Profile</SectionTitle>
       <Card className="p-4 space-y-4">
@@ -117,7 +169,99 @@ export default function SettingsPage() {
             {nameSaved ? <Check className="h-4 w-4 text-success" /> : "Save"}
           </Button>
         </div>
+        <Input label="Username" value={profile ? `@${profile.username}` : "…"} readOnly disabled hint="Friends find you by this" />
         <Input label="Email" value={user?.email ?? ""} readOnly disabled hint="Email can't be changed" />
+      </Card>
+
+      {/* Privacy */}
+      <SectionTitle id="privacy">Privacy</SectionTitle>
+      <Card className="divide-y divide-line/60">
+        {PRIVACY_ITEMS.map((item) => (
+          <div key={item.key} className="flex items-center gap-3 p-4">
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold">{item.label}</p>
+              <p className="text-xs text-ink-dim">{item.desc}</p>
+            </div>
+            <Toggle
+              checked={profile ? profile[item.profileKey] : settings.privacy[item.key]}
+              onChange={(v) => setPrivacy(item, v)}
+              label={item.label}
+            />
+          </div>
+        ))}
+        <div className="flex items-center gap-3 p-4">
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold">Live location tracking</p>
+            <p className="text-xs text-ink-dim">
+              Updates every 30s while Pulse is open. Coordinates are encrypted on your device.
+            </p>
+          </div>
+          <Toggle
+            checked={settings.locationSharing}
+            onChange={settings.setLocationSharing}
+            label="Location tracking"
+          />
+        </div>
+        {settings.locationSharing && (
+          <div className="flex items-center gap-3 p-4">
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold">Campus center</p>
+              <p className="text-xs text-ink-dim">
+                {settings.campusCenter
+                  ? `Set (${settings.campusCenter.lat.toFixed(3)}, ${settings.campusCenter.lng.toFixed(3)}) · 800m radius`
+                  : "Stand anywhere on campus and tap"}
+              </p>
+            </div>
+            <Button variant="secondary" size="sm" onClick={setCampusHere}>
+              <MapPin className="h-3.5 w-3.5" /> Set here
+            </Button>
+          </div>
+        )}
+      </Card>
+
+      {/* Encryption */}
+      <SectionTitle>Encryption</SectionTitle>
+      <Card className="p-4 space-y-4">
+        <div className="flex items-center gap-3 rounded-btn bg-success-dim border border-success/25 px-3.5 py-2.5">
+          <Lock className="h-4 w-4 text-success shrink-0" />
+          <p className="text-xs text-success font-semibold">
+            Your location & private notes are encrypted on your device — the key never leaves it.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="secondary"
+            className="flex-1"
+            onClick={async () => {
+              await exportKeyFile();
+              setKeyExists(true);
+              setKeyMessage("Key exported — keep the file somewhere safe.");
+            }}
+          >
+            <KeyRound className="h-4 w-4" /> Export key
+          </Button>
+          <Button variant="secondary" className="flex-1" onClick={() => keyFileRef.current?.click()}>
+            <Upload className="h-4 w-4" /> Import key
+          </Button>
+          <input
+            ref={keyFileRef}
+            type="file"
+            accept="application/json"
+            className="hidden"
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              const ok = await importKeyFile(file);
+              setKeyMessage(ok ? "Key imported — encrypted data from your other device is readable now." : "That file isn't a valid Pulse key.");
+              e.target.value = "";
+            }}
+          />
+        </div>
+        {keyMessage && <p className="text-xs text-ink-dim">{keyMessage}</p>}
+        <p className="text-[11px] text-ink-faint">
+          {keyExists ? "A key exists on this device." : "A key will be created the first time you use encryption."}{" "}
+          Moving to a new phone? Export here, import there.
+        </p>
       </Card>
 
       {/* Notifications */}
@@ -165,7 +309,7 @@ export default function SettingsPage() {
             value={settings.reminderTime}
             onChange={(e) => settings.setReminderTime(e.target.value)}
             aria-label="Daily reminder time"
-            className="h-10 px-3 rounded-input bg-bg border border-line text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="h-11 px-3 rounded-input bg-bg border border-line text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
           />
         </div>
       </Card>
@@ -173,17 +317,6 @@ export default function SettingsPage() {
       {/* Preferences */}
       <SectionTitle>Preferences</SectionTitle>
       <Card className="divide-y divide-line/60">
-        <div className="flex items-center gap-3 p-4">
-          <div className="flex-1">
-            <p className="text-sm font-semibold">Dark mode</p>
-            <p className="text-xs text-ink-dim">Pulse is designed dark-first</p>
-          </div>
-          <Toggle
-            checked={settings.theme === "dark"}
-            onChange={(v) => settings.setTheme(v ? "dark" : "light")}
-            label="Dark mode"
-          />
-        </div>
         <div className="flex items-center gap-3 p-4">
           <div className="flex-1">
             <p className="text-sm font-semibold">Default required attendance</p>
@@ -201,7 +334,7 @@ export default function SettingsPage() {
                 )
               }
               aria-label="Default required attendance percentage"
-              className="w-20 h-10 px-3 pr-7 rounded-input bg-bg border border-line text-sm text-right tabular-nums focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="w-20 h-11 px-3 pr-7 rounded-input bg-bg border border-line text-sm text-right tabular-nums focus:outline-none focus:ring-2 focus:ring-primary/50"
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-dim">%</span>
           </div>
@@ -227,10 +360,15 @@ export default function SettingsPage() {
 
       {/* Data */}
       <SectionTitle>Data</SectionTitle>
-      <Card className="p-4">
+      <Card className="p-4 space-y-3">
         <Button variant="secondary" className="w-full" onClick={exportExpenses} disabled={expensesQuery.isLoading}>
           <Download className="h-4 w-4" /> Export expenses (CSV)
         </Button>
+        <Link href="/profile/activity" className="block">
+          <Button variant="secondary" className="w-full">
+            <ListChecks className="h-4 w-4" /> My activity log <ChevronRight className="h-3.5 w-3.5" />
+          </Button>
+        </Link>
       </Card>
 
       {/* Account */}
@@ -247,7 +385,7 @@ export default function SettingsPage() {
       <Modal open={confirmDelete} onClose={() => setConfirmDelete(false)} title="Delete account?" variant="center">
         <p className="text-sm text-ink-dim">
           This permanently deletes your account and all data — subjects, attendance, events,
-          expenses and budgets. There is no undo.
+          expenses, friends, polls and stats. There is no undo.
         </p>
         <div className="mt-4">
           <Input

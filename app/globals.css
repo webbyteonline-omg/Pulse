@@ -2,12 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* ============================================================
+   Theme system — every surface color is an RGB-triple variable
+   so Tailwind opacity modifiers (bg-card/90 etc.) keep working.
+   Themes: .dark (default) | .light | .amoled on <html>.
+   ============================================================ */
+:root,
+html.dark {
   color-scheme: dark;
+  --bg: 15 15 19; /* #0F0F13 */
+  --card: 26 26 36; /* #1A1A24 */
+  --card-hover: 31 31 44; /* #1F1F2C */
+  --line: 42 42 58; /* #2A2A3A */
+  --ink: 240 240 245; /* #F0F0F5 */
+  --ink-dim: 136 136 160; /* #8888A0 */
+  --ink-faint: 85 85 106; /* #55556A */
+  --chart-bar: 47 47 66; /* muted bars */
 }
 
 html.light {
   color-scheme: light;
+  --bg: 245 245 250; /* #F5F5FA */
+  --card: 255 255 255; /* #FFFFFF */
+  --card-hover: 246 246 250;
+  --line: 224 224 236; /* #E0E0EC */
+  --ink: 15 15 19; /* #0F0F13 */
+  --ink-dim: 96 96 112; /* #606070 */
+  --ink-faint: 152 152 168;
+  --chart-bar: 210 210 226;
+}
+
+html.amoled {
+  color-scheme: dark;
+  --bg: 0 0 0; /* #000000 */
+  --card: 10 10 10; /* #0A0A0A */
+  --card-hover: 18 18 18;
+  --line: 26 26 26; /* #1A1A1A */
+  --ink: 255 255 255; /* #FFFFFF */
+  --ink-dim: 112 112 112; /* #707070 */
+  --ink-faint: 74 74 74;
+  --chart-bar: 34 34 34;
 }
 
 html {
@@ -19,29 +53,23 @@ body {
   overscroll-behavior-y: contain;
 }
 
-html.light body {
-  background: #f5f5fa;
-  color: #16161d;
-}
-
 /* Thin, unobtrusive scrollbars */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #2a2a3a transparent;
+  scrollbar-color: rgb(var(--line)) transparent;
 }
 *::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 *::-webkit-scrollbar-thumb {
-  background: #2a2a3a;
+  background: rgb(var(--line));
   border-radius: 3px;
 }
 *::-webkit-scrollbar-track {
   background: transparent;
 }
 
-/* Hide horizontal scrollbars on carousels */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -50,7 +78,6 @@ html.light body {
   scrollbar-width: none;
 }
 
-/* Number inputs without spinners */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -61,11 +88,14 @@ input[type="number"] {
   appearance: textfield;
 }
 
-/* Date/time input icons on dark backgrounds */
 input[type="date"]::-webkit-calendar-picker-indicator,
 input[type="time"]::-webkit-calendar-picker-indicator {
   filter: invert(0.6);
   cursor: pointer;
+}
+html.light input[type="date"]::-webkit-calendar-picker-indicator,
+html.light input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: none;
 }
 
 /* iOS PWA safe areas */

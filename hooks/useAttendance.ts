@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
 import { isNetworkError, queueInsert } from "@/lib/outbox";
+import { logActivity } from "@/lib/activityLog";
 import { todayIST } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
 import type { AttendanceLog, AttendanceStatus, Subject } from "@/lib/supabase/types";
@@ -83,6 +84,7 @@ export function useCreateSubject() {
         .from("subjects")
         .insert({ ...input, user_id: user.id });
       if (error) throw error;
+      logActivity("subject_created", "subject", { newValue: { name: input.name } });
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: attendanceKeys.subjects }),
   });
@@ -98,6 +100,7 @@ export function useUpdateSubject() {
       const supabase = getSupabaseBrowser();
       const { error } = await supabase.from("subjects").update(updates).eq("id", id);
       if (error) throw error;
+      logActivity("subject_updated", "subject", { entityId: id, newValue: { ...updates } });
     },
     onSuccess: (_d, vars) => {
       queryClient.invalidateQueries({ queryKey: attendanceKeys.subjects });
@@ -113,6 +116,7 @@ export function useDeleteSubject() {
       const supabase = getSupabaseBrowser();
       const { error } = await supabase.from("subjects").delete().eq("id", id);
       if (error) throw error;
+      logActivity("subject_deleted", "subject", { entityId: id });
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: attendanceKeys.subjects }),
   });
@@ -149,6 +153,10 @@ export function useMarkAttendance() {
         if (e1) throw e1;
         const { error: e2 } = await supabase.from("attendance_logs").insert(log);
         if (e2) throw e2;
+        logActivity("attendance_marked", "attendance_log", {
+          entityId: subject.id,
+          newValue: { status, subject: subject.name },
+        });
       } catch (err) {
         if (isNetworkError(err)) {
           // Queue the log for background sync; counters will refetch on reconnect.

@@ -1,0 +1,72 @@
+"use client";
+
+import { getSupabaseBrowser } from "./supabase/client";
+import { useAuthStore } from "@/store/authStore";
+
+export type ActivityAction =
+  | "attendance_marked"
+  | "expense_added"
+  | "expense_deleted"
+  | "subject_created"
+  | "subject_updated"
+  | "subject_deleted"
+  | "event_added"
+  | "event_deleted"
+  | "events_imported"
+  | "budget_changed"
+  | "friend_added"
+  | "friend_removed"
+  | "friend_request_sent"
+  | "poll_created"
+  | "poll_voted"
+  | "checkin"
+  | "rate_limit_hit";
+
+export const ACTIVITY_META: Record<ActivityAction, { emoji: string; label: string }> = {
+  attendance_marked: { emoji: "✅", label: "Attendance" },
+  expense_added: { emoji: "💸", label: "Expense" },
+  expense_deleted: { emoji: "🗑️", label: "Expense" },
+  subject_created: { emoji: "📚", label: "Subject" },
+  subject_updated: { emoji: "✏️", label: "Subject" },
+  subject_deleted: { emoji: "🗑️", label: "Subject" },
+  event_added: { emoji: "📅", label: "Event" },
+  event_deleted: { emoji: "🗑️", label: "Event" },
+  events_imported: { emoji: "📥", label: "Calendar import" },
+  budget_changed: { emoji: "🎯", label: "Budget" },
+  friend_added: { emoji: "👥", label: "Friends" },
+  friend_removed: { emoji: "👋", label: "Friends" },
+  friend_request_sent: { emoji: "📨", label: "Friends" },
+  poll_created: { emoji: "🗳️", label: "Poll" },
+  poll_voted: { emoji: "🗳️", label: "Poll" },
+  checkin: { emoji: "📝", label: "Check-in" },
+  rate_limit_hit: { emoji: "🚫", label: "Rate limit" },
+};
+
+/**
+ * Fire-and-forget audit logging. Never throws, never blocks the main flow.
+ * Logs are immutable server-side (no update/delete RLS policies).
+ */
+export function logActivity(
+  action: ActivityAction,
+  entityType: string,
+  detail?: {
+    entityId?: string;
+    oldValue?: Record<string, unknown>;
+    newValue?: Record<string, unknown>;
+  }
+): void {
+  const user = useAuthStore.getState().user;
+  if (!user) return;
+  const supabase = getSupabaseBrowser();
+  void supabase
+    .from("activity_logs")
+    .insert({
+      user_id: user.id,
+      action,
+      entity_type: entityType,
+      entity_id: detail?.entityId ?? null,
+      old_value: detail?.oldValue ?? null,
+      new_value: detail?.newValue ?? null,
+    })
+    .then(() => undefined);
+}

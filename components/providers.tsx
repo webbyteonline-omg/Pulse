@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
+import { RealtimeProvider } from "@/lib/realtime";
 import { useAuthStore } from "@/store/authStore";
 import { useSettingsStore } from "@/store/settingsStore";
 
@@ -52,8 +53,8 @@ function ThemeSync() {
   const theme = useSettingsStore((s) => s.theme);
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.toggle("light", theme === "light");
-    root.classList.toggle("dark", theme === "dark");
+    root.classList.remove("dark", "light", "amoled");
+    root.classList.add(theme);
   }, [theme]);
   return null;
 }
@@ -78,7 +79,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <ServiceWorkerRegistrar />
       <AuthListener />
       <ThemeSync />
-      {children}
+      <RealtimeProvider>{children}</RealtimeProvider>
     </QueryClientProvider>
   );
 }

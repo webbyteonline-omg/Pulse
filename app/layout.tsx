@@ -37,9 +37,15 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
+// Applies the saved theme before first paint — no flash on load.
+const themeBootScript = `(function(){try{var t="dark";var raw=localStorage.getItem("pulse-settings");if(raw){var s=JSON.parse(raw);if(s&&s.state&&s.state.theme)t=s.state.theme}else if(window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches){t="light"}document.documentElement.classList.remove("dark","light","amoled");document.documentElement.classList.add(t)}catch(e){document.documentElement.classList.add("dark")}})();`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`dark ${inter.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
+      </head>
       <body className="font-sans min-h-dvh">
         <Providers>{children}</Providers>
       </body>

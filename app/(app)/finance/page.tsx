@@ -8,6 +8,7 @@ import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { FAB } from "@/components/ui/FAB";
 import { CardSkeleton, RowSkeleton } from "@/components/ui/Skeleton";
 import { CategoryDonut } from "@/components/finance/CategoryDonut";
 import { BudgetBar } from "@/components/finance/BudgetBar";
@@ -220,8 +221,19 @@ export default function FinancePage() {
               </div>
             </Card>
           )}
+
+          {budgets.length === 0 && (
+            <Link href="/finance/budget" className="block">
+              <Card interactive className="p-4 text-center mb-4">
+                <p className="text-sm font-semibold text-primary">Set monthly budgets →</p>
+                <p className="text-xs text-ink-dim mt-0.5">Get alerts before you overspend</p>
+              </Card>
+            </Link>
+          )}
         </>
       )}
+
+      <FAB label="Add expense" onClick={() => router.push("/finance/add")} />
     </div>
   );
 }

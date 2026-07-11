@@ -6,15 +6,20 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { AlertBanners } from "@/components/dashboard/AlertBanner";
+import { CheckinCard } from "@/components/dashboard/CheckinCard";
 import { TodayCard } from "@/components/dashboard/TodayCard";
+import { TodayClasses } from "@/components/dashboard/TodayClasses";
 import { UpcomingEvents } from "@/components/dashboard/UpcomingEvents";
 import { AttendanceSummary } from "@/components/dashboard/AttendanceSummary";
 import { SpendingSummary } from "@/components/dashboard/SpendingSummary";
+import { ScoreGauge } from "@/components/pulse-score/ScoreGauge";
 import { CardSkeleton, RowSkeleton, Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useEvents } from "@/hooks/useAcademic";
 import { useSubjects } from "@/hooks/useAttendance";
 import { useBudgets, useExpenses } from "@/hooks/useFinance";
+import { useLivePulseScore } from "@/hooks/useProfile";
+import { useTodayClasses } from "@/hooks/useTimetable";
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import {
   daysLabel,
@@ -41,6 +46,8 @@ export default function DashboardPage() {
   const eventsQuery = useEvents();
   const expensesQuery = useExpenses(month, year);
   const budgetsQuery = useBudgets(month, year);
+  const { breakdown } = useLivePulseScore();
+  const todayClassesQuery = useTodayClasses();
 
   const { ref, pull, refreshing } = usePullToRefresh(async () => {
     await queryClient.invalidateQueries();
@@ -69,7 +76,7 @@ export default function DashboardPage() {
       attendancePercent(s.attended_classes, s.total_classes) < s.required_percentage
   );
 
-  const classesToday = subjects.length; // one class per subject per day heuristic
+  const classesToday = todayClassesQuery.data.length;
   const dateLine = new Intl.DateTimeFormat("en-IN", {
     weekday: "long",
     day: "numeric",
@@ -143,7 +150,7 @@ export default function DashboardPage() {
               emoji="📚"
               label="Classes today"
               value={classesToday === 0 ? "None" : `${classesToday} ${classesToday === 1 ? "class" : "classes"}`}
-              sub={classesToday > 0 ? "Mark attendance after each" : "Add subjects to track"}
+              sub={classesToday > 0 ? "Mark attendance after each" : "Build your timetable"}
             />
             <TodayCard
               index={2}
@@ -169,11 +176,34 @@ export default function DashboardPage() {
             />
           </div>
 
+          {breakdown && (
+            <div className="mb-6">
+              <ScoreGauge breakdown={breakdown} />
+            </div>
+          )}
+
+          <CheckinCard />
+          <TodayClasses />
           <UpcomingEvents events={events} />
           <AttendanceSummary subjects={subjects} />
           <SpendingSummary expenses={expenses} budgets={budgets} />
+
+          <LastUpdated at={expensesQuery.dataUpdatedAt} />
         </>
       )}
     </div>
+  );
+}
+
+/** "Last updated X min ago" — matters when reading cached data offline. */
+function LastUpdated({ at }: { at: number }) {
+  if (!at) return null;
+  const mins = Math.floor((Date.now() - at) / 60_000);
+  if (mins < 1) return null;
+  return (
+    <p className="text-center text-[11px] text-ink-faint pb-2">
+      Last updated {mins < 60 ? `${mins} min` : `${Math.floor(mins / 60)}h`} ago
+      {typeof navigator !== "undefined" && !navigator.onLine ? " · offline" : ""}
+    </p>
   );
 }

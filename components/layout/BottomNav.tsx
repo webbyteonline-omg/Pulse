@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { NAV_ITEMS } from "./Sidebar";
+import { NAV_ITEMS, isNavActive } from "./Sidebar";
 import { cn } from "@/lib/utils";
 
 export function BottomNav() {
@@ -15,13 +15,13 @@ export function BottomNav() {
       className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-card/90 backdrop-blur-lg border-t border-line pb-safe"
     >
       <div className="grid grid-cols-5">
-        {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
-          const active = pathname === href || pathname.startsWith(`${href}/`);
+        {NAV_ITEMS.map(({ href, label, icon: Icon, match }) => {
+          const active = isNavActive(pathname, match);
           return (
             <Link
               key={href}
               href={href}
-              className="relative flex flex-col items-center gap-1 py-2.5 select-none"
+              className="relative flex flex-col items-center gap-1 py-2.5 min-h-[52px] select-none"
             >
               {active && (
                 <motion.span

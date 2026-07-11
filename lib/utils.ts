@@ -147,6 +147,22 @@ export const SUBJECT_COLORS = [
   "#C56CFF",
 ] as const;
 
+/** Monday of the current week in IST, as YYYY-MM-DD. */
+export function weekStartIST(): string {
+  const [y, m, d] = todayIST().split("-").map(Number);
+  const date = new Date(Date.UTC(y ?? 2026, (m ?? 1) - 1, d ?? 1));
+  const dow = (date.getUTCDay() + 6) % 7; // Monday = 0
+  date.setUTCDate(date.getUTCDate() - dow);
+  return date.toISOString().slice(0, 10);
+}
+
+/** ISO date N days before today (IST). */
+export function daysAgoIST(days: number): string {
+  const [y, m, d] = todayIST().split("-").map(Number);
+  const date = new Date(Date.UTC(y ?? 2026, (m ?? 1) - 1, (d ?? 1) - days));
+  return date.toISOString().slice(0, 10);
+}
+
 export function monthLabel(month: number, year: number): string {
   return new Intl.DateTimeFormat("en-IN", { month: "long", year: "numeric" }).format(
     new Date(Date.UTC(year, month - 1, 15))

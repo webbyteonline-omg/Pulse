@@ -20,6 +20,7 @@ function friendlyAuthError(message: string): string {
 export default function SignupPage() {
   const router = useRouter();
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -52,7 +53,12 @@ export default function SignupPage() {
     const { data, error } = await supabase.auth.signUp({
       email: parsed.data.email,
       password: parsed.data.password,
-      options: { data: { name: parsed.data.name } },
+      options: {
+        data: {
+          name: parsed.data.name,
+          username: username.trim().toLowerCase() || undefined,
+        },
+      },
     });
     setLoading(false);
 
@@ -100,6 +106,16 @@ export default function SignupPage() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           error={errors.name}
+        />
+        <Input
+          label="Username"
+          type="text"
+          autoComplete="username"
+          placeholder="sachin_k (friends find you by this)"
+          value={username}
+          onChange={(e) => setUsername(e.target.value.replace(/[^a-zA-Z0-9_]/g, ""))}
+          maxLength={20}
+          hint="Letters, numbers and _ only — optional, we'll generate one otherwise"
         />
         <Input
           label="Email"

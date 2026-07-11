@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { Header } from "@/components/layout/Header";
+import { ACADEMIC_TABS, SubTabs } from "@/components/layout/SubTabs";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { FAB } from "@/components/ui/FAB";
 import { RowSkeleton } from "@/components/ui/Skeleton";
 import { SubjectCard } from "@/components/attendance/SubjectCard";
 import { SubjectFormModal } from "@/components/attendance/SubjectFormModal";
@@ -26,6 +28,7 @@ export default function AttendancePage() {
           </Button>
         }
       />
+      <SubTabs tabs={ACADEMIC_TABS} layoutId="academic-tabs" />
 
       {subjectsQuery.isLoading ? (
         <RowSkeleton rows={4} />
@@ -45,6 +48,7 @@ export default function AttendancePage() {
         </div>
       )}
 
+      <FAB label="Add subject" onClick={() => setShowAdd(true)} />
       <SubjectFormModal open={showAdd} onClose={() => setShowAdd(false)} />
     </div>
   );

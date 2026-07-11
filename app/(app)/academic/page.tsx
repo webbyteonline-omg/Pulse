@@ -4,8 +4,10 @@ import { useMemo, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { Plus } from "lucide-react";
 import { Header } from "@/components/layout/Header";
+import { ACADEMIC_TABS, SubTabs } from "@/components/layout/SubTabs";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { FAB } from "@/components/ui/FAB";
 import { RowSkeleton } from "@/components/ui/Skeleton";
 import { CalendarUpload } from "@/components/academic/CalendarUpload";
 import { CountdownCard } from "@/components/academic/CountdownCard";
@@ -72,6 +74,7 @@ export default function AcademicPage() {
           </Button>
         }
       />
+      <SubTabs tabs={ACADEMIC_TABS} layoutId="academic-tabs" />
 
       {/* Pinned countdowns */}
       {(nextExam || nextHoliday) && (
@@ -150,6 +153,7 @@ export default function AcademicPage() {
         </div>
       )}
 
+      <FAB label="Add event" onClick={() => setShowAdd(true)} />
       <EventFormModal open={showAdd} onClose={() => setShowAdd(false)} subjects={subjects} />
     </div>
   );
