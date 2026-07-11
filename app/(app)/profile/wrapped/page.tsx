@@ -2,13 +2,26 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { ArrowLeft, Lock, Sparkles } from "lucide-react";
 import { Card } from "@/components/ui/Card";
-import { DailyWrapped } from "@/components/wrapped/DailyWrapped";
-import { WeeklyWrapped } from "@/components/wrapped/WeeklyWrapped";
-import { SemesterWrapped } from "@/components/wrapped/SemesterWrapped";
 import { nowIST } from "@/lib/utils";
+
+// All three wrapped screens pull in html2canvas (via WrappedShell) for the
+// share-as-image flow — keep them out of the main profile bundle.
+const DailyWrapped = dynamic(
+  () => import("@/components/wrapped/DailyWrapped").then((m) => m.DailyWrapped),
+  { ssr: false }
+);
+const WeeklyWrapped = dynamic(
+  () => import("@/components/wrapped/WeeklyWrapped").then((m) => m.WeeklyWrapped),
+  { ssr: false }
+);
+const SemesterWrapped = dynamic(
+  () => import("@/components/wrapped/SemesterWrapped").then((m) => m.SemesterWrapped),
+  { ssr: false }
+);
 
 type WrappedType = "daily" | "weekly" | "semester";
 

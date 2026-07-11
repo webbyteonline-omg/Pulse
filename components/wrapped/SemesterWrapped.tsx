@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
+import { PROFILE_COLUMNS } from "@/lib/supabase/columns";
 import { attendancePercent, formatINR } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
 import { useSettingsStore } from "@/store/settingsStore";
@@ -24,11 +25,19 @@ export function SemesterWrapped({ onClose }: { onClose: () => void }) {
         { data: scores },
         { data: profile },
       ] = await Promise.all([
-        supabase.from("subjects").select("*"),
-        supabase.from("expenses").select("*").gte("date", since),
-        supabase.from("daily_checkins").select("*").eq("user_id", user!.id).gte("date", since),
-        supabase.from("pulse_scores").select("*").eq("user_id", user!.id).order("date"),
-        supabase.from("user_profiles").select("*").eq("id", user!.id).maybeSingle(),
+        supabase.from("subjects").select("id,name,total_classes,attended_classes"),
+        supabase.from("expenses").select("id,amount,date").gte("date", since),
+        supabase
+          .from("daily_checkins")
+          .select("id,date,mood,steps")
+          .eq("user_id", user!.id)
+          .gte("date", since),
+        supabase
+          .from("pulse_scores")
+          .select("id,user_id,date,score")
+          .eq("user_id", user!.id)
+          .order("date"),
+        supabase.from("user_profiles").select(PROFILE_COLUMNS).eq("id", user!.id).maybeSingle(),
       ]);
       return {
         subjects: subjects ?? [],

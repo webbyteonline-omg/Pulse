@@ -1,14 +1,49 @@
-/* Pulse service worker v2 — offline-first.
+/* Pulse service worker v3 — offline-first.
    Static: cache-first. API GET: network-first with 5-min TTL cache fallback.
    Mutations: queued to IndexedDB outbox by the app, replayed via Background
    Sync here. Push notifications + notification clicks handled at the bottom. */
-const VERSION = "pulse-v2";
+const VERSION = "pulse-v3";
 const STATIC_CACHE = `${VERSION}-static`;
 const API_CACHE = `${VERSION}-api`;
 const PAGE_CACHE = `${VERSION}-pages`;
 const API_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
 const PRECACHE_URLS = ["/", "/offline", "/manifest.json", "/icons/icon-192.png", "/icons/icon-512.png"];
+
+// Main app routes — precached opportunistically (on activate, not install)
+// so a returning/logged-in user gets instant tab switches even before
+// visiting each tab once. Each is fetched independently and failures are
+// swallowed: an unauthenticated visitor would just get a redirect to
+// /login, which we don't want polluting the page cache, and that must
+// never block SW install/activate.
+const PRECACHE_ROUTES = [
+  "/",
+  "/dashboard",
+  "/attendance",
+  "/academic",
+  "/finance",
+  "/friends",
+  "/timetable",
+  "/leaderboard",
+  "/polls",
+];
+
+function precacheRoutes() {
+  return caches.open(PAGE_CACHE).then((cache) =>
+    Promise.all(
+      PRECACHE_ROUTES.map((url) =>
+        fetch(url, { redirect: "manual" })
+          .then((res) => {
+            // opaqueredirect (type) means it bounced to /login — skip it.
+            if (res && res.ok && res.type !== "opaqueredirect") {
+              return cache.put(url, res);
+            }
+          })
+          .catch(() => undefined)
+      )
+    )
+  );
+}
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -21,6 +56,7 @@ self.addEventListener("activate", (event) => {
     caches.keys()
       .then((keys) => Promise.all(keys.filter((k) => !k.startsWith(VERSION)).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
+      .then(() => precacheRoutes())
   );
 });
 

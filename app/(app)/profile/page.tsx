@@ -1,14 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { ChevronRight, ListChecks, Settings, Sparkles, Zap } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Card } from "@/components/ui/Card";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { Avatar } from "@/components/friends/OnlineIndicator";
-import { ScoreGauge } from "@/components/pulse-score/ScoreGauge";
 import { useLivePulseScore, useMyProfile } from "@/hooks/useProfile";
 import { useAuthStore } from "@/store/authStore";
+
+const ScoreGauge = dynamic(
+  () => import("@/components/pulse-score/ScoreGauge").then((m) => m.ScoreGauge),
+  { ssr: false, loading: () => <Skeleton className="h-14 w-14 rounded-full" /> }
+);
 
 const LINKS = [
   { href: "/profile/wrapped", label: "Wrapped", desc: "Daily, weekly & semester recaps", icon: Sparkles },

@@ -15,7 +15,7 @@ export function useTimetable() {
       const supabase = getSupabaseBrowser();
       const { data, error } = await supabase
         .from("timetable_slots")
-        .select("*")
+        .select("id,user_id,day_of_week,start_time,end_time,subject_id,room,created_at")
         .order("day_of_week")
         .order("start_time");
       if (error) throw error;

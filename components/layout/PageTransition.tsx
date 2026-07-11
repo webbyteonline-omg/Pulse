@@ -3,15 +3,15 @@
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 
-/** Fade+rise transition on every route change. */
+/** Subtle fade on every route change — kept short so navigation feels instant. */
 export function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   return (
     <motion.div
       key={pathname}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.1, ease: "easeOut" }}
     >
       {children}
     </motion.div>

@@ -21,9 +21,17 @@ export function WeeklyWrapped({ onClose }: { onClose: () => void }) {
       const lastStart = lastWeekStart.toISOString().slice(0, 10);
 
       const [{ data: checkins }, { data: expenses }, { data: logs }] = await Promise.all([
-        supabase.from("daily_checkins").select("*").eq("user_id", user!.id).gte("date", lastStart),
-        supabase.from("expenses").select("*").gte("date", thisWeekStart),
-        supabase.from("attendance_logs").select("*").eq("user_id", user!.id).gte("date", thisWeekStart),
+        supabase
+          .from("daily_checkins")
+          .select("id,date,mood,steps")
+          .eq("user_id", user!.id)
+          .gte("date", lastStart),
+        supabase.from("expenses").select("id,amount,category,date").gte("date", thisWeekStart),
+        supabase
+          .from("attendance_logs")
+          .select("id,status,date")
+          .eq("user_id", user!.id)
+          .gte("date", thisWeekStart),
       ]);
       return { checkins: checkins ?? [], expenses: expenses ?? [], logs: logs ?? [], thisWeekStart };
     },

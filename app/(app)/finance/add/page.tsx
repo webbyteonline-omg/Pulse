@@ -2,19 +2,27 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { SMSParser } from "@/components/finance/SMSParser";
-import { ScreenshotParser } from "@/components/finance/ScreenshotParser";
 import { useAddExpense } from "@/hooks/useFinance";
 import { encryptJSON } from "@/lib/encryption";
 import { expenseSchema } from "@/lib/schemas";
 import { ALL_CATEGORIES, CATEGORY_META, todayIST } from "@/lib/utils";
 import type { ParsedSMS } from "@/lib/smsParser";
 import type { ExpenseCategory, ExpenseSource } from "@/lib/supabase/types";
+
+// Tesseract.js (OCR) is very large — only fetch it if the user opens the
+// screenshot tab.
+const ScreenshotParser = dynamic(
+  () => import("@/components/finance/ScreenshotParser").then((m) => m.ScreenshotParser),
+  { ssr: false, loading: () => <Skeleton className="h-40 w-full rounded-card" /> }
+);
 
 type Tab = "manual" | "sms" | "screenshot";
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { Header } from "@/components/layout/Header";
 import { ACADEMIC_TABS, SubTabs } from "@/components/layout/SubTabs";
 import { Button } from "@/components/ui/Button";
@@ -9,9 +10,13 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { WeekGrid } from "@/components/timetable/WeekGrid";
 import { useSubjects } from "@/hooks/useAttendance";
 import { useAddSlot, useDeleteSlot, useTimetable } from "@/hooks/useTimetable";
+
+const WeekGrid = dynamic(
+  () => import("@/components/timetable/WeekGrid").then((m) => m.WeekGrid),
+  { ssr: false, loading: () => <Skeleton className="h-72 w-full rounded-card" /> }
+);
 
 const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 

@@ -41,7 +41,7 @@ export function VoteBar({
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${pct}%` }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
           className="absolute inset-y-0 left-0"
           style={{
             backgroundColor: isWinner ? "#6C63FF33" : "rgb(var(--line) / 0.35)",

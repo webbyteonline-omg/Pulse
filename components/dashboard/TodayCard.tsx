@@ -25,7 +25,7 @@ export function TodayCard({ emoji, label, value, sub, tone = "default", index = 
     <motion.div
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.05 * index, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ delay: 0.02 * index, duration: 0.15, ease: [0.22, 1, 0.36, 1] }}
     >
       <Card gradient className="p-4 h-full">
         <div className="flex items-center gap-1.5 text-xs text-ink-dim font-medium">

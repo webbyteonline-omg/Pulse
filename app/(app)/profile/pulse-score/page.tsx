@@ -1,14 +1,23 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { ArrowLeft, TrendingDown, TrendingUp } from "lucide-react";
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Card } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { ScoreGauge } from "@/components/pulse-score/ScoreGauge";
 import { useLivePulseScore, usePulseHistory } from "@/hooks/useProfile";
 import { SCORE_COMPONENTS, scoreColor } from "@/lib/pulseScore";
+
+const ScoreGauge = dynamic(
+  () => import("@/components/pulse-score/ScoreGauge").then((m) => m.ScoreGauge),
+  { ssr: false, loading: () => <Skeleton className="h-40 w-40 rounded-full" /> }
+);
+// Recharts is pulled in only for the 30-day history area chart.
+const AreaChartView = dynamic(() => import("@/components/pulse-score/ScoreHistoryChart"), {
+  ssr: false,
+  loading: () => <Skeleton className="h-40 w-full rounded-card" />,
+});
 
 export default function PulseScorePage() {
   const router = useRouter();
@@ -81,7 +90,7 @@ export default function PulseScorePage() {
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${pct}%` }}
-                        transition={{ delay: 0.1 + i * 0.08, duration: 0.6, ease: "easeOut" }}
+                        transition={{ delay: 0.05 + i * 0.04, duration: 0.2, ease: "easeOut" }}
                         className="h-full rounded-full"
                         style={{ backgroundColor: pct >= 66 ? "#43D98C" : pct >= 33 ? "#FFB347" : "#FF5C5C" }}
                       />
@@ -106,36 +115,7 @@ export default function PulseScorePage() {
                 Your score history builds up day by day — check back tomorrow.
               </p>
             ) : (
-              <div className="h-40">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={history} margin={{ top: 8, right: 4, left: -22, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="scoreFill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#6C63FF" stopOpacity={0.35} />
-                        <stop offset="100%" stopColor="#6C63FF" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <XAxis
-                      dataKey="date"
-                      tick={{ fill: "#8888A0", fontSize: 9 }}
-                      tickFormatter={(d: string) => d.slice(8)}
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <YAxis domain={[0, 100]} tick={{ fill: "#8888A0", fontSize: 9 }} axisLine={false} tickLine={false} />
-                    <Tooltip
-                      contentStyle={{
-                        background: "#1A1A24",
-                        border: "1px solid #2A2A3A",
-                        borderRadius: 12,
-                        fontSize: 12,
-                      }}
-                      formatter={(value: number | string) => [`${value}`, "Score"]}
-                    />
-                    <Area type="monotone" dataKey="score" stroke="#6C63FF" strokeWidth={2.5} fill="url(#scoreFill)" />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
+              <AreaChartView history={history} />
             )}
           </Card>
 

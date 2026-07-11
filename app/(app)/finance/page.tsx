@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Plus, SlidersHorizontal } from "lucide-react";
 import { Header } from "@/components/layout/Header";
@@ -9,14 +10,19 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { FAB } from "@/components/ui/FAB";
-import { CardSkeleton, RowSkeleton } from "@/components/ui/Skeleton";
-import { CategoryDonut } from "@/components/finance/CategoryDonut";
+import { CardSkeleton, RowSkeleton, Skeleton } from "@/components/ui/Skeleton";
 import { BudgetBar } from "@/components/finance/BudgetBar";
 import { ExpenseItem } from "@/components/finance/ExpenseItem";
 import { useBudgets, useDeleteExpense, useExpenses } from "@/hooks/useFinance";
 import { CATEGORY_META, formatINR, monthLabel, nowIST } from "@/lib/utils";
 import type { ExpenseCategory } from "@/lib/supabase/types";
 import { useRouter } from "next/navigation";
+
+// Recharts is large — split the donut chart out of the main finance bundle.
+const CategoryDonut = dynamic(
+  () => import("@/components/finance/CategoryDonut").then((m) => m.CategoryDonut),
+  { ssr: false, loading: () => <Skeleton className="h-40 w-40 rounded-full mx-auto" /> }
+);
 
 export default function FinancePage() {
   const router = useRouter();
@@ -132,7 +138,7 @@ export default function FinancePage() {
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${budgetPct}%` }}
-                    transition={{ duration: 0.7, ease: "easeOut" }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
                     className="h-full rounded-full"
                     style={{
                       background:

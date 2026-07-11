@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
+import { PROFILE_COLUMNS, USER_STATS_COLUMNS } from "@/lib/supabase/columns";
 import { logActivity } from "@/lib/activityLog";
 import { useAuthStore } from "@/store/authStore";
 import type { FriendRequest, UserProfile } from "@/lib/supabase/types";
@@ -38,7 +39,7 @@ export function useFriends() {
       if (ids.length === 0) return [];
       const { data: profiles, error: e2 } = await supabase
         .from("user_profiles")
-        .select("*")
+        .select(PROFILE_COLUMNS)
         .in("id", ids);
       if (e2) throw e2;
       return profiles;
@@ -56,7 +57,7 @@ export function useFriendRequests() {
       const supabase = getSupabaseBrowser();
       const { data: requests, error } = await supabase
         .from("friend_requests")
-        .select("*")
+        .select("id,sender_id,receiver_id,status,created_at")
         .eq("status", "pending")
         .or(`sender_id.eq.${user!.id},receiver_id.eq.${user!.id}`);
       if (error) throw error;
@@ -66,7 +67,7 @@ export function useFriendRequests() {
       );
       const { data: profiles } = await supabase
         .from("user_profiles")
-        .select("*")
+        .select(PROFILE_COLUMNS)
         .in("id", otherIds);
       const byId = new Map((profiles ?? []).map((p) => [p.id, p]));
       return requests.map((r) => ({
@@ -88,7 +89,7 @@ export function useUserSearch(term: string) {
       const supabase = getSupabaseBrowser();
       const { data, error } = await supabase
         .from("user_profiles")
-        .select("*")
+        .select(PROFILE_COLUMNS)
         .ilike("username", `%${term.trim().toLowerCase()}%`)
         .neq("id", user!.id)
         .limit(10);
@@ -172,12 +173,16 @@ export function useFriendProfile(friendId: string) {
       const supabase = getSupabaseBrowser();
       const [{ data: profile }, { data: stats }, { data: location }, { data: scores }] =
         await Promise.all([
-          supabase.from("user_profiles").select("*").eq("id", friendId).maybeSingle(),
-          supabase.from("user_stats").select("*").eq("user_id", friendId).maybeSingle(),
-          supabase.from("location_shares").select("*").eq("user_id", friendId).maybeSingle(),
+          supabase.from("user_profiles").select(PROFILE_COLUMNS).eq("id", friendId).maybeSingle(),
+          supabase.from("user_stats").select(USER_STATS_COLUMNS).eq("user_id", friendId).maybeSingle(),
+          supabase
+            .from("location_shares")
+            .select("user_id,area,encrypted_coords,updated_at")
+            .eq("user_id", friendId)
+            .maybeSingle(),
           supabase
             .from("pulse_scores")
-            .select("*")
+            .select("id,user_id,date,score,breakdown")
             .eq("user_id", friendId)
             .order("date", { ascending: false })
             .limit(30),

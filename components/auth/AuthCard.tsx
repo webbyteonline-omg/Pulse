@@ -31,7 +31,7 @@ export function AuthCard({
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.15, ease: [0.22, 1, 0.36, 1] }}
       className="bg-card border border-line rounded-card p-7 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.6)]"
     >
       <div className="flex flex-col items-center text-center mb-7">

@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
+import { PROFILE_COLUMNS } from "@/lib/supabase/columns";
 import { logActivity } from "@/lib/activityLog";
 import { isRateLimitError } from "./useFriends";
 import { useAuthStore } from "@/store/authStore";
@@ -23,7 +24,7 @@ export function usePolls() {
       const supabase = getSupabaseBrowser();
       const { data: polls, error } = await supabase
         .from("polls")
-        .select("*")
+        .select("id,creator_id,question,options,votes,anonymous,expires_at,created_at")
         .order("created_at", { ascending: false })
         .limit(100);
       if (error) throw error;
@@ -32,10 +33,10 @@ export function usePolls() {
       const creatorIds = [...new Set(polls.map((p) => p.creator_id))];
       const pollIds = polls.map((p) => p.id);
       const [{ data: profiles }, { data: myVotes }] = await Promise.all([
-        supabase.from("user_profiles").select("*").in("id", creatorIds),
+        supabase.from("user_profiles").select(PROFILE_COLUMNS).in("id", creatorIds),
         supabase
           .from("poll_votes")
-          .select("*")
+          .select("id,poll_id,user_id,option_index,created_at")
           .in("poll_id", pollIds)
           .eq("user_id", user!.id),
       ]);

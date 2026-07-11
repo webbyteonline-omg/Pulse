@@ -20,7 +20,9 @@ export function useEvents() {
       const supabase = getSupabaseBrowser();
       const { data, error } = await supabase
         .from("academic_events")
-        .select("*")
+        .select(
+          "id,user_id,title,event_type,date,description,subject_id,notified_3day,notified_1day,created_at"
+        )
         .order("date", { ascending: true });
       if (error) throw error;
       return data;

@@ -43,7 +43,7 @@ export function AttendanceSummary({ subjects }: { subjects: Subject[] }) {
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${Math.min(100, pct)}%` }}
-                  transition={{ delay: 0.1 + i * 0.05, duration: 0.6, ease: "easeOut" }}
+                  transition={{ delay: 0.05 + i * 0.03, duration: 0.2, ease: "easeOut" }}
                   className="h-full rounded-full"
                   style={{ backgroundColor: color }}
                 />

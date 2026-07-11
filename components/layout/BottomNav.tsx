@@ -1,13 +1,23 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { NAV_ITEMS, isNavActive } from "./Sidebar";
 import { cn } from "@/lib/utils";
 
 export function BottomNav() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  // Explicitly warm the router cache for every tab on mount — Link's
+  // viewport-based prefetch already covers on-screen links, but since all
+  // 5 tabs are visible immediately here, this just guarantees the payload
+  // is fetched right away instead of waiting on an intersection callback.
+  useEffect(() => {
+    for (const { href } of NAV_ITEMS) router.prefetch(href);
+  }, [router]);
 
   return (
     <nav

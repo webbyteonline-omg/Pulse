@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { AnimatePresence } from "framer-motion";
 import { Crown, Timer } from "lucide-react";
 import { Header } from "@/components/layout/Header";
@@ -8,7 +9,6 @@ import { SOCIAL_TABS, SubTabs } from "@/components/layout/SubTabs";
 import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { RowSkeleton } from "@/components/ui/Skeleton";
-import { LeaderboardRow } from "@/components/leaderboard/LeaderboardRow";
 import {
   LEADERBOARD_CATEGORIES,
   useLastWeekChampion,
@@ -16,6 +16,11 @@ import {
   type LeaderboardCategory,
 } from "@/hooks/useLeaderboard";
 import { weekStartIST } from "@/lib/utils";
+
+const LeaderboardRow = dynamic(
+  () => import("@/components/leaderboard/LeaderboardRow").then((m) => m.LeaderboardRow),
+  { loading: () => <div className="h-16 rounded-card bg-line/40 animate-pulse" /> }
+);
 
 /** ms until next Monday 00:00 IST. */
 function msToReset(): number {

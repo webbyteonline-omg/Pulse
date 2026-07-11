@@ -23,7 +23,9 @@ export function useSubjects() {
       const supabase = getSupabaseBrowser();
       const { data, error } = await supabase
         .from("subjects")
-        .select("*")
+        .select(
+          "id,user_id,name,color,total_classes,attended_classes,required_percentage,created_at"
+        )
         .order("created_at", { ascending: true });
       if (error) throw error;
       return data;
@@ -40,7 +42,9 @@ export function useSubject(id: string) {
       const supabase = getSupabaseBrowser();
       const { data, error } = await supabase
         .from("subjects")
-        .select("*")
+        .select(
+          "id,user_id,name,color,total_classes,attended_classes,required_percentage,created_at"
+        )
         .eq("id", id)
         .maybeSingle();
       if (error) throw error;
@@ -62,7 +66,7 @@ export function useAttendanceLogs(subjectId: string, month: string) {
       const end = new Date(Date.UTC(y ?? 2026, m ?? 1, 0)).getUTCDate();
       const { data, error } = await supabase
         .from("attendance_logs")
-        .select("*")
+        .select("id,user_id,subject_id,date,status,created_at")
         .eq("subject_id", subjectId)
         .gte("date", start)
         .lte("date", `${month}-${String(end).padStart(2, "0")}`)

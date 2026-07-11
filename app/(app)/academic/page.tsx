@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import dynamic from "next/dynamic";
 import { AnimatePresence } from "framer-motion";
 import { Plus } from "lucide-react";
 import { Header } from "@/components/layout/Header";
@@ -8,8 +9,7 @@ import { ACADEMIC_TABS, SubTabs } from "@/components/layout/SubTabs";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { FAB } from "@/components/ui/FAB";
-import { RowSkeleton } from "@/components/ui/Skeleton";
-import { CalendarUpload } from "@/components/academic/CalendarUpload";
+import { RowSkeleton, Skeleton } from "@/components/ui/Skeleton";
 import { CountdownCard } from "@/components/academic/CountdownCard";
 import { EventCard } from "@/components/academic/EventCard";
 import { EventFormModal } from "@/components/academic/EventFormModal";
@@ -17,6 +17,13 @@ import { useDeleteEvent, useEvents } from "@/hooks/useAcademic";
 import { useSubjects } from "@/hooks/useAttendance";
 import { EVENT_TYPE_META, daysUntil } from "@/lib/utils";
 import type { EventType } from "@/lib/supabase/types";
+
+// Pulls in pdfjs-dist (massive) for PDF calendar parsing — split out and
+// only loaded when this page actually mounts.
+const CalendarUpload = dynamic(
+  () => import("@/components/academic/CalendarUpload").then((m) => m.CalendarUpload),
+  { ssr: false, loading: () => <Skeleton className="h-24 w-full rounded-card mb-6" /> }
+);
 
 type Tab = "upcoming" | "past" | "all";
 type TypeFilter = "all" | EventType;

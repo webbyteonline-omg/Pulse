@@ -9,8 +9,16 @@ export interface PulseBreakdown {
   total: number; // /100
 }
 
+// computePulseScore only reads a handful of fields off each row, so callers
+// can pass Supabase results selected down to just those columns (cheaper
+// queries) instead of the full row type.
+type SubjectForScore = Pick<Subject, "total_classes" | "attended_classes">;
+type ExpenseForScore = Pick<Expense, "amount">;
+type BudgetForScore = Pick<Budget, "amount">;
+type CheckinForScore = Pick<DailyCheckin, "mood">;
+
 /** Attendance (30): avg % across subjects. ≥80→30, 75-80→20, 70-75→10, <70→0. */
-export function attendanceScore(subjects: Subject[]): number {
+export function attendanceScore(subjects: SubjectForScore[]): number {
   const tracked = subjects.filter((s) => s.total_classes > 0);
   if (tracked.length === 0) return 0;
   const avg =
@@ -23,7 +31,7 @@ export function attendanceScore(subjects: Subject[]): number {
 }
 
 /** Finance (25): spend vs pro-rated budget. Under→25, ≤20% over→15, else 0. */
-export function financeScore(expenses: Expense[], budgets: Budget[], dayOfMonth: number, daysInMonth: number): number {
+export function financeScore(expenses: ExpenseForScore[], budgets: BudgetForScore[], dayOfMonth: number, daysInMonth: number): number {
   const totalBudget = budgets.reduce((sum, b) => sum + Number(b.amount), 0);
   if (totalBudget <= 0) return 0;
   const spent = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
@@ -42,7 +50,7 @@ export function consistencyScore(streak: number): number {
 }
 
 /** Mood (20): weekly average of 1-5 check-ins. ≥4→20, 3-4→12, 2-3→5, <2→0. */
-export function moodScore(checkins: DailyCheckin[]): number {
+export function moodScore(checkins: CheckinForScore[]): number {
   const moods = checkins.map((c) => c.mood).filter((m): m is number => m !== null);
   if (moods.length === 0) return 0;
   const avg = moods.reduce((a, b) => a + b, 0) / moods.length;
@@ -53,10 +61,10 @@ export function moodScore(checkins: DailyCheckin[]): number {
 }
 
 export function computePulseScore(input: {
-  subjects: Subject[];
-  monthExpenses: Expense[];
-  monthBudgets: Budget[];
-  weekCheckins: DailyCheckin[];
+  subjects: SubjectForScore[];
+  monthExpenses: ExpenseForScore[];
+  monthBudgets: BudgetForScore[];
+  weekCheckins: CheckinForScore[];
   streak: number;
   dayOfMonth: number;
   daysInMonth: number;

@@ -48,6 +48,18 @@ html {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Removes the ~300ms tap-delay on iOS Safari and kills the grey flash
+   highlight on tap for every interactive element. */
+button,
+a,
+[role="button"],
+input,
+select,
+textarea {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   @apply bg-bg text-ink antialiased;
   overscroll-behavior-y: contain;

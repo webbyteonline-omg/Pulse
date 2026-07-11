@@ -30,7 +30,7 @@ export function useExpenses(month: number, year: number) {
       const { start, end } = monthRange(month, year);
       const { data, error } = await supabase
         .from("expenses")
-        .select("*")
+        .select("id,user_id,amount,merchant,category,note,date,source,created_at")
         .gte("date", start)
         .lte("date", end)
         .order("date", { ascending: false })
@@ -50,7 +50,7 @@ export function useAllExpenses() {
       const supabase = getSupabaseBrowser();
       const { data, error } = await supabase
         .from("expenses")
-        .select("*")
+        .select("id,user_id,amount,merchant,category,note,date,source,created_at")
         .order("date", { ascending: false });
       if (error) throw error;
       return data;
@@ -67,7 +67,7 @@ export function useBudgets(month: number, year: number) {
       const supabase = getSupabaseBrowser();
       const { data, error } = await supabase
         .from("budgets")
-        .select("*")
+        .select("id,user_id,month,year,category,amount")
         .eq("month", month)
         .eq("year", year);
       if (error) throw error;

@@ -26,7 +26,7 @@ export function SubjectCard({ subject, index = 0 }: { subject: Subject; index?: 
     <motion.div
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.04 * index, duration: 0.3 }}
+      transition={{ delay: 0.04 * index, duration: 0.1 }}
       layout
     >
       <Card className="p-4">
@@ -51,7 +51,7 @@ export function SubjectCard({ subject, index = 0 }: { subject: Subject; index?: 
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${hasClasses ? Math.min(100, pct) : 0}%` }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
               className="h-full rounded-full"
               style={{ backgroundColor: color }}
             />

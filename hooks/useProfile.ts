@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
+import { PROFILE_COLUMNS } from "@/lib/supabase/columns";
 import { logActivity } from "@/lib/activityLog";
 import { computePulseScore, type PulseBreakdown } from "@/lib/pulseScore";
 import {
@@ -24,7 +25,7 @@ export function useMyProfile() {
       const supabase = getSupabaseBrowser();
       const { data, error } = await supabase
         .from("user_profiles")
-        .select("*")
+        .select(PROFILE_COLUMNS)
         .eq("id", user!.id)
         .maybeSingle();
       if (error) throw error;
@@ -59,7 +60,7 @@ export function useTodayCheckin() {
       const supabase = getSupabaseBrowser();
       const { data, error } = await supabase
         .from("daily_checkins")
-        .select("*")
+        .select("id,user_id,date,mood,steps,created_at")
         .eq("user_id", user!.id)
         .eq("date", todayIST())
         .maybeSingle();
@@ -78,7 +79,7 @@ export function useWeekCheckins() {
       const supabase = getSupabaseBrowser();
       const { data, error } = await supabase
         .from("daily_checkins")
-        .select("*")
+        .select("id,user_id,date,mood,steps,created_at")
         .eq("user_id", user!.id)
         .gte("date", weekStartIST())
         .order("date");
@@ -120,7 +121,7 @@ export function usePulseHistory() {
       const supabase = getSupabaseBrowser();
       const { data, error } = await supabase
         .from("pulse_scores")
-        .select("*")
+        .select("id,user_id,date,score,breakdown")
         .eq("user_id", user!.id)
         .gte("date", daysAgoIST(30))
         .order("date");
@@ -150,11 +151,19 @@ export function useLivePulseScore(): { breakdown: PulseBreakdown | null; loading
 
       const [{ data: subjects }, { data: expenses }, { data: budgets }, { data: checkins }, { data: stats }] =
         await Promise.all([
-          supabase.from("subjects").select("*"),
-          supabase.from("expenses").select("*").gte("date", `${year}-${mm}-01`).lte("date", `${year}-${mm}-${lastDay}`),
-          supabase.from("budgets").select("*").eq("month", month).eq("year", year),
-          supabase.from("daily_checkins").select("*").eq("user_id", user!.id).gte("date", weekStartIST()),
-          supabase.from("user_stats").select("*").eq("user_id", user!.id).maybeSingle(),
+          supabase.from("subjects").select("id,total_classes,attended_classes,required_percentage"),
+          supabase
+            .from("expenses")
+            .select("id,amount,category,date")
+            .gte("date", `${year}-${mm}-01`)
+            .lte("date", `${year}-${mm}-${lastDay}`),
+          supabase.from("budgets").select("id,category,amount").eq("month", month).eq("year", year),
+          supabase
+            .from("daily_checkins")
+            .select("id,date,mood,steps")
+            .eq("user_id", user!.id)
+            .gte("date", weekStartIST()),
+          supabase.from("user_stats").select("streak").eq("user_id", user!.id).maybeSingle(),
         ]);
 
       return computePulseScore({
@@ -197,7 +206,7 @@ export function useStatsSync(): void {
 
       const { data: stats } = await supabase
         .from("user_stats")
-        .select("*")
+        .select("streak,last_open")
         .eq("user_id", user.id)
         .maybeSingle();
 
@@ -208,10 +217,18 @@ export function useStatsSync(): void {
 
       const [{ data: subjects }, { data: expenses }, { data: budgets }, { data: checkins }] =
         await Promise.all([
-          supabase.from("subjects").select("*"),
-          supabase.from("expenses").select("*").gte("date", `${year}-${mm}-01`).lte("date", `${year}-${mm}-${lastDay}`),
-          supabase.from("budgets").select("*").eq("month", month).eq("year", year),
-          supabase.from("daily_checkins").select("*").eq("user_id", user.id).gte("date", weekStartIST()),
+          supabase.from("subjects").select("id,total_classes,attended_classes,required_percentage"),
+          supabase
+            .from("expenses")
+            .select("id,amount,date")
+            .gte("date", `${year}-${mm}-01`)
+            .lte("date", `${year}-${mm}-${lastDay}`),
+          supabase.from("budgets").select("id,amount").eq("month", month).eq("year", year),
+          supabase
+            .from("daily_checkins")
+            .select("id,mood,steps")
+            .eq("user_id", user.id)
+            .gte("date", weekStartIST()),
         ]);
 
       const tracked = (subjects ?? []).filter((s) => s.total_classes > 0);

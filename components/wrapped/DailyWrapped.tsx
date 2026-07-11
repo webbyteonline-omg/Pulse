@@ -19,9 +19,18 @@ export function DailyWrapped({ onClose }: { onClose: () => void }) {
     queryFn: async () => {
       const supabase = getSupabaseBrowser();
       const [{ data: checkin }, { data: expenses }, { data: logs }] = await Promise.all([
-        supabase.from("daily_checkins").select("*").eq("user_id", user!.id).eq("date", today).maybeSingle(),
-        supabase.from("expenses").select("*").eq("date", today),
-        supabase.from("attendance_logs").select("*").eq("user_id", user!.id).eq("date", today),
+        supabase
+          .from("daily_checkins")
+          .select("id,user_id,date,mood,steps,created_at")
+          .eq("user_id", user!.id)
+          .eq("date", today)
+          .maybeSingle(),
+        supabase.from("expenses").select("id,amount,category,date").eq("date", today),
+        supabase
+          .from("attendance_logs")
+          .select("id,user_id,subject_id,date,status,created_at")
+          .eq("user_id", user!.id)
+          .eq("date", today),
       ]);
       return { checkin, expenses: expenses ?? [], logs: logs ?? [] };
     },

@@ -32,7 +32,7 @@ export function BudgetBar({
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${pct}%` }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
           className="h-full rounded-full"
           style={{ backgroundColor: barColor }}
         />

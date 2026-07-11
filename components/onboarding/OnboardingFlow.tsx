@@ -2,18 +2,24 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
 import { BellRing, Check, Plus } from "lucide-react";
 import { PulseLogo } from "@/components/auth/AuthCard";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { CalendarUpload } from "@/components/academic/CalendarUpload";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { FriendSearch } from "@/components/friends/FriendSearch";
 import { useCreateSubject, useSubjects } from "@/hooks/useAttendance";
 import { usePushNotifications } from "@/hooks/useNotifications";
 import { useUpdateProfile } from "@/hooks/useProfile";
 import { SUBJECT_COLORS } from "@/lib/utils";
 import { useSettingsStore } from "@/store/settingsStore";
+
+const CalendarUpload = dynamic(
+  () => import("@/components/academic/CalendarUpload").then((m) => m.CalendarUpload),
+  { ssr: false, loading: () => <Skeleton className="h-24 w-full rounded-card" /> }
+);
 
 const SUGGESTIONS = ["Mathematics", "Physics", "Chemistry", "CS101", "English", "Electronics"];
 const TOTAL_STEPS = 5;
@@ -250,7 +256,7 @@ export function OnboardingFlow() {
               initial={{ opacity: 0, x: 40 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -40 }}
-              transition={{ duration: 0.25 }}
+              transition={{ duration: 0.1 }}
             >
               {steps[step]}
             </motion.div>

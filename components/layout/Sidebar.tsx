@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -48,6 +49,10 @@ export function Sidebar() {
   const router = useRouter();
   const displayName = useAuthStore((s) => s.displayName)();
   const user = useAuthStore((s) => s.user);
+
+  useEffect(() => {
+    for (const { href } of NAV_ITEMS) router.prefetch(href);
+  }, [router]);
 
   const logout = async () => {
     await getSupabaseBrowser().auth.signOut();

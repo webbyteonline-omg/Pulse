@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import dynamic from "next/dynamic";
 import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
@@ -11,9 +12,18 @@ import { TodayCard } from "@/components/dashboard/TodayCard";
 import { TodayClasses } from "@/components/dashboard/TodayClasses";
 import { UpcomingEvents } from "@/components/dashboard/UpcomingEvents";
 import { AttendanceSummary } from "@/components/dashboard/AttendanceSummary";
-import { SpendingSummary } from "@/components/dashboard/SpendingSummary";
-import { ScoreGauge } from "@/components/pulse-score/ScoreGauge";
 import { CardSkeleton, RowSkeleton, Skeleton } from "@/components/ui/Skeleton";
+
+// Both pull in Recharts — split out of the main bundle and only fetched
+// once the rest of the dashboard has already painted.
+const SpendingSummary = dynamic(
+  () => import("@/components/dashboard/SpendingSummary").then((m) => m.SpendingSummary),
+  { ssr: false, loading: () => <Skeleton className="h-40 w-full rounded-card" /> }
+);
+const ScoreGauge = dynamic(
+  () => import("@/components/pulse-score/ScoreGauge").then((m) => m.ScoreGauge),
+  { ssr: false, loading: () => <Skeleton className="h-40 w-full rounded-card" /> }
+);
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useEvents } from "@/hooks/useAcademic";
 import { useSubjects } from "@/hooks/useAttendance";

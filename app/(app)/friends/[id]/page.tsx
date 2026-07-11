@@ -24,7 +24,7 @@ function useFriendTodaySteps(friendId: string, allowed: boolean) {
       const supabase = getSupabaseBrowser();
       const { data } = await supabase
         .from("daily_checkins")
-        .select("*")
+        .select("id,user_id,date,mood,steps,created_at")
         .eq("user_id", friendId)
         .eq("date", todayIST())
         .maybeSingle();

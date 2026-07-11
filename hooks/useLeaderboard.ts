@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
+import { PROFILE_COLUMNS, USER_STATS_COLUMNS } from "@/lib/supabase/columns";
 import { weekStartIST } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
 import type { UserProfile, UserStats } from "@/lib/supabase/types";
@@ -61,8 +62,8 @@ export function useLeaderboard(category: LeaderboardCategory) {
       const ids = [user!.id, ...(friendRows ?? []).map((r) => r.friend_id)];
 
       const [{ data: profiles }, { data: stats }] = await Promise.all([
-        supabase.from("user_profiles").select("*").in("id", ids),
-        supabase.from("user_stats").select("*").in("user_id", ids),
+        supabase.from("user_profiles").select(PROFILE_COLUMNS).in("id", ids),
+        supabase.from("user_stats").select(USER_STATS_COLUMNS).in("user_id", ids),
       ]);
       const statsById = new Map((stats ?? []).map((s) => [s.user_id, s]));
       const meta = LEADERBOARD_CATEGORIES.find((c) => c.id === category);
@@ -94,7 +95,7 @@ export function useLastWeekChampion(category: LeaderboardCategory) {
       lastWeek.setUTCDate(lastWeek.getUTCDate() - 7);
       const { data } = await supabase
         .from("leaderboard_history")
-        .select("*")
+        .select("id,week_start,category,user_id,value")
         .eq("week_start", lastWeek.toISOString().slice(0, 10))
         .eq("category", category)
         .limit(1);
@@ -102,7 +103,7 @@ export function useLastWeekChampion(category: LeaderboardCategory) {
       if (!row) return null;
       const { data: profile } = await supabase
         .from("user_profiles")
-        .select("*")
+        .select(PROFILE_COLUMNS)
         .eq("id", row.user_id)
         .maybeSingle();
       return profile ? { profile, value: row.value !== null ? Number(row.value) : null } : null;

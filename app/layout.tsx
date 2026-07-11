@@ -40,10 +40,27 @@ export const viewport: Viewport = {
 // Applies the saved theme before first paint — no flash on load.
 const themeBootScript = `(function(){try{var t="dark";var raw=localStorage.getItem("pulse-settings");if(raw){var s=JSON.parse(raw);if(s&&s.state&&s.state.theme)t=s.state.theme}else if(window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches){t="light"}document.documentElement.classList.remove("dark","light","amoled");document.documentElement.classList.add(t)}catch(e){document.documentElement.classList.add("dark")}})();`;
 
+// Every page fetches from Supabase almost immediately on mount — warming
+// the connection (DNS + TLS) before that request fires shaves the
+// round-trip off the very first query.
+const supabaseOrigin = (() => {
+  try {
+    return new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").origin;
+  } catch {
+    return null;
+  }
+})();
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`dark ${inter.variable}`} suppressHydrationWarning>
       <head>
+        {supabaseOrigin && (
+          <>
+            <link rel="preconnect" href={supabaseOrigin} crossOrigin="anonymous" />
+            <link rel="dns-prefetch" href={supabaseOrigin} />
+          </>
+        )}
         <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
       </head>
       <body className="font-sans min-h-dvh">
