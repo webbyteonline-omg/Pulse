@@ -1,4 +1,4 @@
-import type { EventType, ExpenseCategory, IncomeSource } from "./supabase/types";
+import type { EventType, ExpenseCategory } from "./supabase/types";
 
 export function cn(...classes: Array<string | false | null | undefined>): string {
   return classes.filter(Boolean).join(" ");
@@ -137,18 +137,6 @@ export const CATEGORY_META: Record<
 };
 
 export const ALL_CATEGORIES = Object.keys(CATEGORY_META) as ExpenseCategory[];
-
-export const INCOME_SOURCE_META: Record<
-  IncomeSource,
-  { label: string; color: string; emoji: string }
-> = {
-  pocket_money: { label: "Pocket Money", color: "#43D98C", emoji: "👛" },
-  part_time: { label: "Part-time", color: "#5AB0FF", emoji: "💼" },
-  transfer: { label: "Transfer", color: "#6C63FF", emoji: "🔄" },
-  other_income: { label: "Other", color: "#8888A0", emoji: "💵" },
-};
-
-export const ALL_INCOME_SOURCES = Object.keys(INCOME_SOURCE_META) as IncomeSource[];
 
 export const SUBJECT_COLORS = [
   "#6C63FF",

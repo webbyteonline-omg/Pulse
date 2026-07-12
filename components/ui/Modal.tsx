@@ -9,6 +9,8 @@ export interface ModalProps {
   open: boolean;
   onClose: () => void;
   title?: string;
+  /** Optional extra control rendered next to the close button (e.g. "Mark all read"). */
+  titleAction?: React.ReactNode;
   children: React.ReactNode;
   /** "sheet" slides from bottom on mobile; "center" is a centered dialog. */
   variant?: "sheet" | "center";
@@ -16,7 +18,7 @@ export interface ModalProps {
 }
 
 /** Modal / bottom-sheet with backdrop, escape handling, body scroll lock. */
-export function Modal({ open, onClose, title, children, variant = "sheet", className }: ModalProps) {
+export function Modal({ open, onClose, title, titleAction, children, variant = "sheet", className }: ModalProps) {
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -64,13 +66,16 @@ export function Modal({ open, onClose, title, children, variant = "sheet", class
             )}
             <div className="flex items-center justify-between px-5 pt-4 pb-2">
               {title && <h2 className="text-base font-bold">{title}</h2>}
-              <button
-                onClick={onClose}
-                aria-label="Close"
-                className="p-1.5 rounded-full text-ink-dim hover:text-ink hover:bg-line/50 transition-colors"
-              >
-                <X className="h-4 w-4" />
-              </button>
+              <div className="flex items-center gap-3 ml-auto">
+                {titleAction}
+                <button
+                  onClick={onClose}
+                  aria-label="Close"
+                  className="p-1.5 rounded-full text-ink-dim hover:text-ink hover:bg-line/50 transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
             </div>
             <div className="px-5 pb-5">{children}</div>
           </motion.div>

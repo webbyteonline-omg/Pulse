@@ -105,7 +105,8 @@ export type Expense = {
   user_id: string;
   amount: number;
   merchant: string | null;
-  /** Expense category when transaction_type is "expense", income source when "income". */
+  /** Expense category. May still hold a legacy income-source string on old
+   *  rows from before income tracking was removed from the app. */
   category: TransactionCategory | null;
   note: string | null;
   date: string; // YYYY-MM-DD

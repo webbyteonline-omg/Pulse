@@ -6,13 +6,7 @@ import { isNetworkError, queueInsert } from "@/lib/outbox";
 import { logActivity } from "@/lib/activityLog";
 import { isRateLimitError } from "./useFriends";
 import { useAuthStore } from "@/store/authStore";
-import type {
-  Budget,
-  Expense,
-  ExpenseSource,
-  TransactionCategory,
-  TransactionType,
-} from "@/lib/supabase/types";
+import type { Budget, Expense, ExpenseCategory, ExpenseSource } from "@/lib/supabase/types";
 
 export const financeKeys = {
   expenses: (month: number, year: number) => ["expenses", year, month] as const,
@@ -84,12 +78,11 @@ export function useBudgets(month: number, year: number) {
 
 export interface AddExpenseInput {
   amount: number;
-  category: TransactionCategory;
+  category: ExpenseCategory;
   merchant: string | null;
   note: string | null;
   date: string;
   source: ExpenseSource;
-  transaction_type?: TransactionType;
 }
 
 export function useAddExpense() {
@@ -103,12 +96,12 @@ export function useAddExpense() {
       try {
         const { error } = await supabase.from("expenses").insert(row);
         if (error) throw new Error(isRateLimitError(error) ?? error.message);
-        logActivity(row.transaction_type === "income" ? "income_added" : "expense_added", "expense", {
+        logActivity("expense_added", "expense", {
           newValue: { amount: input.amount, merchant: input.merchant ?? undefined },
         });
       } catch (err) {
         if (isNetworkError(err)) {
-          await queueInsert("expenses", row, `${row.transaction_type === "income" ? "Income" : "Expense"} ₹${input.amount}`);
+          await queueInsert("expenses", row, `Expense ₹${input.amount}`);
           return;
         }
         throw err;
@@ -116,43 +109,6 @@ export function useAddExpense() {
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: financeKeys.allExpenses }),
   });
-}
-
-export interface AddIncomeInput {
-  amount: number;
-  source: "pocket_money" | "part_time" | "transfer" | "other_income";
-  merchant: string | null;
-  note: string | null;
-  date: string;
-}
-
-/** Thin wrapper over useAddExpense — writes an income-flavored row to the
- *  same `expenses` table (transaction_type: "income", category = source). */
-export function useAddIncome() {
-  const addExpense = useAddExpense();
-  return {
-    ...addExpense,
-    mutate: (input: AddIncomeInput) =>
-      addExpense.mutate({
-        amount: input.amount,
-        category: input.source,
-        merchant: input.merchant,
-        note: input.note,
-        date: input.date,
-        source: "manual",
-        transaction_type: "income",
-      }),
-    mutateAsync: (input: AddIncomeInput) =>
-      addExpense.mutateAsync({
-        amount: input.amount,
-        category: input.source,
-        merchant: input.merchant,
-        note: input.note,
-        date: input.date,
-        source: "manual",
-        transaction_type: "income",
-      }),
-  };
 }
 
 export function useDeleteExpense() {
