@@ -21,7 +21,7 @@ import { useEvents } from "@/hooks/useAcademic";
 import { useAssignments } from "@/hooks/useAcademicWork";
 import { useSubjects } from "@/hooks/useAttendance";
 import { useBudgets, useExpenses } from "@/hooks/useFinance";
-import { useLivePulseScore, useMyProfile, useTodayCheckin } from "@/hooks/useProfile";
+import { useLivePulseScore, useTodayCheckin } from "@/hooks/useProfile";
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import { attendancePercent, daysUntil, formatINR, nowIST, todayIST } from "@/lib/utils";
 import { useRouter } from "next/navigation";
@@ -43,7 +43,6 @@ export default function DashboardPage() {
   const budgetsQuery = useBudgets(month, year);
   const checkinQuery = useTodayCheckin();
   const { breakdown } = useLivePulseScore();
-  const profileQuery = useMyProfile();
   const assignmentsQuery = useAssignments();
 
   const { ref, pull, refreshing } = usePullToRefresh(async () => {
@@ -144,10 +143,7 @@ export default function DashboardPage() {
             spentThisMonth={formatINR(monthSpend)}
           />
 
-          <LeaderboardCard
-            yourName={profileQuery.data?.display_name ?? profileQuery.data?.username ?? "You"}
-            yourScore={breakdown?.total ?? 0}
-          />
+          <LeaderboardCard />
 
           <Link
             href="/groups"

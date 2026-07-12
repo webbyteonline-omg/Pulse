@@ -9,29 +9,25 @@ import {
   ArrowUpRight,
   ChevronLeft,
   ChevronRight,
-  Download,
   Eye,
   EyeOff,
   HandCoins,
-  ScanLine,
 } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { FAB } from "@/components/ui/FAB";
-import { Button } from "@/components/ui/Button";
 import { CardSkeleton, RowSkeleton, Skeleton } from "@/components/ui/Skeleton";
 import { BudgetBar } from "@/components/finance/BudgetBar";
 import { ExpenseItem } from "@/components/finance/ExpenseItem";
 import { UdharSection } from "@/components/finance/UdharSection";
 import { summarize, useBorrowLend } from "@/hooks/useBorrowLend";
 import { useBudgets, useDeleteExpense, useExpenses } from "@/hooks/useFinance";
-import { ALL_CATEGORIES, CATEGORY_META, downloadCSV, formatINR, monthLabel, nowIST } from "@/lib/utils";
+import { ALL_CATEGORIES, CATEGORY_META, formatINR, monthLabel, nowIST } from "@/lib/utils";
 import type { ExpenseCategory } from "@/lib/supabase/types";
 
 const CategoryDonut = dynamic(
   () => import("@/components/finance/CategoryDonut").then((m) => m.CategoryDonut),
-  { ssr: false, loading: () => <Skeleton className="h-52 w-full rounded-card" /> }
+  { ssr: false, loading: () => <Skeleton className="h-[180px] w-full rounded-card" /> }
 );
 
 type Tab = "overview" | "transactions" | "udhar";
@@ -147,11 +143,11 @@ export default function FinancePage() {
           {tab === "overview" && (
             <>
               {/* Total Spent gradient card */}
-              <div className="relative overflow-hidden rounded-hero p-5 mb-4 bg-pulse-gradient text-white">
+              <div className="relative overflow-hidden rounded-hero p-4 mb-4 bg-pulse-gradient text-white">
                 <div aria-hidden className="absolute -right-8 -top-10 h-36 w-36 rounded-full bg-white/15 blur-2xl" />
                 <button
                   onClick={() => setHideBalance((v) => !v)}
-                  className="flex items-center gap-1.5 text-sm font-semibold opacity-90"
+                  className="flex items-center gap-1.5 text-[13px] font-semibold opacity-90"
                 >
                   Total Spent This Month {hideBalance ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                 </button>
@@ -159,7 +155,7 @@ export default function FinancePage() {
                   key={`${month}-${year}-${spent}`}
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mt-1 text-4xl font-black tracking-tight tabular-nums"
+                  className="mt-1 text-[32px] font-black tracking-tight tabular-nums"
                 >
                   {hide(formatINR(spent))}
                 </motion.p>
@@ -182,12 +178,12 @@ export default function FinancePage() {
               ) : (
                 <>
                   {expenses.length > 0 && (
-                    <Card className="p-4 mb-4">
-                      <h2 className="text-lg font-semibold mb-2">Spending Breakdown</h2>
+                    <Card className="p-3.5 mb-4">
+                      <h2 className="text-[15px] font-semibold mb-2">Spending Breakdown</h2>
                       <CategoryDonut expenses={expenses} />
-                      <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1.5">
+                      <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
                         {[...spentByCategory.entries()].sort((a, b) => b[1] - a[1]).map(([cat, amount]) => (
-                          <div key={cat} className="flex items-center gap-2 text-xs">
+                          <div key={cat} className="flex items-center gap-2 text-[13px] py-1.5">
                             <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: CATEGORY_META[cat].color }} />
                             <span className="flex-1 text-ink-dim">{CATEGORY_META[cat].label}</span>
                             <span className="font-semibold tabular-nums">{formatINR(amount)}</span>
@@ -220,10 +216,27 @@ export default function FinancePage() {
                     </div>
                   )}
 
+                  {/* Inline quick actions — replaces the old fixed/floating
+                      bottom bar, which collided with the bottom nav. */}
+                  <div className="grid grid-cols-2 gap-2.5 mb-4">
+                    <Link
+                      href="/finance/add"
+                      className="h-11 rounded-xl bg-primary text-white text-sm font-semibold flex items-center justify-center gap-1.5"
+                    >
+                      <ArrowUpRight className="h-4 w-4" /> Add Expense
+                    </Link>
+                    <Link
+                      href="/finance/borrow"
+                      className="h-11 rounded-xl bg-card border border-line text-ink text-sm font-semibold flex items-center justify-center gap-1.5"
+                    >
+                      <HandCoins className="h-4 w-4" /> Lent/Borrow
+                    </Link>
+                  </div>
+
                   {expenses.length > 0 && (
                     <Card className="mb-4">
-                      <div className="flex items-center justify-between px-4 pt-4">
-                        <h2 className="text-lg font-semibold">Recent</h2>
+                      <div className="flex items-center justify-between px-3.5 pt-3.5">
+                        <h2 className="text-[15px] font-semibold">Recent</h2>
                         <button onClick={() => setTab("transactions")} className="text-xs font-semibold text-primary">See all →</button>
                       </div>
                       <div className="divide-y divide-line/60 mt-1">
@@ -238,7 +251,7 @@ export default function FinancePage() {
 
                   {/* Borrowed & Lent summary card */}
                   <Link href="/finance/borrow" className="block mb-4">
-                    <Card interactive className="p-4 flex items-center gap-3.5">
+                    <Card interactive className="p-3.5 flex items-center gap-3.5">
                       <div className="h-11 w-11 rounded-btn bg-warning-dim grid place-items-center shrink-0">
                         <HandCoins className="h-5 w-5 text-warning" />
                       </div>
@@ -255,20 +268,6 @@ export default function FinancePage() {
                   </Link>
                 </>
               )}
-
-              <Button
-                variant="secondary"
-                className="w-full mb-4"
-                onClick={() =>
-                  downloadCSV(`pulse-expenses-${year}-${String(month).padStart(2, "0")}.csv`,
-                    expenses.map((e) => ({
-                      date: e.date, amount: e.amount, category: e.category ?? "others",
-                      merchant: e.merchant ?? "", source: e.source ?? "manual",
-                    })))
-                }
-              >
-                <Download className="h-4 w-4" /> Export {monthLabel(month, year)} (CSV)
-              </Button>
             </>
           )}
 
@@ -327,49 +326,7 @@ export default function FinancePage() {
           )}
 
           {tab === "udhar" && <UdharSection />}
-
-          {/* Extra bottom breathing room so the fixed quick-add bar below
-              never covers the last card in the scrollable content. */}
-          {tab !== "udhar" && <div className="h-20 md:hidden" />}
         </>
-      )}
-
-      {/* Single quick-add bar — this used to be THREE separate controls
-          (a fixed "Add Expense" strip, a "Udhar" shortcut button next to
-          it, AND a floating + FAB) all stacked in the same bottom-right
-          corner, colliding with each other and the bottom nav. Consolidated
-          into one bar, hidden on the Borrowed & Lent tab since that tab has
-          its own dedicated add-entry flow on /finance/borrow. */}
-      {tab !== "udhar" && (
-        <div
-          className="md:hidden fixed inset-x-4 z-40 flex items-center gap-2.5"
-          style={{ bottom: "calc(64px + env(safe-area-inset-bottom, 0px) + 12px)" }}
-        >
-          <Link
-            href="/finance/add"
-            className="flex-[2] flex items-center justify-center gap-1.5 h-[50px] rounded-2xl bg-primary text-white text-[15px] font-semibold"
-          >
-            <ArrowUpRight className="h-4 w-4" /> Add Expense
-          </Link>
-          <Link
-            href="/finance/borrow"
-            className="flex-1 flex items-center justify-center gap-1.5 h-[50px] rounded-2xl text-[14px] font-semibold"
-            style={{
-              background: "#161622",
-              border: "1px solid rgba(108,99,255,0.3)",
-              color: "#9B97FF",
-            }}
-          >
-            <HandCoins className="h-4 w-4" /> Lent/Borrow
-          </Link>
-        </div>
-      )}
-
-      {/* Desktop keeps a static FAB instead of the mobile quick-add bar. */}
-      {tab === "overview" && (
-        <div className="hidden md:block">
-          <FAB label="Add expense" onClick={() => router.push("/finance/add")} />
-        </div>
       )}
     </div>
   );

@@ -7,10 +7,14 @@ import { motion } from "framer-motion";
 import { BookOpen, House, MapPin, Users, Wallet } from "lucide-react";
 import { isNavActive } from "./Sidebar";
 import { cn } from "@/lib/utils";
+import { MenuIcon } from "@/components/ui/MenuIcon";
+import { MoreMenuSheet } from "./MoreMenuSheet";
 
 /**
- * Bottom nav v5 — 5 tabs (Home / Academics / Map / Expense / Friends), NO
- * center FAB. Profile is reached via the avatar in the page header instead.
+ * Bottom nav v6 — 5 route tabs (Home / Academics / Map / Expense / Friends)
+ * plus a 6th "More" tab that opens a bottom-sheet menu instead of navigating
+ * (Groups / Campus Map / Health / Profile / Settings / Privacy / About).
+ * Profile is also reachable via the avatar in the page header.
  * Active tab shows icon + label in primary purple with a soft glow;
  * inactive is icon only, muted (#555570). 64px tall + safe-area-inset-bottom
  * padding. Pure flat bar — no border, no shadow. Backdrop-blurs once the
@@ -34,6 +38,8 @@ const TABS = [
     match: ["/friends", "/polls", "/leaderboard"],
   },
 ] as const;
+
+const MORE_MATCH = ["/groups", "/health", "/profile", "/settings", "/privacy"];
 
 function NavTab({
   href,
@@ -96,9 +102,52 @@ function NavTab({
   );
 }
 
+function MoreTab({ active, onClick }: { active: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      aria-label="More"
+      aria-current={active ? "page" : undefined}
+      className="relative flex-1 h-16 grid place-items-center select-none touch-manipulation"
+    >
+      <motion.span
+        initial={false}
+        animate={{ scale: 1 }}
+        whileTap={{ scale: 0.9 }}
+        transition={{ duration: 0.1 }}
+        className="relative flex flex-col items-center gap-1"
+      >
+        {active && (
+          <motion.span
+            layoutId="nav-glow"
+            className="absolute -inset-2.5 rounded-full bg-primary/15 blur-[2px]"
+            transition={{ type: "spring", stiffness: 500, damping: 34 }}
+          />
+        )}
+        <MenuIcon
+          size={23}
+          className={cn(
+            "relative transition-colors duration-150",
+            active ? "text-primary" : "text-[#555570]"
+          )}
+        />
+        {active && (
+          <motion.span
+            layoutId="nav-label"
+            className="relative text-[10px] font-bold text-primary leading-none"
+          >
+            More
+          </motion.span>
+        )}
+      </motion.span>
+    </button>
+  );
+}
+
 export function BottomNav() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -108,24 +157,29 @@ export function BottomNav() {
   }, []);
 
   return (
-    <nav
-      aria-label="Main"
-      className={cn(
-        "md:hidden fixed bottom-0 inset-x-0 z-40 pb-safe transition-[backdrop-filter,background-color] duration-200",
-        scrolled ? "bg-bg/80 backdrop-blur-lg" : "bg-bg"
-      )}
-    >
-      <div className="flex items-stretch h-16">
-        {TABS.map((item) => (
-          <NavTab
-            key={item.href}
-            href={item.href}
-            label={item.label}
-            icon={item.icon}
-            active={isNavActive(pathname, item.match)}
-          />
-        ))}
-      </div>
-    </nav>
+    <>
+      <nav
+        aria-label="Main"
+        className={cn(
+          "md:hidden fixed bottom-0 inset-x-0 z-40 pb-safe transition-[backdrop-filter,background-color] duration-200",
+          scrolled ? "bg-bg/80 backdrop-blur-lg" : "bg-bg"
+        )}
+      >
+        <div className="flex items-stretch h-16">
+          {TABS.map((item) => (
+            <NavTab
+              key={item.href}
+              href={item.href}
+              label={item.label}
+              icon={item.icon}
+              active={isNavActive(pathname, item.match)}
+            />
+          ))}
+          <MoreTab active={isNavActive(pathname, MORE_MATCH)} onClick={() => setMoreOpen(true)} />
+        </div>
+      </nav>
+
+      <MoreMenuSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
+    </>
   );
 }

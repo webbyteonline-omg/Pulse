@@ -45,17 +45,17 @@ export function ExpenseItem({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: 40 }}
       transition={{ delay: Math.min(0.25, 0.03 * index) }}
-      className="flex items-center gap-3 px-4 py-3"
+      className="flex items-center gap-2.5 px-3.5 py-2 min-h-[52px]"
     >
       <div
-        className="h-10 w-10 rounded-btn grid place-items-center text-base shrink-0"
+        className="h-9 w-9 rounded-btn grid place-items-center text-sm shrink-0"
         style={{ backgroundColor: `${meta.color}1f` }}
         aria-hidden
       >
         {meta.emoji}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold truncate">
+        <p className="text-[13px] font-semibold truncate">
           {expense.merchant || meta.label}
         </p>
         <p className="text-[11px] text-ink-dim flex items-center gap-1 flex-wrap">
@@ -70,7 +70,7 @@ export function ExpenseItem({
           {expense.source && expense.source !== "manual" ? ` · via ${expense.source}` : ""}
         </p>
       </div>
-      <span className="text-sm font-bold tabular-nums shrink-0 text-ink">
+      <span className="text-[13px] font-bold tabular-nums shrink-0 text-ink">
         −{formatINR(Number(expense.amount), { decimals: true })}
       </span>
       {onDelete && (
