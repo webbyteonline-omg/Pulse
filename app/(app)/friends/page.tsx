@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
-import { UserPlus } from "lucide-react";
+import { UserPlus, Users } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { RowSkeleton, Skeleton } from "@/components/ui/Skeleton";
@@ -11,8 +11,11 @@ import { FriendCard } from "@/components/friends/FriendCard";
 import { FriendsOverview } from "@/components/friends/FriendsOverview";
 import { AddFriendSheet } from "@/components/friends/AddFriendSheet";
 import { RequestsPanel } from "@/components/friends/RequestsPanel";
+import { GroupAvatar } from "@/components/groups/GroupAvatar";
 import { useFriendRequests, useFriends } from "@/hooks/useFriends";
 import { useLocationSharing } from "@/hooks/useLocationSharing";
+import { useMyGroups } from "@/hooks/useGroups";
+import Link from "next/link";
 
 // Leaflet touches `window` — client-only.
 const FriendsMap = dynamic(() => import("@/components/friends/FriendsMap"), {
@@ -26,6 +29,7 @@ function FriendsContent() {
   const searchParams = useSearchParams();
   const friendsQuery = useFriends();
   const requestsQuery = useFriendRequests();
+  const groupsQuery = useMyGroups();
   const [tab, setTab] = useState<Tab>("friends");
   const [addOpen, setAddOpen] = useState(false);
   const { isSharing, toggleSharing, permissionDenied } = useLocationSharing();
@@ -85,6 +89,43 @@ function FriendsContent() {
 
       {tab === "friends" ? (
         <>
+          {/* Your Groups — horizontal scroll */}
+          {(groupsQuery.data ?? []).length > 0 && (
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-base font-bold text-ink">Your Groups</p>
+                <Link href="/groups" className="text-xs font-semibold text-primary">
+                  See all
+                </Link>
+              </div>
+              <div className="flex gap-3 overflow-x-auto pb-1 -mx-4 px-4 no-scrollbar">
+                {(groupsQuery.data ?? []).map((group) => (
+                  <Link
+                    key={group.id}
+                    href={`/groups/${group.id}`}
+                    className="flex flex-col items-center gap-1.5 shrink-0 w-16"
+                  >
+                    <GroupAvatar group={group} size={56} />
+                    <p className="text-[11px] font-medium text-ink-dim text-center truncate w-full">
+                      {group.name}
+                    </p>
+                  </Link>
+                ))}
+                <Link
+                  href="/groups/create"
+                  className="flex flex-col items-center gap-1.5 shrink-0 w-16"
+                >
+                  <div className="h-14 w-14 rounded-full grid place-items-center bg-card border border-dashed border-line text-ink-dim">
+                    <Users className="h-5 w-5" />
+                  </div>
+                  <p className="text-[11px] font-medium text-ink-dim text-center truncate w-full">
+                    New
+                  </p>
+                </Link>
+              </div>
+            </div>
+          )}
+
           <FriendsOverview />
 
           {friendsQuery.isLoading ? (

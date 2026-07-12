@@ -11,21 +11,12 @@ interface StatCardProps {
 
 function StatCard({ emoji, label, value, warning }: StatCardProps) {
   return (
-    <div
-      className="rounded-2xl px-4 py-3.5"
-      style={{ background: "#161622", border: "1px solid rgba(255,255,255,0.06)" }}
-    >
-      <p className="text-[12px] mb-1" style={{ color: "#8888A8" }}>
+    <div className="rounded-2xl px-4 py-3.5 bg-card border border-line">
+      <p className="text-[12px] mb-1 text-ink-dim">
         {emoji} {label}
       </p>
-      <p className="text-[22px] font-bold" style={{ color: "#FFFFFF" }}>
-        {value}
-      </p>
-      {warning && (
-        <p className="text-[11px] mt-1" style={{ color: "#FF6B6B" }}>
-          ⚠ {warning}
-        </p>
-      )}
+      <p className="text-[22px] font-bold text-ink">{value}</p>
+      {warning && <p className="text-[11px] mt-1 text-danger">⚠ {warning}</p>}
     </div>
   );
 }

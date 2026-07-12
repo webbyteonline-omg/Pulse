@@ -25,6 +25,8 @@ import { useLivePulseScore, useMyProfile, useTodayCheckin } from "@/hooks/usePro
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import { attendancePercent, daysUntil, formatINR, nowIST, todayIST } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -146,6 +148,14 @@ export default function DashboardPage() {
             yourName={profileQuery.data?.display_name ?? profileQuery.data?.username ?? "You"}
             yourScore={breakdown?.total ?? 0}
           />
+
+          <Link
+            href="/groups"
+            className="flex items-center justify-between px-1 -mt-3 mb-5 text-xs font-semibold text-primary"
+          >
+            Group leaderboards
+            <ChevronRight className="h-3.5 w-3.5" />
+          </Link>
 
           <QuickTiles
             attendancePct={avgAttendance}

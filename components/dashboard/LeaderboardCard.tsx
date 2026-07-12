@@ -39,76 +39,73 @@ export function LeaderboardCard({ yourName, yourScore }: LeaderboardCardProps) {
 
   return (
     <div
-      className="rounded-[20px] p-4 mb-5"
+      className="rounded-[20px] p-4 mb-5 border border-primary/20"
       style={{
-        background: "linear-gradient(145deg, #1A1A2E, #16213E)",
-        border: "1px solid rgba(108,99,255,0.2)",
+        // Theme-aware base (rgb(var(--card))) tinted with the always-purple
+        // brand accent — same "adapts + branded" pattern PulseScoreCard.tsx
+        // uses, rather than a hardcoded dark-navy gradient that ignored
+        // light theme entirely.
+        background: "linear-gradient(145deg, rgb(var(--card)), rgb(var(--card-hover)))",
       }}
     >
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <span>🏆</span>
-          <span className="font-bold text-[16px]" style={{ color: "#FFFFFF" }}>
-            Leaderboard
-          </span>
+          <span className="font-bold text-[16px] text-ink">Leaderboard</span>
         </div>
-        <span className="text-[12px]" style={{ color: "#8888A8" }}>
-          This Week
-        </span>
+        <span className="text-[12px] text-ink-dim">This Week</span>
       </div>
 
       {entries.map((entry) => (
         <div
           key={entry.rank}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl mb-1.5"
-          style={{
-            background: entry.isYou ? "rgba(108,99,255,0.15)" : "transparent",
-            border: entry.isYou ? "1px solid rgba(108,99,255,0.3)" : "1px solid transparent",
-          }}
+          className={
+            entry.isYou
+              ? "flex items-center gap-3 px-3 py-2.5 rounded-xl mb-1.5 bg-primary/15 border border-primary/30"
+              : "flex items-center gap-3 px-3 py-2.5 rounded-xl mb-1.5 border border-transparent"
+          }
         >
           <div
-            className="h-7 w-7 rounded-lg grid place-items-center shrink-0 text-[13px] font-bold"
-            style={{
-              background: RANK_COLORS[entry.rank] ?? "#2A2A3E",
-              color: entry.rank <= 3 ? "#000000" : "#8888A8",
-            }}
+            className={
+              RANK_COLORS[entry.rank]
+                ? "h-7 w-7 rounded-lg grid place-items-center shrink-0 text-[13px] font-bold text-black"
+                : "h-7 w-7 rounded-lg grid place-items-center shrink-0 text-[13px] font-bold bg-card-hover text-ink-dim"
+            }
+            style={RANK_COLORS[entry.rank] ? { background: RANK_COLORS[entry.rank] } : undefined}
           >
             {entry.rank}
           </div>
 
           <div
-            className="h-9 w-9 rounded-full grid place-items-center shrink-0 text-[14px] font-bold text-white"
-            style={{
-              background: entry.isYou ? "linear-gradient(135deg, #6C63FF, #4FACFE)" : "#2A2A3E",
-            }}
+            className={
+              entry.isYou
+                ? "h-9 w-9 rounded-full grid place-items-center shrink-0 text-[14px] font-bold text-white"
+                : "h-9 w-9 rounded-full grid place-items-center shrink-0 text-[14px] font-bold text-ink bg-card-hover"
+            }
+            style={
+              entry.isYou ? { background: "linear-gradient(135deg, #6C63FF, #4FACFE)" } : undefined
+            }
           >
             {entry.name.replace("You (", "").charAt(0).toUpperCase()}
           </div>
 
           <div className="flex-1 min-w-0">
             <p
-              className="text-[14px] truncate m-0"
-              style={{ color: "#FFFFFF", fontWeight: entry.isYou ? 700 : 500 }}
+              className="text-[14px] truncate m-0 text-ink"
+              style={{ fontWeight: entry.isYou ? 700 : 500 }}
             >
               {entry.name}
             </p>
-            <p className="text-[11px] m-0" style={{ color: "#8888A8" }}>
-              Pulse Score: {entry.score}
-            </p>
+            <p className="text-[11px] m-0 text-ink-dim">Pulse Score: {entry.score}</p>
           </div>
 
-          <div
-            className="rounded-full px-3 py-1 shrink-0"
-            style={{ background: "rgba(108,99,255,0.2)", border: "1px solid rgba(108,99,255,0.4)" }}
-          >
-            <span className="text-[15px] font-bold" style={{ color: "#6C63FF" }}>
-              {entry.score}
-            </span>
+          <div className="rounded-full px-3 py-1 shrink-0 bg-primary/20 border border-primary/40">
+            <span className="text-[15px] font-bold text-primary">{entry.score}</span>
           </div>
         </div>
       ))}
 
-      <p className="text-center text-[13px] mt-2 cursor-pointer" style={{ color: "#6C63FF" }}>
+      <p className="text-center text-[13px] mt-2 cursor-pointer text-primary">
         See Full Leaderboard
       </p>
     </div>

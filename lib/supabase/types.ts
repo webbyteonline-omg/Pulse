@@ -172,6 +172,28 @@ export type Friendship = {
   created_at: string;
 };
 
+export type GroupMemberRole = "admin" | "member";
+
+export type FriendGroup = {
+  id: string;
+  name: string;
+  avatar_emoji: string;
+  avatar_image_url: string | null;
+  color: string;
+  created_by: string;
+  invite_code: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type GroupMember = {
+  id: string;
+  group_id: string;
+  user_id: string;
+  role: GroupMemberRole;
+  joined_at: string;
+};
+
 export type Poll = {
   id: string;
   creator_id: string;
@@ -386,6 +408,22 @@ export type Database = {
         Row: Friendship;
         Insert: InsertOf<Friendship, "id" | "created_at">;
         Update: Partial<Friendship>;
+        Relationships: [];
+      };
+      friend_groups: {
+        Row: FriendGroup;
+        Insert: InsertOf<
+          FriendGroup,
+          | "id" | "avatar_emoji" | "avatar_image_url" | "color" | "invite_code"
+          | "created_at" | "updated_at"
+        >;
+        Update: Partial<FriendGroup>;
+        Relationships: [];
+      };
+      group_members: {
+        Row: GroupMember;
+        Insert: InsertOf<GroupMember, "id" | "role" | "joined_at">;
+        Update: Partial<GroupMember>;
         Relationships: [];
       };
       polls: {

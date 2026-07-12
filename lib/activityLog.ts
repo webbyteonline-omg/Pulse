@@ -30,7 +30,15 @@ export type ActivityAction =
   | "quiz_deleted"
   | "exam_added"
   | "exam_updated"
-  | "exam_deleted";
+  | "exam_deleted"
+  | "group_created"
+  | "group_updated"
+  | "group_deleted"
+  | "group_member_added"
+  | "group_member_removed"
+  | "group_member_role_changed"
+  | "group_joined"
+  | "group_left";
 
 export const ACTIVITY_META: Record<ActivityAction, { emoji: string; label: string }> = {
   attendance_marked: { emoji: "✅", label: "Attendance" },
@@ -60,6 +68,14 @@ export const ACTIVITY_META: Record<ActivityAction, { emoji: string; label: strin
   exam_added: { emoji: "🧾", label: "Exam" },
   exam_updated: { emoji: "✏️", label: "Exam" },
   exam_deleted: { emoji: "🗑️", label: "Exam" },
+  group_created: { emoji: "👥", label: "Group" },
+  group_updated: { emoji: "✏️", label: "Group" },
+  group_deleted: { emoji: "🗑️", label: "Group" },
+  group_member_added: { emoji: "➕", label: "Group" },
+  group_member_removed: { emoji: "➖", label: "Group" },
+  group_member_role_changed: { emoji: "👑", label: "Group" },
+  group_joined: { emoji: "🎉", label: "Group" },
+  group_left: { emoji: "👋", label: "Group" },
 };
 
 /**
