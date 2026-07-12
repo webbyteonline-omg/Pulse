@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Header } from "@/components/layout/Header";
-import { ACADEMIC_TABS, SubTabs } from "@/components/layout/SubTabs";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Input } from "@/components/ui/Input";
@@ -69,7 +68,6 @@ export default function TimetablePage() {
   return (
     <div>
       <Header title="Timetable" subtitle="Your weekly class schedule" />
-      <SubTabs tabs={ACADEMIC_TABS} layoutId="academic-tabs" />
 
       {timetableQuery.isLoading || subjectsQuery.isLoading ? (
         <Skeleton className="h-72 w-full rounded-card" />

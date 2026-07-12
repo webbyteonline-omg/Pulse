@@ -10,17 +10,13 @@ export interface SubTab {
   label: string;
 }
 
-/** Horizontal section tabs (Academic: Events/Attendance/Timetable, Friends: Friends/Polls/Leaderboard). */
+/** Horizontal section tabs (currently just Friends: Friends/Polls/Leaderboard). */
 export function SubTabs({ tabs, layoutId }: { tabs: SubTab[]; layoutId: string }) {
   const pathname = usePathname();
   return (
     <div className="flex items-center gap-1 bg-card border border-line rounded-btn p-1 mb-5">
       {tabs.map((tab) => {
-        // Exact match only for "/academic" itself so its own sub-routes
-        // (assignments/quizzes/exams) don't also light up the Events tab.
-        const active =
-          pathname === tab.href ||
-          (tab.href !== "/academic" && pathname.startsWith(`${tab.href}/`));
+        const active = pathname === tab.href || pathname.startsWith(`${tab.href}/`);
         return (
           <Link
             key={tab.href}
@@ -44,15 +40,6 @@ export function SubTabs({ tabs, layoutId }: { tabs: SubTab[]; layoutId: string }
     </div>
   );
 }
-
-export const ACADEMIC_TABS: SubTab[] = [
-  { href: "/attendance", label: "Attendance" },
-  { href: "/academic/assignments", label: "Assignments" },
-  { href: "/academic/quizzes", label: "Quiz" },
-  { href: "/academic/exams", label: "Exams" },
-  { href: "/academic", label: "Events" },
-  { href: "/timetable", label: "Timetable" },
-];
 
 export const SOCIAL_TABS: SubTab[] = [
   { href: "/friends", label: "Friends" },

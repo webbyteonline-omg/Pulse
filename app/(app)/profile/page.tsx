@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import {
   Bell,
   BookOpen,
+  CalendarClock,
+  CalendarDays,
   CheckCircle2,
   ChevronRight,
   Crown,
@@ -46,6 +48,8 @@ const MORE_LINKS = [
   { href: "/profile/activity", label: "My Activity", icon: ListChecks },
   { href: "/map", label: "Campus Map", icon: Map },
   { href: "/health", label: "Health", icon: HeartPulse },
+  { href: "/timetable", label: "Timetable", icon: CalendarDays },
+  { href: "/academic", label: "Academic Calendar", icon: CalendarClock },
 ];
 
 export default function ProfilePage() {

@@ -2,7 +2,7 @@
    Static: cache-first. API GET: network-first with 5-min TTL cache fallback.
    Mutations: queued to IndexedDB outbox by the app, replayed via Background
    Sync here. Push notifications + notification clicks handled at the bottom. */
-const VERSION = "pulse-v4";
+const VERSION = "pulse-v5";
 const STATIC_CACHE = `${VERSION}-static`;
 const API_CACHE = `${VERSION}-api`;
 const PAGE_CACHE = `${VERSION}-pages`;
@@ -21,9 +21,6 @@ const PRECACHE_ROUTES = [
   "/dashboard",
   "/attendance",
   "/academic",
-  "/academic/assignments",
-  "/academic/quizzes",
-  "/academic/exams",
   "/finance",
   "/friends",
   "/timetable",

@@ -1,12 +1,12 @@
 "use client";
 
-import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
-import { Bell, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { AlertBanners } from "@/components/dashboard/AlertBanner";
 import { FriendActivity } from "@/components/dashboard/FriendActivity";
+import { NotificationSheet } from "@/components/dashboard/NotificationSheet";
 import { PulseScoreCard } from "@/components/dashboard/PulseScoreCard";
 import { QuickTiles } from "@/components/dashboard/QuickTiles";
 import { TodayClasses } from "@/components/dashboard/TodayClasses";
@@ -14,29 +14,21 @@ import { UpcomingEvents } from "@/components/dashboard/UpcomingEvents";
 import { AttendanceSummary } from "@/components/dashboard/AttendanceSummary";
 import { SpendingSummary } from "@/components/dashboard/SpendingSummary";
 import { WeatherChip } from "@/components/dashboard/WeatherChip";
-import { Avatar } from "@/components/friends/OnlineIndicator";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { CardSkeleton, RowSkeleton, Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useEvents } from "@/hooks/useAcademic";
 import { useSubjects } from "@/hooks/useAttendance";
 import { useBudgets, useExpenses } from "@/hooks/useFinance";
-import { useFriendRequests } from "@/hooks/useFriends";
-import { useLivePulseScore, useMyProfile, useTodayCheckin } from "@/hooks/useProfile";
+import { useLivePulseScore, useTodayCheckin } from "@/hooks/useProfile";
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
-import {
-  attendancePercent,
-  daysUntil,
-  greeting,
-  nowIST,
-  todayIST,
-} from "@/lib/utils";
-import { useAuthStore } from "@/store/authStore";
+import { attendancePercent, daysUntil, nowIST, todayIST } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const displayName = useAuthStore((s) => s.displayName)();
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
 
   const now = nowIST();
   const month = now.getMonth() + 1;
@@ -46,10 +38,8 @@ export default function DashboardPage() {
   const eventsQuery = useEvents();
   const expensesQuery = useExpenses(month, year);
   const budgetsQuery = useBudgets(month, year);
-  const profileQuery = useMyProfile();
   const checkinQuery = useTodayCheckin();
   const { breakdown } = useLivePulseScore();
-  const { data: requests } = useFriendRequests();
 
   const { ref, pull, refreshing } = usePullToRefresh(async () => {
     await queryClient.invalidateQueries();
@@ -82,7 +72,6 @@ export default function DashboardPage() {
     return d >= 0 && d <= 7 && e.event_type !== "holiday";
   }).length;
 
-  const pendingRequests = (requests ?? []).filter((r) => r.direction === "incoming").length;
   const isEmpty =
     !loading && subjects.length === 0 && events.length === 0 && expenses.length === 0;
 
@@ -105,37 +94,13 @@ export default function DashboardPage() {
         )}
       </AnimatePresence>
 
-      {/* Top bar — greeting + weather + bell + avatar (mockup style) */}
-      <header className="flex items-center gap-3 mb-6">
-        <div className="flex-1 min-w-0">
-          <p className="text-sm text-ink-dim">{greeting()}, 👋</p>
-          <h1 className="text-2xl font-black tracking-tight truncate">{displayName}</h1>
-        </div>
-        <WeatherChip />
-        <Link href="/friends?tab=requests" aria-label="Notifications">
-          <motion.span
-            whileTap={{ scale: 0.85 }}
-            className="relative grid place-items-center h-11 w-11 rounded-btn bg-card border border-line text-ink-dim"
-          >
-            <Bell className="h-[18px] w-[18px]" />
-            {pendingRequests > 0 && (
-              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-accent text-white text-[10px] font-bold grid place-items-center">
-                {pendingRequests > 9 ? "9+" : pendingRequests}
-              </span>
-            )}
-          </motion.span>
-        </Link>
-        <Link href="/profile" aria-label="Profile">
-          <motion.span whileTap={{ scale: 0.9 }} className="block">
-            <Avatar
-              name={displayName}
-              size={44}
-              showOnline={false}
-              src={profileQuery.data?.avatar_url}
-            />
-          </motion.span>
-        </Link>
-      </header>
+      <PageHeader
+        title="Pulse"
+        showGreeting
+        showBell
+        onBellClick={() => setNotificationsOpen(true)}
+        action={<WeatherChip />}
+      />
 
       {loading ? (
         <div className="space-y-5">
@@ -178,6 +143,8 @@ export default function DashboardPage() {
           <LastUpdated at={expensesQuery.dataUpdatedAt} />
         </>
       )}
+
+      <NotificationSheet open={notificationsOpen} onClose={() => setNotificationsOpen(false)} />
     </div>
   );
 }

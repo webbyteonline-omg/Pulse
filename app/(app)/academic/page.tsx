@@ -6,7 +6,6 @@ import dynamic from "next/dynamic";
 import { AnimatePresence } from "framer-motion";
 import { Plus } from "lucide-react";
 import { Header } from "@/components/layout/Header";
-import { ACADEMIC_TABS, SubTabs } from "@/components/layout/SubTabs";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { FAB } from "@/components/ui/FAB";
@@ -88,7 +87,7 @@ function AcademicContent() {
   return (
     <div>
       <Header
-        title="Academic"
+        title="Academic Calendar"
         subtitle="Exams, holidays & deadlines"
         action={
           <Button onClick={() => setShowAdd(true)}>
@@ -96,7 +95,6 @@ function AcademicContent() {
           </Button>
         }
       />
-      <SubTabs tabs={ACADEMIC_TABS} layoutId="academic-tabs" />
 
       {/* Pinned countdowns */}
       {(nextExam || nextHoliday) && (

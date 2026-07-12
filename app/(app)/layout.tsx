@@ -5,6 +5,7 @@ import { BottomNav } from "@/components/layout/BottomNav";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { PushPrompt } from "@/components/layout/PushPrompt";
 import { AppShellExtras } from "@/components/layout/AppShellExtras";
+import { RoutePrefetcher } from "@/components/layout/RoutePrefetcher";
 import { OfflineBanner } from "@/components/ui/OfflineBanner";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -16,6 +17,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex min-h-dvh">
+      <RoutePrefetcher />
       <OfflineBanner />
       <Sidebar />
       <div className="flex-1 min-w-0">

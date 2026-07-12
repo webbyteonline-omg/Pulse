@@ -1,60 +1,58 @@
 "use client";
 
-import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Suspense, useState } from "react";
 import { Header } from "@/components/layout/Header";
-import { ACADEMIC_TABS, SubTabs } from "@/components/layout/SubTabs";
-import { Button } from "@/components/ui/Button";
-import { EmptyState } from "@/components/ui/EmptyState";
-import { FAB } from "@/components/ui/FAB";
-import { RowSkeleton } from "@/components/ui/Skeleton";
-import { OverallCard } from "@/components/attendance/OverallCard";
-import { SubjectCard } from "@/components/attendance/SubjectCard";
-import { SubjectFormModal } from "@/components/attendance/SubjectFormModal";
-import { useSubjects } from "@/hooks/useAttendance";
+import { AttendanceSection } from "@/components/academic/AttendanceSection";
+import { AssignmentsSection } from "@/components/academic/AssignmentsSection";
+import { QuizzesSection } from "@/components/academic/QuizzesSection";
+import { ExamsSection } from "@/components/academic/ExamsSection";
+import { SectionSkeleton } from "@/components/academic/SectionSkeleton";
 
-export default function AttendancePage() {
-  const subjectsQuery = useSubjects();
-  const [showAdd, setShowAdd] = useState(false);
-  const subjects = subjectsQuery.data ?? [];
+type Tab = "attendance" | "assignments" | "quizzes" | "exams";
+const TABS: Array<{ id: Tab; label: string }> = [
+  { id: "attendance", label: "Attendance" },
+  { id: "assignments", label: "Assignments" },
+  { id: "quizzes", label: "Quizzes" },
+  { id: "exams", label: "Exams" },
+];
+
+/**
+ * Academics — single page, 4 pill tabs. Only the ACTIVE tab's section is
+ * mounted (and thus only its data is fetched); switching tabs shows a
+ * skeleton instantly via Suspense while that tab's own React Query call
+ * resolves (staleTime keeps it snappy on repeat visits).
+ */
+export default function AcademicsPage() {
+  const [tab, setTab] = useState<Tab>("attendance");
 
   return (
     <div>
-      <Header
-        title="Attendance"
-        subtitle={subjects.length > 0 ? `${subjects.length} subjects tracked` : undefined}
-        action={
-          <Button size="md" onClick={() => setShowAdd(true)}>
-            <Plus className="h-4 w-4" /> Subject
-          </Button>
-        }
-      />
-      <SubTabs tabs={ACADEMIC_TABS} layoutId="academic-tabs" />
+      <Header title="Academics" />
 
-      {subjectsQuery.isLoading ? (
-        <RowSkeleton rows={4} />
-      ) : subjects.length === 0 ? (
-        <EmptyState
-          illustration="subjects"
-          title="No subjects yet"
-          description="Add your subjects and mark attendance after each class — Pulse will tell you exactly how many you can bunk."
-          actionLabel="Add your first subject"
-          onAction={() => setShowAdd(true)}
-        />
-      ) : (
-        <>
-          <OverallCard subjects={subjects} />
-          <h2 className="text-lg font-semibold mb-3">Subject Wise Attendance</h2>
-          <div className="space-y-3">
-            {subjects.map((subject, i) => (
-              <SubjectCard key={subject.id} subject={subject} index={i} />
-            ))}
-          </div>
-        </>
-      )}
+      <div className="flex gap-2 overflow-x-auto no-scrollbar mb-6" style={{ padding: "0 0 4px" }}>
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            onClick={() => setTab(t.id)}
+            className="shrink-0 min-h-[32px] px-4 py-1.5 rounded-full text-[13px] font-medium transition-colors"
+            style={{
+              backgroundColor: tab === t.id ? "#6C63FF" : "#161622",
+              color: tab === t.id ? "#FFFFFF" : "#8888A8",
+            }}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
 
-      <FAB label="Add subject" onClick={() => setShowAdd(true)} />
-      <SubjectFormModal open={showAdd} onClose={() => setShowAdd(false)} />
+      <div className="pb-24">
+        <Suspense fallback={<SectionSkeleton />}>
+          {tab === "attendance" && <AttendanceSection />}
+          {tab === "assignments" && <AssignmentsSection />}
+          {tab === "quizzes" && <QuizzesSection />}
+          {tab === "exams" && <ExamsSection />}
+        </Suspense>
+      </div>
     </div>
   );
 }

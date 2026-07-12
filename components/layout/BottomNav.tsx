@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { BookOpen, House, Users, Wallet } from "lucide-react";
@@ -45,9 +45,18 @@ function NavTab({
   icon: typeof House;
   active: boolean;
 }) {
+  const router = useRouter();
+  // Belt-and-suspenders prefetching: Link's own prefetch (viewport-based,
+  // already on since these tabs are always mounted) plus an explicit
+  // imperative prefetch on hover/touch-start so the route's JS + first
+  // data fetch are warm before the tap even completes.
+  const warm = () => router.prefetch(href);
   return (
     <Link
       href={href}
+      prefetch
+      onMouseEnter={warm}
+      onTouchStart={warm}
       aria-label={label}
       aria-current={active ? "page" : undefined}
       className="relative flex-1 h-16 grid place-items-center select-none touch-manipulation"

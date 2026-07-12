@@ -2,13 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { AnimatePresence } from "framer-motion";
-import { Plus } from "lucide-react";
-import { Header } from "@/components/layout/Header";
-import { ACADEMIC_TABS, SubTabs } from "@/components/layout/SubTabs";
-import { Button } from "@/components/ui/Button";
+import { RowSkeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { FAB } from "@/components/ui/FAB";
-import { RowSkeleton } from "@/components/ui/Skeleton";
 import { CountdownCard } from "@/components/academic/CountdownCard";
 import { QuizCard } from "@/components/academic/QuizCard";
 import { QuizFormModal } from "@/components/academic/QuizFormModal";
@@ -16,17 +12,17 @@ import { useQuizzes } from "@/hooks/useAcademicWork";
 import { useSubjects } from "@/hooks/useAttendance";
 import { daysUntil } from "@/lib/utils";
 
-type Tab = "upcoming" | "past" | "all";
-const TABS: Array<{ id: Tab; label: string }> = [
+type Filter = "upcoming" | "completed";
+const FILTERS: Array<{ id: Filter; label: string }> = [
   { id: "upcoming", label: "Upcoming" },
-  { id: "past", label: "Past" },
-  { id: "all", label: "All" },
+  { id: "completed", label: "Completed" },
 ];
 
-export default function QuizzesPage() {
+/** Quizzes tab — isolated so its data only loads while this tab is active. */
+export function QuizzesSection() {
   const quizzesQuery = useQuizzes();
   const subjectsQuery = useSubjects();
-  const [tab, setTab] = useState<Tab>("upcoming");
+  const [filter, setFilter] = useState<Filter>("upcoming");
   const [showAdd, setShowAdd] = useState(false);
 
   const quizzes = useMemo(() => quizzesQuery.data ?? [], [quizzesQuery.data]);
@@ -38,32 +34,18 @@ export default function QuizzesPage() {
     .sort((a, b) => a.date.localeCompare(b.date))[0];
 
   const filtered = useMemo(() => {
-    let list = [...quizzes];
-    if (tab === "upcoming") {
-      list = list.filter((q) => daysUntil(q.date) >= 0).sort((a, b) => a.date.localeCompare(b.date));
-    } else if (tab === "past") {
-      list = list.filter((q) => daysUntil(q.date) < 0).sort((a, b) => b.date.localeCompare(a.date));
-    } else {
-      list.sort((a, b) => b.date.localeCompare(a.date));
+    if (filter === "upcoming") {
+      return quizzes.filter((q) => daysUntil(q.date) >= 0).sort((a, b) => a.date.localeCompare(b.date));
     }
-    return list;
-  }, [quizzes, tab]);
+    return quizzes.filter((q) => daysUntil(q.date) < 0).sort((a, b) => b.date.localeCompare(a.date));
+  }, [quizzes, filter]);
+
+  if (quizzesQuery.isLoading) return <RowSkeleton rows={4} />;
 
   return (
-    <div>
-      <Header
-        title="Upcoming Quiz"
-        subtitle="Quizzes & unit tests"
-        action={
-          <Button onClick={() => setShowAdd(true)}>
-            <Plus className="h-4 w-4" /> Quiz
-          </Button>
-        }
-      />
-      <SubTabs tabs={ACADEMIC_TABS} layoutId="academic-tabs" />
-
+    <>
       {nextQuiz && (
-        <div className="mb-6">
+        <div className="mb-4">
           <CountdownCard
             event={{
               id: nextQuiz.id,
@@ -82,32 +64,32 @@ export default function QuizzesPage() {
         </div>
       )}
 
-      <div className="flex items-center gap-1 bg-card border border-line rounded-btn p-1 mb-4">
-        {TABS.map((t) => (
+      <div className="flex gap-2 overflow-x-auto no-scrollbar mb-4">
+        {FILTERS.map((f) => (
           <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            className={`flex-1 h-8 rounded-input text-xs font-bold transition-colors ${
-              tab === t.id ? "bg-primary text-white" : "text-ink-dim hover:text-ink"
-            }`}
+            key={f.id}
+            onClick={() => setFilter(f.id)}
+            className="shrink-0 px-4 py-1.5 rounded-full text-[13px] font-medium transition-colors"
+            style={{
+              backgroundColor: filter === f.id ? "#6C63FF" : "#161622",
+              color: filter === f.id ? "#FFFFFF" : "#8888A8",
+            }}
           >
-            {t.label}
+            {f.label}
           </button>
         ))}
       </div>
 
-      {quizzesQuery.isLoading ? (
-        <RowSkeleton rows={4} />
-      ) : filtered.length === 0 ? (
+      {filtered.length === 0 ? (
         <EmptyState
           illustration="events"
-          title={quizzes.length === 0 ? "No quizzes yet" : "Nothing here"}
+          title={quizzes.length === 0 ? "No quizzes" : "Nothing here"}
           description={
             quizzes.length === 0
               ? "Add upcoming quizzes and track your scores once they're done."
               : "No quizzes match this filter."
           }
-          actionLabel={quizzes.length === 0 ? "Add a quiz" : undefined}
+          actionLabel={quizzes.length === 0 ? "Add Quiz" : undefined}
           onAction={quizzes.length === 0 ? () => setShowAdd(true) : undefined}
         />
       ) : (
@@ -127,6 +109,6 @@ export default function QuizzesPage() {
 
       <FAB label="Add quiz" onClick={() => setShowAdd(true)} />
       <QuizFormModal open={showAdd} onClose={() => setShowAdd(false)} subjects={subjects} />
-    </div>
+    </>
   );
 }
