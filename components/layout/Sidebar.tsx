@@ -6,10 +6,12 @@ import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   BookOpen,
+  HeartPulse,
   House,
   LogOut,
   Map,
   User,
+  Users,
   Wallet,
 } from "lucide-react";
 import { PulseLogo } from "@/components/auth/AuthCard";
@@ -21,17 +23,24 @@ export const NAV_ITEMS = [
   { href: "/dashboard", label: "Home", icon: House, match: ["/dashboard"] },
   {
     href: "/academic",
-    label: "Academic",
+    label: "Academics",
     icon: BookOpen,
     match: ["/academic", "/attendance", "/timetable"],
   },
-  { href: "/map", label: "Map", icon: Map, match: ["/map"] },
   { href: "/finance", label: "Finance", icon: Wallet, match: ["/finance"] },
+  {
+    href: "/friends",
+    label: "Friends",
+    icon: Users,
+    match: ["/friends", "/polls", "/leaderboard"],
+  },
+  { href: "/map", label: "Campus Map", icon: Map, match: ["/map"] },
+  { href: "/health", label: "Health", icon: HeartPulse, match: ["/health"] },
   {
     href: "/profile",
     label: "Profile",
     icon: User,
-    match: ["/profile", "/settings", "/friends", "/polls", "/leaderboard"],
+    match: ["/profile", "/settings"],
   },
 ] as const;
 

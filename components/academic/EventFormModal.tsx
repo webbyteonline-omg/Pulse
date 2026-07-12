@@ -115,7 +115,7 @@ export function EventFormModal({
               id="event-subject"
               value={subjectId}
               onChange={(e) => setSubjectId(e.target.value)}
-              className="w-full h-11 px-3 rounded-input bg-bg border border-line text-sm text-ink focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="w-full h-11 px-3 rounded-input bg-input border border-line text-sm text-ink focus:outline-none focus:ring-2 focus:ring-primary/50"
             >
               <option value="">None</option>
               {subjects.map((s) => (

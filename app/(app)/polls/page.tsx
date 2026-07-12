@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import { Plus } from "lucide-react";
 import { Header } from "@/components/layout/Header";
@@ -23,10 +24,23 @@ const TABS: Array<{ id: Tab; label: string }> = [
 ];
 
 export default function PollsPage() {
+  return (
+    <Suspense>
+      <PollsContent />
+    </Suspense>
+  );
+}
+
+function PollsContent() {
+  const searchParams = useSearchParams();
   const user = useAuthStore((s) => s.user);
   const pollsQuery = usePolls();
   const [tab, setTab] = useState<Tab>("active");
   const [showCreate, setShowCreate] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get("create") === "1") setShowCreate(true);
+  }, [searchParams]);
 
   const polls = useMemo(() => {
     const all = pollsQuery.data ?? [];

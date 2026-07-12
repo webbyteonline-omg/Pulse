@@ -60,7 +60,7 @@ export function useTodayCheckin() {
       const supabase = getSupabaseBrowser();
       const { data, error } = await supabase
         .from("daily_checkins")
-        .select("id,user_id,date,mood,steps,created_at")
+        .select("*")
         .eq("user_id", user!.id)
         .eq("date", todayIST())
         .maybeSingle();
@@ -79,7 +79,7 @@ export function useWeekCheckins() {
       const supabase = getSupabaseBrowser();
       const { data, error } = await supabase
         .from("daily_checkins")
-        .select("id,user_id,date,mood,steps,created_at")
+        .select("*")
         .eq("user_id", user!.id)
         .gte("date", weekStartIST())
         .order("date");

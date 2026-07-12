@@ -18,7 +18,9 @@ const config: Config = {
         card: v("card"),
         "card-hover": v("card-hover"),
         line: v("line"),
+        input: v("input"),
         "chart-bar": v("chart-bar"),
+        sky: { DEFAULT: "#4FACFE", dim: "#4FACFE26" },
         primary: { DEFAULT: "#6C63FF", dim: "#6C63FF26" },
         accent: { DEFAULT: "#FF6584", dim: "#FF658426" },
         success: { DEFAULT: "#43D98C", dim: "#43D98C26" },
@@ -27,9 +29,13 @@ const config: Config = {
         ink: { DEFAULT: v("ink"), dim: v("ink-dim"), faint: v("ink-faint") },
       },
       borderRadius: {
-        card: "16px",
-        btn: "12px",
-        input: "8px",
+        card: "20px",
+        hero: "24px",
+        btn: "14px",
+        input: "10px",
+      },
+      backgroundImage: {
+        "pulse-gradient": "linear-gradient(135deg, #6C63FF, #4FACFE)",
       },
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],

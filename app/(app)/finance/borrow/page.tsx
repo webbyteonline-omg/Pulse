@@ -295,7 +295,7 @@ function AddEntrySheet({ open, onClose }: { open: boolean; onClose: () => void }
     <Modal open={open} onClose={onClose} title="Add entry">
       <form onSubmit={submit} className="space-y-4">
         {/* Lent / Borrowed toggle */}
-        <div className="flex items-center gap-1 bg-bg border border-line rounded-btn p-1">
+        <div className="flex items-center gap-1 bg-input border border-line rounded-btn p-1">
           {(["lent", "borrowed"] as const).map((t) => (
             <button
               key={t}

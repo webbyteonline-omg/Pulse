@@ -166,6 +166,10 @@ export type DailyCheckin = {
   date: string;
   mood: number | null;
   steps: number | null;
+  water_ml: number | null;
+  calories: number | null;
+  sleep_minutes: number | null;
+  journal: string | null;
   created_at: string;
 };
 
@@ -330,7 +334,10 @@ export type Database = {
       };
       daily_checkins: {
         Row: DailyCheckin;
-        Insert: InsertOf<DailyCheckin, "id" | "mood" | "steps" | "created_at">;
+        Insert: InsertOf<
+          DailyCheckin,
+          "id" | "mood" | "steps" | "water_ml" | "calories" | "sleep_minutes" | "journal" | "created_at"
+        >;
         Update: Partial<DailyCheckin>;
         Relationships: [];
       };

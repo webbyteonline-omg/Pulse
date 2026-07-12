@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { FAB } from "@/components/ui/FAB";
 import { RowSkeleton } from "@/components/ui/Skeleton";
+import { OverallCard } from "@/components/attendance/OverallCard";
 import { SubjectCard } from "@/components/attendance/SubjectCard";
 import { SubjectFormModal } from "@/components/attendance/SubjectFormModal";
 import { useSubjects } from "@/hooks/useAttendance";
@@ -41,11 +42,15 @@ export default function AttendancePage() {
           onAction={() => setShowAdd(true)}
         />
       ) : (
-        <div className="space-y-3">
-          {subjects.map((subject, i) => (
-            <SubjectCard key={subject.id} subject={subject} index={i} />
-          ))}
-        </div>
+        <>
+          <OverallCard subjects={subjects} />
+          <h2 className="text-lg font-semibold mb-3">Subject Wise Attendance</h2>
+          <div className="space-y-3">
+            {subjects.map((subject, i) => (
+              <SubjectCard key={subject.id} subject={subject} index={i} />
+            ))}
+          </div>
+        </>
       )}
 
       <FAB label="Add subject" onClick={() => setShowAdd(true)} />

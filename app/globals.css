@@ -10,25 +10,27 @@
 :root,
 html.dark {
   color-scheme: dark;
-  --bg: 15 15 19; /* #0F0F13 */
-  --card: 26 26 36; /* #1A1A24 */
-  --card-hover: 31 31 44; /* #1F1F2C */
-  --line: 42 42 58; /* #2A2A3A */
-  --ink: 240 240 245; /* #F0F0F5 */
-  --ink-dim: 136 136 160; /* #8888A0 */
-  --ink-faint: 85 85 106; /* #55556A */
-  --chart-bar: 47 47 66; /* muted bars */
+  --bg: 13 13 20; /* #0D0D14 */
+  --card: 22 22 34; /* #161622 */
+  --card-hover: 28 28 42;
+  --line: 37 37 51; /* ≈ rgba(255,255,255,.06) blended on card */
+  --input: 30 30 46; /* #1E1E2E */
+  --ink: 255 255 255; /* #FFFFFF */
+  --ink-dim: 136 136 168; /* #8888A8 */
+  --ink-faint: 90 90 118;
+  --chart-bar: 47 47 66;
 }
 
 html.light {
   color-scheme: light;
-  --bg: 245 245 250; /* #F5F5FA */
+  --bg: 240 240 250; /* #F0F0FA */
   --card: 255 255 255; /* #FFFFFF */
   --card-hover: 246 246 250;
-  --line: 224 224 236; /* #E0E0EC */
-  --ink: 15 15 19; /* #0F0F13 */
-  --ink-dim: 96 96 112; /* #606070 */
-  --ink-faint: 152 152 168;
+  --line: 228 228 238; /* ≈ rgba(0,0,0,.06) blended */
+  --input: 244 244 250;
+  --ink: 13 13 20; /* #0D0D14 */
+  --ink-dim: 102 102 128; /* #666680 */
+  --ink-faint: 158 158 180;
   --chart-bar: 210 210 226;
 }
 
@@ -38,10 +40,16 @@ html.amoled {
   --card: 10 10 10; /* #0A0A0A */
   --card-hover: 18 18 18;
   --line: 26 26 26; /* #1A1A1A */
+  --input: 16 16 16;
   --ink: 255 255 255; /* #FFFFFF */
   --ink-dim: 112 112 112; /* #707070 */
   --ink-faint: 74 74 74;
   --chart-bar: 34 34 34;
+}
+
+/* Subtle card shadow on light theme only (design spec) */
+html.light .bg-card.border {
+  box-shadow: 0 2px 12px -4px rgba(13, 13, 20, 0.08);
 }
 
 html {

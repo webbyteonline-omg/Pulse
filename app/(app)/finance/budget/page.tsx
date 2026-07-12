@@ -108,7 +108,7 @@ export default function BudgetPage() {
                         setValues((prev) => ({ ...prev, [category]: e.target.value }))
                       }
                       onBlur={() => void save(category)}
-                      className="w-28 h-10 pl-7 pr-3 rounded-input bg-bg border border-line text-sm text-right tabular-nums focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      className="w-28 h-10 pl-7 pr-3 rounded-input bg-input border border-line text-sm text-right tabular-nums focus:outline-none focus:ring-2 focus:ring-primary/50"
                     />
                   </div>
                   {savedCategory === category && (

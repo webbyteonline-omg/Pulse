@@ -309,7 +309,7 @@ export default function SettingsPage() {
             value={settings.reminderTime}
             onChange={(e) => settings.setReminderTime(e.target.value)}
             aria-label="Daily reminder time"
-            className="h-11 px-3 rounded-input bg-bg border border-line text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="h-11 px-3 rounded-input bg-input border border-line text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
           />
         </div>
       </Card>
@@ -334,7 +334,7 @@ export default function SettingsPage() {
                 )
               }
               aria-label="Default required attendance percentage"
-              className="w-20 h-11 px-3 pr-7 rounded-input bg-bg border border-line text-sm text-right tabular-nums focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="w-20 h-11 px-3 pr-7 rounded-input bg-input border border-line text-sm text-right tabular-nums focus:outline-none focus:ring-2 focus:ring-primary/50"
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-dim">%</span>
           </div>

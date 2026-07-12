@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { AnimatePresence } from "framer-motion";
 import { Plus } from "lucide-react";
@@ -37,12 +38,26 @@ const TABS: Array<{ id: Tab; label: string }> = [
 const TYPE_FILTERS: TypeFilter[] = ["all", "exam", "quiz", "assignment", "holiday", "other"];
 
 export default function AcademicPage() {
+  return (
+    <Suspense>
+      <AcademicContent />
+    </Suspense>
+  );
+}
+
+function AcademicContent() {
+  const searchParams = useSearchParams();
   const eventsQuery = useEvents();
   const subjectsQuery = useSubjects();
   const deleteEvent = useDeleteEvent();
   const [tab, setTab] = useState<Tab>("upcoming");
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
   const [showAdd, setShowAdd] = useState(false);
+
+  // Quick-add FAB deep link (/academic?add=1)
+  useEffect(() => {
+    if (searchParams.get("add") === "1") setShowAdd(true);
+  }, [searchParams]);
 
   const events = useMemo(() => eventsQuery.data ?? [], [eventsQuery.data]);
   const subjects = subjectsQuery.data ?? [];

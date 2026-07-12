@@ -9,6 +9,7 @@ import { SOCIAL_TABS, SubTabs } from "@/components/layout/SubTabs";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { RowSkeleton } from "@/components/ui/Skeleton";
 import { FriendCard } from "@/components/friends/FriendCard";
+import { FriendsOverview } from "@/components/friends/FriendsOverview";
 import { FriendSearch } from "@/components/friends/FriendSearch";
 import { Avatar } from "@/components/friends/OnlineIndicator";
 import { useFriendRequests, useFriends, useRespondToRequest } from "@/hooks/useFriends";
@@ -28,6 +29,8 @@ function FriendsContent() {
     <div>
       <Header title="Friends" subtitle={friends.length > 0 ? `${friends.length} friends` : undefined} />
       <SubTabs tabs={SOCIAL_TABS} layoutId="social-tabs" />
+
+      {!highlightRequests && <FriendsOverview />}
 
       <div className="mb-6">
         <FriendSearch />

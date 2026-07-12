@@ -1,7 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
@@ -33,9 +33,20 @@ const TABS: Array<{ id: Tab; label: string }> = [
 ];
 
 export default function AddExpensePage() {
+  return (
+    <Suspense>
+      <AddExpenseContent />
+    </Suspense>
+  );
+}
+
+function AddExpenseContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const addExpense = useAddExpense();
-  const [tab, setTab] = useState<Tab>("manual");
+  const [tab, setTab] = useState<Tab>(
+    searchParams.get("tab") === "screenshot" ? "screenshot" : "manual"
+  );
   const [source, setSource] = useState<ExpenseSource>("manual");
 
   const [amount, setAmount] = useState("");

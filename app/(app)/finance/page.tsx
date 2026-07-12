@@ -1,35 +1,56 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
+import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Plus, SlidersHorizontal } from "lucide-react";
+import { useRouter } from "next/navigation";
+import {
+  ArrowDownLeft,
+  ArrowUpRight,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  Eye,
+  EyeOff,
+  ScanLine,
+  Users,
+  Wallet,
+} from "lucide-react";
 import { Header } from "@/components/layout/Header";
-import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { FAB } from "@/components/ui/FAB";
+import { Button } from "@/components/ui/Button";
 import { CardSkeleton, RowSkeleton, Skeleton } from "@/components/ui/Skeleton";
 import { BorrowLendCard } from "@/components/finance/BorrowLendCard";
 import { BudgetBar } from "@/components/finance/BudgetBar";
 import { ExpenseItem } from "@/components/finance/ExpenseItem";
+import { SpendingSummary } from "@/components/dashboard/SpendingSummary";
 import { useBudgets, useDeleteExpense, useExpenses } from "@/hooks/useFinance";
-import { CATEGORY_META, formatINR, monthLabel, nowIST } from "@/lib/utils";
+import { CATEGORY_META, downloadCSV, formatINR, monthLabel, nowIST } from "@/lib/utils";
 import type { ExpenseCategory } from "@/lib/supabase/types";
-import { useRouter } from "next/navigation";
 
-// Recharts is large — split the donut chart out of the main finance bundle.
 const CategoryDonut = dynamic(
   () => import("@/components/finance/CategoryDonut").then((m) => m.CategoryDonut),
-  { ssr: false, loading: () => <Skeleton className="h-40 w-40 rounded-full mx-auto" /> }
+  { ssr: false, loading: () => <Skeleton className="h-52 w-full rounded-card" /> }
 );
+
+type Tab = "overview" | "transactions" | "budget" | "reports";
+const TABS: Array<{ id: Tab; label: string }> = [
+  { id: "overview", label: "Overview" },
+  { id: "transactions", label: "Transactions" },
+  { id: "budget", label: "Budget" },
+  { id: "reports", label: "Reports" },
+];
 
 export default function FinancePage() {
   const router = useRouter();
   const now = nowIST();
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [year, setYear] = useState(now.getFullYear());
+  const [tab, setTab] = useState<Tab>("overview");
+  const [hideBalance, setHideBalance] = useState(false);
 
   const expensesQuery = useExpenses(month, year);
   const budgetsQuery = useBudgets(month, year);
@@ -38,10 +59,9 @@ export default function FinancePage() {
   const expenses = useMemo(() => expensesQuery.data ?? [], [expensesQuery.data]);
   const budgets = budgetsQuery.data ?? [];
 
-  const total = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
+  const spent = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
   const totalBudget = budgets.reduce((sum, b) => sum + Number(b.amount), 0);
-  const remaining = totalBudget - total;
-  const budgetPct = totalBudget > 0 ? Math.min(100, (total / totalBudget) * 100) : 0;
+  const balance = totalBudget - spent;
 
   const spentByCategory = useMemo(() => {
     const map = new Map<ExpenseCategory, number>();
@@ -55,190 +75,231 @@ export default function FinancePage() {
   const navigateMonth = (delta: number) => {
     let m = month + delta;
     let y = year;
-    if (m < 1) {
-      m = 12;
-      y -= 1;
-    } else if (m > 12) {
-      m = 1;
-      y += 1;
-    }
-    setMonth(m);
-    setYear(y);
+    if (m < 1) { m = 12; y -= 1; } else if (m > 12) { m = 1; y += 1; }
+    setMonth(m); setYear(y);
   };
 
   const loading = expensesQuery.isLoading || budgetsQuery.isLoading;
+  const hide = (v: string) => (hideBalance ? "₹ ••••" : v);
 
   return (
     <div>
-      <Header
-        title="Finance"
-        action={
-          <div className="flex gap-2">
-            <Link href="/finance/budget">
-              <Button variant="secondary" aria-label="Budgets">
-                <SlidersHorizontal className="h-4 w-4" />
-              </Button>
-            </Link>
-            <Link href="/finance/add">
-              <Button>
-                <Plus className="h-4 w-4" /> Add
-              </Button>
-            </Link>
-          </div>
-        }
-      />
+      <Header title="Finance" />
+
+      {/* Tabs */}
+      <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-4 px-4 mb-4">
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            onClick={() => setTab(t.id)}
+            className={`shrink-0 min-h-[44px] px-4 rounded-full text-xs font-bold transition-colors ${
+              tab === t.id ? "bg-primary text-white" : "bg-card border border-line text-ink-dim"
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
 
       {/* Month selector */}
-      <div className="flex items-center justify-center gap-3 mb-5">
-        <button
-          onClick={() => navigateMonth(-1)}
-          aria-label="Previous month"
-          className="p-2 rounded-btn bg-card border border-line text-ink-dim hover:text-ink transition-colors"
-        >
+      <div className="flex items-center justify-center gap-3 mb-4">
+        <button onClick={() => navigateMonth(-1)} aria-label="Previous month" className="p-2.5 rounded-btn bg-card border border-line text-ink-dim">
           <ChevronLeft className="h-4 w-4" />
         </button>
         <span className="text-sm font-bold w-40 text-center">{monthLabel(month, year)}</span>
-        <button
-          onClick={() => navigateMonth(1)}
-          aria-label="Next month"
-          className="p-2 rounded-btn bg-card border border-line text-ink-dim hover:text-ink transition-colors"
-        >
+        <button onClick={() => navigateMonth(1)} aria-label="Next month" className="p-2.5 rounded-btn bg-card border border-line text-ink-dim">
           <ChevronRight className="h-4 w-4" />
         </button>
       </div>
 
       {loading ? (
         <div className="space-y-4">
-          <CardSkeleton className="h-40" />
+          <CardSkeleton className="h-44" />
           <RowSkeleton rows={4} />
         </div>
-      ) : expenses.length === 0 && budgets.length === 0 ? (
-        <EmptyState
-          illustration="expenses"
-          title="No expenses this month"
-          description="Log expenses manually, paste a UPI SMS, or upload a payment screenshot — Pulse categorizes them for you."
-          actionLabel="Add first expense"
-          onAction={() => router.push("/finance/add")}
-        />
       ) : (
         <>
-          {/* Total + budget */}
-          <Card gradient className="p-5 mb-4">
-            <p className="text-xs text-ink-dim">Spent in {monthLabel(month, year)}</p>
+          {/* Total Balance gradient card (all tabs) */}
+          <div className="relative overflow-hidden rounded-hero p-5 mb-4 bg-pulse-gradient text-white">
+            <div aria-hidden className="absolute -right-8 -top-10 h-36 w-36 rounded-full bg-white/15 blur-2xl" />
+            <button
+              onClick={() => setHideBalance((v) => !v)}
+              className="flex items-center gap-1.5 text-sm font-semibold opacity-90"
+            >
+              Budget Balance {hideBalance ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+            </button>
             <motion.p
-              key={`${month}-${year}-${total}`}
+              key={`${month}-${year}-${balance}`}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-1 text-4xl font-black tracking-tighter"
+              className="mt-1 text-4xl font-black tracking-tight tabular-nums"
             >
-              {formatINR(total)}
+              {totalBudget > 0 ? hide(formatINR(balance)) : hide(formatINR(spent))}
             </motion.p>
-            {totalBudget > 0 && (
-              <>
-                <div className="mt-4 h-2.5 rounded-full bg-line overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${budgetPct}%` }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
-                    className="h-full rounded-full"
-                    style={{
-                      background:
-                        budgetPct < 65
-                          ? "linear-gradient(90deg,#43D98C,#43D98C)"
-                          : budgetPct < 90
-                            ? "linear-gradient(90deg,#43D98C,#FFB347)"
-                            : "linear-gradient(90deg,#FFB347,#FF5C5C)",
-                    }}
-                  />
-                </div>
-                <p className={`mt-2 text-xs font-semibold ${remaining < 0 ? "text-danger" : "text-ink-dim"}`}>
-                  {remaining >= 0
-                    ? `${formatINR(remaining)} left of ${formatINR(totalBudget)}`
-                    : `${formatINR(Math.abs(remaining))} over budget`}
-                </p>
-              </>
-            )}
-          </Card>
+            {totalBudget === 0 && <p className="text-xs opacity-80 mt-0.5">spent this month · set budgets for a balance view</p>}
+            <div className="mt-4 flex gap-5 text-sm">
+              <span className="flex items-center gap-1.5">
+                <span className="grid place-items-center h-6 w-6 rounded-full bg-white/20"><ArrowDownLeft className="h-3.5 w-3.5" /></span>
+                <span><span className="opacity-75 text-xs">Budget</span> <b>{hide(formatINR(totalBudget))}</b></span>
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="grid place-items-center h-6 w-6 rounded-full bg-white/20"><ArrowUpRight className="h-3.5 w-3.5" /></span>
+                <span><span className="opacity-75 text-xs">Expenses</span> <b>{hide(formatINR(spent))}</b></span>
+              </span>
+            </div>
+          </div>
 
-          <BorrowLendCard />
+          {tab === "overview" && (
+            <>
+              <BorrowLendCard />
+              {expenses.length === 0 && budgets.length === 0 ? (
+                <EmptyState
+                  illustration="expenses"
+                  title="No expenses this month"
+                  description="Log manually, paste a UPI SMS, or scan a payment screenshot."
+                  actionLabel="Add first expense"
+                  onAction={() => router.push("/finance/add")}
+                />
+              ) : (
+                <>
+                  {expenses.length > 0 && (
+                    <Card className="p-4 mb-4">
+                      <h2 className="text-lg font-semibold mb-2">Monthly Spending</h2>
+                      <CategoryDonut expenses={expenses} />
+                      <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1.5">
+                        {[...spentByCategory.entries()].sort((a, b) => b[1] - a[1]).map(([cat, amount]) => (
+                          <div key={cat} className="flex items-center gap-2 text-xs">
+                            <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: CATEGORY_META[cat].color }} />
+                            <span className="flex-1 text-ink-dim">{CATEGORY_META[cat].label}</span>
+                            <span className="font-semibold tabular-nums">{formatINR(amount)}</span>
+                            <span className="text-ink-faint tabular-nums w-9 text-right">
+                              {spent > 0 ? Math.round((amount / spent) * 100) : 0}%
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  )}
 
-          {/* Donut */}
-          {expenses.length > 0 && (
-            <Card className="p-4 mb-4">
-              <h2 className="text-sm font-bold text-ink-dim uppercase tracking-wider mb-2">
-                By category
-              </h2>
-              <CategoryDonut expenses={expenses} />
-              <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1.5">
-                {[...spentByCategory.entries()]
-                  .sort((a, b) => b[1] - a[1])
-                  .map(([category, amount]) => (
-                    <div key={category} className="flex items-center gap-2 text-xs">
-                      <span
-                        className="h-2 w-2 rounded-full shrink-0"
-                        style={{ backgroundColor: CATEGORY_META[category].color }}
-                      />
-                      <span className="flex-1 text-ink-dim">{CATEGORY_META[category].label}</span>
-                      <span className="font-semibold tabular-nums">{formatINR(amount)}</span>
+                  {budgets.length > 0 && (
+                    <div className="mb-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <h2 className="text-lg font-semibold">Budget Overview</h2>
+                        <Link href="/finance/budget" className="text-xs font-semibold text-primary">Edit Budget</Link>
+                      </div>
+                      <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4">
+                        {budgets.filter((b) => Number(b.amount) > 0).map((b) => (
+                          <Card key={b.id} className="p-3.5 w-44 shrink-0">
+                            <BudgetBar
+                              category={b.category as ExpenseCategory}
+                              spent={spentByCategory.get(b.category as ExpenseCategory) ?? 0}
+                              limit={Number(b.amount)}
+                            />
+                          </Card>
+                        ))}
+                      </div>
                     </div>
-                  ))}
-              </div>
-            </Card>
+                  )}
+
+                  {expenses.length > 0 && (
+                    <Card className="mb-4">
+                      <div className="flex items-center justify-between px-4 pt-4">
+                        <h2 className="text-lg font-semibold">Recent Transactions</h2>
+                        <button onClick={() => setTab("transactions")} className="text-xs font-semibold text-primary">View All</button>
+                      </div>
+                      <div className="divide-y divide-line/60 mt-1">
+                        <AnimatePresence initial={false}>
+                          {expenses.slice(0, 5).map((expense, i) => (
+                            <ExpenseItem key={expense.id} expense={expense} index={i} onDelete={(id) => deleteExpense.mutate(id)} />
+                          ))}
+                        </AnimatePresence>
+                      </div>
+                    </Card>
+                  )}
+                </>
+              )}
+            </>
           )}
 
-          {/* Budget bars */}
-          {budgets.length > 0 && (
-            <Card className="p-4 mb-4">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-bold text-ink-dim uppercase tracking-wider">Budgets</h2>
-                <Link href="/finance/budget" className="text-xs font-semibold text-primary hover:underline">
-                  Edit
-                </Link>
-              </div>
-              <div className="space-y-3.5">
-                {budgets
-                  .filter((b) => Number(b.amount) > 0)
-                  .map((budget) => (
-                    <BudgetBar
-                      key={budget.id}
-                      category={budget.category as ExpenseCategory}
-                      spent={spentByCategory.get(budget.category as ExpenseCategory) ?? 0}
-                      limit={Number(budget.amount)}
-                    />
-                  ))}
-              </div>
-            </Card>
-          )}
-
-          {/* Recent transactions */}
-          {expenses.length > 0 && (
-            <Card className="mb-4">
-              <h2 className="text-sm font-bold text-ink-dim uppercase tracking-wider px-4 pt-4">
-                Recent
-              </h2>
-              <div className="divide-y divide-line/60 mt-1">
-                <AnimatePresence initial={false}>
-                  {expenses.slice(0, 10).map((expense, i) => (
-                    <ExpenseItem
-                      key={expense.id}
-                      expense={expense}
-                      index={i}
-                      onDelete={(id) => deleteExpense.mutate(id)}
-                    />
-                  ))}
-                </AnimatePresence>
-              </div>
-            </Card>
-          )}
-
-          {budgets.length === 0 && (
-            <Link href="/finance/budget" className="block">
-              <Card interactive className="p-4 text-center mb-4">
-                <p className="text-sm font-semibold text-primary">Set monthly budgets →</p>
-                <p className="text-xs text-ink-dim mt-0.5">Get alerts before you overspend</p>
+          {tab === "transactions" && (
+            expenses.length === 0 ? (
+              <EmptyState illustration="expenses" title="No transactions" description="Everything you log this month shows up here." actionLabel="Add expense" onAction={() => router.push("/finance/add")} />
+            ) : (
+              <Card>
+                <div className="divide-y divide-line/60">
+                  <AnimatePresence initial={false}>
+                    {expenses.map((expense, i) => (
+                      <ExpenseItem key={expense.id} expense={expense} index={i} onDelete={(id) => deleteExpense.mutate(id)} />
+                    ))}
+                  </AnimatePresence>
+                </div>
               </Card>
-            </Link>
+            )
           )}
+
+          {tab === "budget" && (
+            <>
+              {budgets.length === 0 ? (
+                <EmptyState illustration="expenses" title="No budgets set" description="Set per-category monthly limits — Pulse warns you at 80%." actionLabel="Set budgets" onAction={() => router.push("/finance/budget")} />
+              ) : (
+                <Card className="p-4 space-y-4">
+                  {budgets.filter((b) => Number(b.amount) > 0).map((b) => (
+                    <BudgetBar
+                      key={b.id}
+                      category={b.category as ExpenseCategory}
+                      spent={spentByCategory.get(b.category as ExpenseCategory) ?? 0}
+                      limit={Number(b.amount)}
+                    />
+                  ))}
+                </Card>
+              )}
+              <Link href="/finance/budget" className="block mt-4">
+                <Button variant="secondary" className="w-full">Edit budgets</Button>
+              </Link>
+            </>
+          )}
+
+          {tab === "reports" && (
+            <>
+              <SpendingSummary expenses={expenses} budgets={budgets} />
+              <Button
+                variant="secondary"
+                className="w-full"
+                onClick={() =>
+                  downloadCSV(`pulse-${year}-${String(month).padStart(2, "0")}.csv`,
+                    expenses.map((e) => ({
+                      date: e.date, amount: e.amount, category: e.category ?? "others",
+                      merchant: e.merchant ?? "", source: e.source ?? "manual",
+                    })))
+                }
+              >
+                <Download className="h-4 w-4" /> Export {monthLabel(month, year)} (CSV)
+              </Button>
+            </>
+          )}
+
+          {/* Quick Add bar (above bottom nav) */}
+          <div className="fixed bottom-[76px] inset-x-0 z-30 md:static md:mt-4 px-4 pb-2 pointer-events-none">
+            <div className="pointer-events-auto max-w-3xl mx-auto flex items-center gap-2 bg-card/95 backdrop-blur border border-line rounded-full px-3 py-2 overflow-x-auto no-scrollbar">
+              <span className="text-[11px] font-bold text-ink-dim shrink-0">Quick Add:</span>
+              {[
+                { label: "Add Expense", color: "#FF5C5C", icon: ArrowUpRight, href: "/finance/add" },
+                { label: "Set Budget", color: "#43D98C", icon: Wallet, href: "/finance/budget" },
+                { label: "Scan Bill", color: "#4FACFE", icon: ScanLine, href: "/finance/add?tab=screenshot" },
+                { label: "Split Bill", color: "#FFB347", icon: Users, href: "/finance/borrow" },
+              ].map((a) => (
+                <Link
+                  key={a.label}
+                  href={a.href}
+                  className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full text-[11px] font-bold"
+                  style={{ backgroundColor: `${a.color}22`, color: a.color }}
+                >
+                  <a.icon className="h-3.5 w-3.5" /> {a.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div className="h-14 md:hidden" />
         </>
       )}
 
