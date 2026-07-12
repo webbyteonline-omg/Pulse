@@ -53,7 +53,7 @@
     {
       "name": "Today's Classes",
       "short_name": "Classes",
-      "url": "/academic",
+      "url": "/timetable",
       "icons": [{ "src": "/icons/academic.png", "sizes": "96x96" }]
     }
   ],

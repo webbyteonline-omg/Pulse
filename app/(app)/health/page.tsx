@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { Droplets, Flame, Footprints, Heart, Info, Moon, NotebookPen, Wind } from "lucide-react";
 import { Header } from "@/components/layout/Header";
@@ -9,12 +8,8 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Modal } from "@/components/ui/Modal";
 import { CardSkeleton } from "@/components/ui/Skeleton";
-import { useTodayCheckin } from "@/hooks/useProfile";
-import { getSupabaseBrowser } from "@/lib/supabase/client";
+import { useSaveCheckin, useTodayCheckin } from "@/hooks/useProfile";
 import { encryptJSON } from "@/lib/encryption";
-import { logActivity } from "@/lib/activityLog";
-import { todayIST } from "@/lib/utils";
-import { useAuthStore } from "@/store/authStore";
 import type { DailyCheckin } from "@/lib/supabase/types";
 
 const GOALS = { steps: 8000, water: 2500, calories: 750, sleep: 480 };
@@ -25,25 +20,6 @@ const MOODS = [
   { value: 2, emoji: "😕", label: "Low" },
   { value: 1, emoji: "😡", label: "Bad" },
 ];
-
-function useSaveHealth() {
-  const queryClient = useQueryClient();
-  const user = useAuthStore((s) => s.user);
-  return useMutation({
-    mutationFn: async (patch: Partial<DailyCheckin>) => {
-      const supabase = getSupabaseBrowser();
-      const { error } = await supabase
-        .from("daily_checkins")
-        .upsert({ user_id: user!.id, date: todayIST(), ...patch }, { onConflict: "user_id,date" });
-      if (error) throw error;
-      logActivity("checkin", "daily_checkin", { newValue: { ...patch, journal: undefined } });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["checkin"] });
-      queryClient.invalidateQueries({ queryKey: ["checkins-week"] });
-    },
-  });
-}
 
 function wellness(c: DailyCheckin | null | undefined): number {
   if (!c) return 0;
@@ -58,7 +34,7 @@ function wellness(c: DailyCheckin | null | undefined): number {
 
 export default function HealthPage() {
   const checkinQuery = useTodayCheckin();
-  const save = useSaveHealth();
+  const save = useSaveCheckin();
   const checkin = checkinQuery.data;
   const score = wellness(checkin);
 
@@ -92,7 +68,7 @@ export default function HealthPage() {
     if (!logOpen) return;
     const n = Number(logValue);
     if (!Number.isFinite(n) || n < 0) return;
-    const patch: Partial<DailyCheckin> =
+    const patch: Partial<Pick<DailyCheckin, "steps" | "water_ml" | "calories" | "sleep_minutes">> =
       logOpen === "steps" ? { steps: Math.floor(n) }
       : logOpen === "water" ? { water_ml: Math.floor(n) }
       : logOpen === "calories" ? { calories: Math.floor(n) }

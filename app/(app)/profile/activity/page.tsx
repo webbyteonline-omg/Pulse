@@ -17,8 +17,12 @@ const TYPE_FILTERS = [
   { id: null, label: "All" },
   { id: "attendance", label: "Attendance" },
   { id: "expense", label: "Expenses" },
+  { id: "income", label: "Income" },
   { id: "subject", label: "Subjects" },
   { id: "event", label: "Events" },
+  { id: "assignment", label: "Assignments" },
+  { id: "quiz", label: "Quizzes" },
+  { id: "exam", label: "Exams" },
   { id: "friend", label: "Friends" },
   { id: "poll", label: "Polls" },
 ];
@@ -32,6 +36,8 @@ function describe(log: ActivityLog): string {
       return `You added expense ${typeof v.amount === "number" ? formatINR(v.amount) : ""}${v.merchant ? ` at ${v.merchant}` : ""}`;
     case "expense_deleted":
       return "You deleted an expense";
+    case "income_added":
+      return `You logged income ${typeof v.amount === "number" ? formatINR(v.amount) : ""}${v.merchant ? ` from ${v.merchant}` : ""}`;
     case "subject_created":
       return `You added subject ${v.name ?? ""}`;
     case "subject_updated":
@@ -58,6 +64,24 @@ function describe(log: ActivityLog): string {
       return "You voted on a poll";
     case "checkin":
       return `Daily check-in${v.mood ? ` — mood ${v.mood}/5` : ""}${v.steps ? `, ${v.steps} steps` : ""}`;
+    case "assignment_added":
+      return `You added assignment ${v.title ?? ""}`;
+    case "assignment_updated":
+      return `You updated assignment ${v.title ?? ""}`;
+    case "assignment_deleted":
+      return "You deleted an assignment";
+    case "quiz_added":
+      return `You added quiz ${v.title ?? ""}`;
+    case "quiz_updated":
+      return `You updated quiz ${v.title ?? ""}`;
+    case "quiz_deleted":
+      return "You deleted a quiz";
+    case "exam_added":
+      return `You added exam ${v.title ?? ""}`;
+    case "exam_updated":
+      return `You updated exam ${v.title ?? ""}`;
+    case "exam_deleted":
+      return "You deleted an exam";
     case "rate_limit_hit":
       return `Rate limit reached (${log.entity_type})`;
     default:

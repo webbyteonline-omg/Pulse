@@ -6,7 +6,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { Bell, Loader2 } from "lucide-react";
 import { AlertBanners } from "@/components/dashboard/AlertBanner";
-import { CheckinCard } from "@/components/dashboard/CheckinCard";
 import { FriendActivity } from "@/components/dashboard/FriendActivity";
 import { PulseScoreCard } from "@/components/dashboard/PulseScoreCard";
 import { QuickTiles } from "@/components/dashboard/QuickTiles";
@@ -66,7 +65,7 @@ export default function DashboardPage() {
 
   const today = todayIST();
   const todaySpend = expenses
-    .filter((e) => e.date === today)
+    .filter((e) => e.date === today && e.transaction_type !== "income")
     .reduce((sum, e) => sum + Number(e.amount), 0);
 
   const tracked = subjects.filter((s) => s.total_classes > 0);
@@ -171,7 +170,6 @@ export default function DashboardPage() {
           />
 
           <TodayClasses />
-          <CheckinCard />
           <FriendActivity />
           <UpcomingEvents events={events} />
           <AttendanceSummary subjects={subjects} />

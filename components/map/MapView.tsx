@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { WeatherChip } from "@/components/dashboard/WeatherChip";
 import { SvgCampusMap } from "./SvgCampusMap";
+import { CityMapMarkers } from "./CityMapMarkers";
 import { formatTime } from "@/components/timetable/SlotCard";
 import { useTodayClasses } from "@/hooks/useTimetable";
 import { useSubjects } from "@/hooks/useAttendance";
@@ -85,22 +86,20 @@ export function MapView() {
         ))}
       </div>
 
-      {/* Category filters */}
-      {tab === "campus" && (
-        <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-4 px-4 mb-3">
-          {FILTERS.map((f) => (
-            <button
-              key={f.id}
-              onClick={() => setFilter(f.id)}
-              className={`shrink-0 min-h-[44px] px-3.5 rounded-full text-xs font-bold border transition-colors ${
-                filter === f.id ? "bg-primary text-white border-primary" : "bg-card border-line text-ink-dim"
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-      )}
+      {/* Category filters — apply to both Campus (SVG) and City (Leaflet) tabs */}
+      <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-4 px-4 mb-3">
+        {FILTERS.map((f) => (
+          <button
+            key={f.id}
+            onClick={() => setFilter(f.id)}
+            className={`shrink-0 min-h-[44px] px-3.5 rounded-full text-xs font-bold border transition-colors ${
+              filter === f.id ? "bg-primary text-white border-primary" : "bg-card border-line text-ink-dim"
+            }`}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
 
       {tab === "campus" ? (
         <SvgCampusMap
@@ -116,6 +115,7 @@ export function MapView() {
         <div className="rounded-card overflow-hidden border border-line" style={{ height: "55dvh" }}>
           <MapContainer center={CAMPUS_CENTER} zoom={14} minZoom={11} maxZoom={19} className="h-full w-full" zoomControl={false} attributionControl={false}>
             <TileLayer url={theme === "light" ? LIGHT_TILES : DARK_TILES} />
+            <CityMapMarkers filter={filter} onSelect={setSelected} userPos={userPos} />
           </MapContainer>
         </div>
       )}

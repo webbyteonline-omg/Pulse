@@ -16,7 +16,8 @@ export function CategoryDonut({ expenses }: { expenses: Expense[] }) {
   const { slices, total } = useMemo(() => {
     const byCategory = new Map<ExpenseCategory, number>();
     for (const e of expenses) {
-      const cat = e.category ?? "others";
+      if (e.transaction_type === "income") continue;
+      const cat = (e.category as ExpenseCategory | null) ?? "others";
       byCategory.set(cat, (byCategory.get(cat) ?? 0) + Number(e.amount));
     }
     const slices: Slice[] = [...byCategory.entries()]

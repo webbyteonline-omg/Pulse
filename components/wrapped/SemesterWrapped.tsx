@@ -26,7 +26,11 @@ export function SemesterWrapped({ onClose }: { onClose: () => void }) {
         { data: profile },
       ] = await Promise.all([
         supabase.from("subjects").select("id,name,total_classes,attended_classes"),
-        supabase.from("expenses").select("id,amount,date").gte("date", since),
+        supabase
+          .from("expenses")
+          .select("id,amount,date")
+          .eq("transaction_type", "expense")
+          .gte("date", since),
         supabase
           .from("daily_checkins")
           .select("id,date,mood,steps")

@@ -80,6 +80,7 @@ export default function ProfilePage() {
     <div>
       <Header
         title="Profile"
+        showAvatar={false}
         action={
           <Link href="/settings" aria-label="Settings">
             <span className="grid place-items-center h-11 w-11 rounded-btn bg-card border border-line text-ink-dim">

@@ -109,7 +109,7 @@ function DashboardPrefetcher() {
         queryFn: async () => {
           const { data, error } = await supabase
             .from("expenses")
-            .select("id,user_id,amount,merchant,category,note,date,source,created_at")
+            .select("id,user_id,amount,merchant,category,note,date,source,transaction_type,created_at")
             .gte("date", monthStart)
             .lte("date", monthEnd)
             .order("date", { ascending: false })

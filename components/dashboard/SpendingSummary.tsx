@@ -15,7 +15,11 @@ interface DayBar {
 
 /** Last-7-days spending bar chart + month total vs budget. */
 export function SpendingSummary({ expenses, budgets }: { expenses: Expense[]; budgets: Budget[] }) {
-  const monthTotal = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
+  const spendOnly = useMemo(
+    () => expenses.filter((e) => e.transaction_type !== "income"),
+    [expenses]
+  );
+  const monthTotal = spendOnly.reduce((sum, e) => sum + Number(e.amount), 0);
   const totalBudget = budgets.reduce((sum, b) => sum + Number(b.amount), 0);
 
   const bars = useMemo<DayBar[]>(() => {
@@ -29,14 +33,14 @@ export function SpendingSummary({ expenses, budgets }: { expenses: Expense[]; bu
       const label = new Intl.DateTimeFormat("en-IN", { weekday: "short", timeZone: "UTC" }).format(d);
       days.push({
         day: label,
-        amount: expenses
+        amount: spendOnly
           .filter((e) => e.date === iso)
           .reduce((sum, e) => sum + Number(e.amount), 0),
         isToday: i === 0,
       });
     }
     return days;
-  }, [expenses]);
+  }, [spendOnly]);
 
   const budgetPct = totalBudget > 0 ? Math.min(100, (monthTotal / totalBudget) * 100) : 0;
 

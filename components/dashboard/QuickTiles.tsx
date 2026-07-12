@@ -53,7 +53,7 @@ export function QuickTiles({
       color: "#6C63FF",
     },
     {
-      href: "/profile/pulse-score",
+      href: "/health",
       label: "Health",
       value: stepsToday !== null ? stepsToday.toLocaleString("en-IN") : "—",
       sub: "Steps Today",

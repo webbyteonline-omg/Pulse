@@ -14,8 +14,17 @@ export type ExpenseCategory =
   | "health"
   | "entertainment"
   | "others";
+export type IncomeSource = "pocket_money" | "part_time" | "transfer" | "other_income";
+export type TransactionCategory = ExpenseCategory | IncomeSource;
+export type TransactionType = "expense" | "income";
 export type ExpenseSource = "manual" | "sms" | "screenshot";
 export type AttendanceStatus = "present" | "absent";
+export type AssignmentStatus = "pending" | "submitted" | "graded" | "late";
+export type QuizStatus = "upcoming" | "completed" | "missed";
+/** Same literal values as QuizStatus today, but kept as its own alias so the
+ * two tables' status enums can diverge later without silently miscompiling. */
+export type ExamStatus = QuizStatus;
+export type ExamType = "midterm" | "final" | "unit_test" | "practical" | "other";
 
 export type Subject = {
   id: string;
@@ -50,15 +59,58 @@ export type AcademicEvent = {
   created_at: string;
 };
 
+export type Assignment = {
+  id: string;
+  user_id: string;
+  subject_id: string | null;
+  title: string;
+  description: string | null;
+  due_date: string; // YYYY-MM-DD
+  status: AssignmentStatus;
+  score: number | null;
+  max_score: number | null;
+  submitted_at: string | null;
+  created_at: string;
+};
+
+export type Quiz = {
+  id: string;
+  user_id: string;
+  subject_id: string | null;
+  title: string;
+  syllabus: string | null;
+  date: string; // YYYY-MM-DD
+  status: QuizStatus;
+  score: number | null;
+  max_score: number | null;
+  created_at: string;
+};
+
+export type Exam = {
+  id: string;
+  user_id: string;
+  subject_id: string | null;
+  title: string;
+  exam_type: ExamType;
+  date: string; // YYYY-MM-DD
+  syllabus: string | null;
+  status: ExamStatus;
+  score: number | null;
+  max_score: number | null;
+  created_at: string;
+};
+
 export type Expense = {
   id: string;
   user_id: string;
   amount: number;
   merchant: string | null;
-  category: ExpenseCategory | null;
+  /** Expense category when transaction_type is "expense", income source when "income". */
+  category: TransactionCategory | null;
   note: string | null;
   date: string; // YYYY-MM-DD
   source: ExpenseSource | null;
+  transaction_type: TransactionType;
   created_at: string;
 };
 
@@ -242,9 +294,24 @@ export type AcademicEventInsert = InsertOf<
   AcademicEvent,
   "id" | "created_at" | "description" | "subject_id" | "notified_3day" | "notified_1day"
 >;
-export type ExpenseInsert = InsertOf<Expense, "id" | "created_at" | "merchant" | "note">;
+export type ExpenseInsert = InsertOf<
+  Expense,
+  "id" | "created_at" | "merchant" | "note" | "transaction_type"
+>;
 export type BudgetInsert = InsertOf<Budget, "id">;
 export type PushSubscriptionInsert = InsertOf<PushSubscriptionRow, "id" | "created_at">;
+export type AssignmentInsert = InsertOf<
+  Assignment,
+  "id" | "subject_id" | "description" | "status" | "score" | "max_score" | "submitted_at" | "created_at"
+>;
+export type QuizInsert = InsertOf<
+  Quiz,
+  "id" | "subject_id" | "syllabus" | "status" | "score" | "max_score" | "created_at"
+>;
+export type ExamInsert = InsertOf<
+  Exam,
+  "id" | "subject_id" | "exam_type" | "syllabus" | "status" | "score" | "max_score" | "created_at"
+>;
 
 export type Database = {
   public: {
@@ -380,6 +447,24 @@ export type Database = {
           | "settled_at" | "notified_overdue" | "created_at"
         >;
         Update: Partial<BorrowLend>;
+        Relationships: [];
+      };
+      assignments: {
+        Row: Assignment;
+        Insert: AssignmentInsert;
+        Update: Partial<Assignment>;
+        Relationships: [];
+      };
+      quizzes: {
+        Row: Quiz;
+        Insert: QuizInsert;
+        Update: Partial<Quiz>;
+        Relationships: [];
+      };
+      exams: {
+        Row: Exam;
+        Insert: ExamInsert;
+        Update: Partial<Exam>;
         Relationships: [];
       };
     };

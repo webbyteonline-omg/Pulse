@@ -118,12 +118,21 @@ html.light input[type="time"]::-webkit-calendar-picker-indicator {
   filter: none;
 }
 
-/* iOS PWA safe areas */
+/* iOS/Android PWA safe areas.
+   .pt-safe is additive (env() + 16px), not a replacement for whatever
+   padding-top a page already has — it's meant to be combined with a
+   page's own spacing utility, never used alone, so status-bar / notch
+   insets never eat into a page's intended top spacing. */
 @supports (padding: env(safe-area-inset-bottom)) {
   .pb-safe {
     padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
   }
   .pt-safe {
-    padding-top: env(safe-area-inset-top);
+    padding-top: calc(env(safe-area-inset-top) + 16px);
+  }
+}
+@supports not (padding: env(safe-area-inset-bottom)) {
+  .pt-safe {
+    padding-top: 16px;
   }
 }

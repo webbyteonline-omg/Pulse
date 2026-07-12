@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Lock, Trash2 } from "lucide-react";
 import { decryptJSON } from "@/lib/encryption";
-import { CATEGORY_META, formatDate, formatINR } from "@/lib/utils";
-import type { Expense } from "@/lib/supabase/types";
+import { CATEGORY_META, INCOME_SOURCE_META, formatDate, formatINR } from "@/lib/utils";
+import type { Expense, ExpenseCategory, IncomeSource } from "@/lib/supabase/types";
 
 /** Decrypt "enc:"-prefixed private notes on-device. */
 function useDecryptedNote(note: string | null): { text: string | null; encrypted: boolean } {
@@ -36,7 +36,10 @@ export function ExpenseItem({
   onDelete?: (id: string) => void;
   index?: number;
 }) {
-  const meta = CATEGORY_META[expense.category ?? "others"];
+  const isIncome = expense.transaction_type === "income";
+  const meta = isIncome
+    ? INCOME_SOURCE_META[(expense.category as IncomeSource | null) ?? "other_income"]
+    : CATEGORY_META[(expense.category as ExpenseCategory | null) ?? "others"];
   const { text: note, encrypted } = useDecryptedNote(expense.note);
   return (
     <motion.div
@@ -70,8 +73,11 @@ export function ExpenseItem({
           {expense.source && expense.source !== "manual" ? ` · via ${expense.source}` : ""}
         </p>
       </div>
-      <span className="text-sm font-bold tabular-nums shrink-0">
-        −{formatINR(Number(expense.amount), { decimals: true })}
+      <span
+        className={`text-sm font-bold tabular-nums shrink-0 ${isIncome ? "text-success" : "text-ink"}`}
+      >
+        {isIncome ? "+" : "−"}
+        {formatINR(Number(expense.amount), { decimals: true })}
       </span>
       {onDelete && (
         <motion.button

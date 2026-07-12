@@ -106,13 +106,14 @@ export default function SettingsPage() {
   const exportExpenses = () => {
     const rows = (expensesQuery.data ?? []).map((e) => ({
       date: e.date,
+      type: e.transaction_type,
       amount: e.amount,
       category: e.category ?? "others",
       merchant: e.merchant ?? "",
       note: e.note?.startsWith("enc:") ? "(encrypted)" : (e.note ?? ""),
       source: e.source ?? "manual",
     }));
-    downloadCSV(`pulse-expenses-${new Date().toISOString().slice(0, 10)}.csv`, rows);
+    downloadCSV(`pulse-transactions-${new Date().toISOString().slice(0, 10)}.csv`, rows);
   };
 
   const setCampusHere = () => {

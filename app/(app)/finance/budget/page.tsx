@@ -37,7 +37,8 @@ export default function BudgetPage() {
   const spentByCategory = useMemo(() => {
     const map = new Map<ExpenseCategory, number>();
     for (const e of expensesQuery.data ?? []) {
-      const cat = e.category ?? "others";
+      if (e.transaction_type === "income") continue;
+      const cat = (e.category as ExpenseCategory | null) ?? "others";
       map.set(cat, (map.get(cat) ?? 0) + Number(e.amount));
     }
     return map;

@@ -25,7 +25,11 @@ export function DailyWrapped({ onClose }: { onClose: () => void }) {
           .eq("user_id", user!.id)
           .eq("date", today)
           .maybeSingle(),
-        supabase.from("expenses").select("id,amount,category,date").eq("date", today),
+        supabase
+          .from("expenses")
+          .select("id,amount,category,date")
+          .eq("transaction_type", "expense")
+          .eq("date", today),
         supabase
           .from("attendance_logs")
           .select("id,user_id,subject_id,date,status,created_at")
@@ -43,7 +47,7 @@ export function DailyWrapped({ onClose }: { onClose: () => void }) {
 
   const byCategory = new Map<ExpenseCategory, number>();
   for (const e of data.expenses) {
-    const cat = e.category ?? "others";
+    const cat = (e.category as ExpenseCategory | null) ?? "others";
     byCategory.set(cat, (byCategory.get(cat) ?? 0) + Number(e.amount));
   }
   const topCategory = [...byCategory.entries()].sort((a, b) => b[1] - a[1])[0];

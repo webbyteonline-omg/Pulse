@@ -14,6 +14,7 @@ import {
   Eye,
   EyeOff,
   ScanLine,
+  SlidersHorizontal,
   Users,
   Wallet,
 } from "lucide-react";
@@ -26,6 +27,8 @@ import { CardSkeleton, RowSkeleton, Skeleton } from "@/components/ui/Skeleton";
 import { BorrowLendCard } from "@/components/finance/BorrowLendCard";
 import { BudgetBar } from "@/components/finance/BudgetBar";
 import { ExpenseItem } from "@/components/finance/ExpenseItem";
+import { AddIncomeSheet } from "@/components/finance/AddIncomeSheet";
+import { TransactionFilterSheet, type TxnFilter } from "@/components/finance/TransactionFilterSheet";
 import { SpendingSummary } from "@/components/dashboard/SpendingSummary";
 import { useBudgets, useDeleteExpense, useExpenses } from "@/hooks/useFinance";
 import { CATEGORY_META, downloadCSV, formatINR, monthLabel, nowIST } from "@/lib/utils";
@@ -51,22 +54,42 @@ export default function FinancePage() {
   const [year, setYear] = useState(now.getFullYear());
   const [tab, setTab] = useState<Tab>("overview");
   const [hideBalance, setHideBalance] = useState(false);
+  const [addIncomeOpen, setAddIncomeOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [txnFilter, setTxnFilter] = useState<TxnFilter>({ type: "all", category: null });
 
   const expensesQuery = useExpenses(month, year);
   const budgetsQuery = useBudgets(month, year);
   const deleteExpense = useDeleteExpense();
 
-  const expenses = useMemo(() => expensesQuery.data ?? [], [expensesQuery.data]);
+  const allTransactions = useMemo(() => expensesQuery.data ?? [], [expensesQuery.data]);
+  const expenses = useMemo(
+    () => allTransactions.filter((e) => e.transaction_type !== "income"),
+    [allTransactions]
+  );
+  const income = useMemo(
+    () => allTransactions.filter((e) => e.transaction_type === "income"),
+    [allTransactions]
+  );
   const budgets = budgetsQuery.data ?? [];
 
+  const filteredTransactions = useMemo(() => {
+    return allTransactions.filter((e) => {
+      if (txnFilter.type !== "all" && e.transaction_type !== txnFilter.type) return false;
+      if (txnFilter.category && e.category !== txnFilter.category) return false;
+      return true;
+    });
+  }, [allTransactions, txnFilter]);
+
   const spent = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
+  const totalIncome = income.reduce((sum, e) => sum + Number(e.amount), 0);
   const totalBudget = budgets.reduce((sum, b) => sum + Number(b.amount), 0);
-  const balance = totalBudget - spent;
+  const balance = totalIncome - spent;
 
   const spentByCategory = useMemo(() => {
     const map = new Map<ExpenseCategory, number>();
     for (const e of expenses) {
-      const cat = e.category ?? "others";
+      const cat = (e.category as ExpenseCategory | null) ?? "others";
       map.set(cat, (map.get(cat) ?? 0) + Number(e.amount));
     }
     return map;
@@ -81,10 +104,28 @@ export default function FinancePage() {
 
   const loading = expensesQuery.isLoading || budgetsQuery.isLoading;
   const hide = (v: string) => (hideBalance ? "₹ ••••" : v);
+  const activeFilterCount = (txnFilter.type !== "all" ? 1 : 0) + (txnFilter.category ? 1 : 0);
 
   return (
     <div>
-      <Header title="Finance" />
+      <Header
+        title="Finance"
+        showBell
+        mobileAction={
+          <button
+            onClick={() => setFilterOpen(true)}
+            aria-label="Filter transactions"
+            className="relative grid place-items-center h-11 w-11 rounded-btn bg-card border border-line text-ink-dim hover:text-ink transition-colors"
+          >
+            <SlidersHorizontal className="h-[18px] w-[18px]" />
+            {activeFilterCount > 0 && (
+              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-accent text-white text-[10px] font-bold grid place-items-center">
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
+        }
+      />
 
       {/* Tabs */}
       <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-4 px-4 mb-4">
@@ -126,7 +167,7 @@ export default function FinancePage() {
               onClick={() => setHideBalance((v) => !v)}
               className="flex items-center gap-1.5 text-sm font-semibold opacity-90"
             >
-              Budget Balance {hideBalance ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+              Total Balance {hideBalance ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
             </button>
             <motion.p
               key={`${month}-${year}-${balance}`}
@@ -134,13 +175,12 @@ export default function FinancePage() {
               animate={{ opacity: 1, y: 0 }}
               className="mt-1 text-4xl font-black tracking-tight tabular-nums"
             >
-              {totalBudget > 0 ? hide(formatINR(balance)) : hide(formatINR(spent))}
+              {hide(formatINR(balance))}
             </motion.p>
-            {totalBudget === 0 && <p className="text-xs opacity-80 mt-0.5">spent this month · set budgets for a balance view</p>}
             <div className="mt-4 flex gap-5 text-sm">
               <span className="flex items-center gap-1.5">
                 <span className="grid place-items-center h-6 w-6 rounded-full bg-white/20"><ArrowDownLeft className="h-3.5 w-3.5" /></span>
-                <span><span className="opacity-75 text-xs">Budget</span> <b>{hide(formatINR(totalBudget))}</b></span>
+                <span><span className="opacity-75 text-xs">Income</span> <b>{hide(formatINR(totalIncome))}</b></span>
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="grid place-items-center h-6 w-6 rounded-full bg-white/20"><ArrowUpRight className="h-3.5 w-3.5" /></span>
@@ -152,10 +192,10 @@ export default function FinancePage() {
           {tab === "overview" && (
             <>
               <BorrowLendCard />
-              {expenses.length === 0 && budgets.length === 0 ? (
+              {allTransactions.length === 0 && budgets.length === 0 ? (
                 <EmptyState
                   illustration="expenses"
-                  title="No expenses this month"
+                  title="No transactions this month"
                   description="Log manually, paste a UPI SMS, or scan a payment screenshot."
                   actionLabel="Add first expense"
                   onAction={() => router.push("/finance/add")}
@@ -201,7 +241,7 @@ export default function FinancePage() {
                     </div>
                   )}
 
-                  {expenses.length > 0 && (
+                  {allTransactions.length > 0 && (
                     <Card className="mb-4">
                       <div className="flex items-center justify-between px-4 pt-4">
                         <h2 className="text-lg font-semibold">Recent Transactions</h2>
@@ -209,7 +249,7 @@ export default function FinancePage() {
                       </div>
                       <div className="divide-y divide-line/60 mt-1">
                         <AnimatePresence initial={false}>
-                          {expenses.slice(0, 5).map((expense, i) => (
+                          {allTransactions.slice(0, 5).map((expense, i) => (
                             <ExpenseItem key={expense.id} expense={expense} index={i} onDelete={(id) => deleteExpense.mutate(id)} />
                           ))}
                         </AnimatePresence>
@@ -222,13 +262,19 @@ export default function FinancePage() {
           )}
 
           {tab === "transactions" && (
-            expenses.length === 0 ? (
-              <EmptyState illustration="expenses" title="No transactions" description="Everything you log this month shows up here." actionLabel="Add expense" onAction={() => router.push("/finance/add")} />
+            filteredTransactions.length === 0 ? (
+              <EmptyState
+                illustration="expenses"
+                title="No transactions"
+                description={activeFilterCount > 0 ? "No transactions match this filter." : "Everything you log this month shows up here."}
+                actionLabel="Add expense"
+                onAction={() => router.push("/finance/add")}
+              />
             ) : (
               <Card>
                 <div className="divide-y divide-line/60">
                   <AnimatePresence initial={false}>
-                    {expenses.map((expense, i) => (
+                    {filteredTransactions.map((expense, i) => (
                       <ExpenseItem key={expense.id} expense={expense} index={i} onDelete={(id) => deleteExpense.mutate(id)} />
                     ))}
                   </AnimatePresence>
@@ -261,14 +307,14 @@ export default function FinancePage() {
 
           {tab === "reports" && (
             <>
-              <SpendingSummary expenses={expenses} budgets={budgets} />
+              <SpendingSummary expenses={allTransactions} budgets={budgets} />
               <Button
                 variant="secondary"
                 className="w-full"
                 onClick={() =>
-                  downloadCSV(`pulse-${year}-${String(month).padStart(2, "0")}.csv`,
-                    expenses.map((e) => ({
-                      date: e.date, amount: e.amount, category: e.category ?? "others",
+                  downloadCSV(`pulse-transactions-${year}-${String(month).padStart(2, "0")}.csv`,
+                    allTransactions.map((e) => ({
+                      date: e.date, type: e.transaction_type, amount: e.amount, category: e.category ?? "others",
                       merchant: e.merchant ?? "", source: e.source ?? "manual",
                     })))
                 }
@@ -284,24 +330,44 @@ export default function FinancePage() {
               <span className="text-[11px] font-bold text-ink-dim shrink-0">Quick Add:</span>
               {[
                 { label: "Add Expense", color: "#FF5C5C", icon: ArrowUpRight, href: "/finance/add" },
+                { label: "Add Income", color: "#43D98C", icon: ArrowDownLeft, onClick: () => setAddIncomeOpen(true) },
                 { label: "Set Budget", color: "#43D98C", icon: Wallet, href: "/finance/budget" },
                 { label: "Scan Bill", color: "#4FACFE", icon: ScanLine, href: "/finance/add?tab=screenshot" },
                 { label: "Split Bill", color: "#FFB347", icon: Users, href: "/finance/borrow" },
-              ].map((a) => (
-                <Link
-                  key={a.label}
-                  href={a.href}
-                  className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full text-[11px] font-bold"
-                  style={{ backgroundColor: `${a.color}22`, color: a.color }}
-                >
-                  <a.icon className="h-3.5 w-3.5" /> {a.label}
-                </Link>
-              ))}
+              ].map((a) =>
+                a.href ? (
+                  <Link
+                    key={a.label}
+                    href={a.href}
+                    className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full text-[11px] font-bold"
+                    style={{ backgroundColor: `${a.color}22`, color: a.color }}
+                  >
+                    <a.icon className="h-3.5 w-3.5" /> {a.label}
+                  </Link>
+                ) : (
+                  <button
+                    key={a.label}
+                    onClick={a.onClick}
+                    className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full text-[11px] font-bold"
+                    style={{ backgroundColor: `${a.color}22`, color: a.color }}
+                  >
+                    <a.icon className="h-3.5 w-3.5" /> {a.label}
+                  </button>
+                )
+              )}
             </div>
           </div>
           <div className="h-14 md:hidden" />
         </>
       )}
+
+      <AddIncomeSheet open={addIncomeOpen} onClose={() => setAddIncomeOpen(false)} />
+      <TransactionFilterSheet
+        open={filterOpen}
+        onClose={() => setFilterOpen(false)}
+        filter={txnFilter}
+        onChange={setTxnFilter}
+      />
 
       <FAB label="Add expense" onClick={() => router.push("/finance/add")} />
     </div>

@@ -19,7 +19,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <OfflineBanner />
       <Sidebar />
       <div className="flex-1 min-w-0">
-        <main className="mx-auto max-w-3xl px-4 md:px-8 pt-6 pt-safe pb-28 md:pb-12">
+        <main className="mx-auto max-w-3xl px-4 md:px-8 pt-safe pb-28 md:pb-12">
           <PageTransition>{children}</PageTransition>
         </main>
       </div>

@@ -48,6 +48,17 @@ export const expenseSchema = z.object({
   source: z.enum(["manual", "sms", "screenshot"]),
 });
 
+export const incomeSchema = z.object({
+  amount: z
+    .number({ invalid_type_error: "Enter an amount" })
+    .positive("Amount must be positive")
+    .max(10_00_000, "That's too large"),
+  category: z.enum(["pocket_money", "part_time", "transfer", "other_income"]),
+  merchant: z.string().trim().max(60, "Too long").nullable(),
+  note: z.string().trim().max(200, "Too long").nullable(),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Pick a date"),
+});
+
 export const budgetSchema = z.object({
   category: z.string().min(1),
   amount: z
@@ -70,4 +81,5 @@ export type SignupInput = z.infer<typeof signupSchema>;
 export type SubjectInput = z.infer<typeof subjectSchema>;
 export type EventInput = z.infer<typeof eventSchema>;
 export type ExpenseInput = z.infer<typeof expenseSchema>;
+export type IncomeInput = z.infer<typeof incomeSchema>;
 export type ParsedCalendarEvent = z.infer<typeof parsedCalendarEventSchema>;

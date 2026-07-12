@@ -7,6 +7,7 @@ export type ActivityAction =
   | "attendance_marked"
   | "expense_added"
   | "expense_deleted"
+  | "income_added"
   | "subject_created"
   | "subject_updated"
   | "subject_deleted"
@@ -20,12 +21,22 @@ export type ActivityAction =
   | "poll_created"
   | "poll_voted"
   | "checkin"
-  | "rate_limit_hit";
+  | "rate_limit_hit"
+  | "assignment_added"
+  | "assignment_updated"
+  | "assignment_deleted"
+  | "quiz_added"
+  | "quiz_updated"
+  | "quiz_deleted"
+  | "exam_added"
+  | "exam_updated"
+  | "exam_deleted";
 
 export const ACTIVITY_META: Record<ActivityAction, { emoji: string; label: string }> = {
   attendance_marked: { emoji: "✅", label: "Attendance" },
   expense_added: { emoji: "💸", label: "Expense" },
   expense_deleted: { emoji: "🗑️", label: "Expense" },
+  income_added: { emoji: "💰", label: "Income" },
   subject_created: { emoji: "📚", label: "Subject" },
   subject_updated: { emoji: "✏️", label: "Subject" },
   subject_deleted: { emoji: "🗑️", label: "Subject" },
@@ -40,6 +51,15 @@ export const ACTIVITY_META: Record<ActivityAction, { emoji: string; label: strin
   poll_voted: { emoji: "🗳️", label: "Poll" },
   checkin: { emoji: "📝", label: "Check-in" },
   rate_limit_hit: { emoji: "🚫", label: "Rate limit" },
+  assignment_added: { emoji: "📄", label: "Assignment" },
+  assignment_updated: { emoji: "✏️", label: "Assignment" },
+  assignment_deleted: { emoji: "🗑️", label: "Assignment" },
+  quiz_added: { emoji: "❓", label: "Quiz" },
+  quiz_updated: { emoji: "✏️", label: "Quiz" },
+  quiz_deleted: { emoji: "🗑️", label: "Quiz" },
+  exam_added: { emoji: "🧾", label: "Exam" },
+  exam_updated: { emoji: "✏️", label: "Exam" },
+  exam_deleted: { emoji: "🗑️", label: "Exam" },
 };
 
 /**

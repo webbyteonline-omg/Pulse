@@ -22,7 +22,7 @@ import { useAuthStore } from "@/store/authStore";
 export const NAV_ITEMS = [
   { href: "/dashboard", label: "Home", icon: House, match: ["/dashboard"] },
   {
-    href: "/academic",
+    href: "/attendance",
     label: "Academics",
     icon: BookOpen,
     match: ["/academic", "/attendance", "/timetable"],

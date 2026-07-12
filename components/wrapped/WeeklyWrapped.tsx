@@ -26,7 +26,11 @@ export function WeeklyWrapped({ onClose }: { onClose: () => void }) {
           .select("id,date,mood,steps")
           .eq("user_id", user!.id)
           .gte("date", lastStart),
-        supabase.from("expenses").select("id,amount,category,date").gte("date", thisWeekStart),
+        supabase
+          .from("expenses")
+          .select("id,amount,category,date")
+          .eq("transaction_type", "expense")
+          .gte("date", thisWeekStart),
         supabase
           .from("attendance_logs")
           .select("id,status,date")
@@ -48,7 +52,7 @@ export function WeeklyWrapped({ onClose }: { onClose: () => void }) {
   const spent = data.expenses.reduce((sum, e) => sum + Number(e.amount), 0);
   const byCategory = new Map<ExpenseCategory, number>();
   for (const e of data.expenses) {
-    const cat = e.category ?? "others";
+    const cat = (e.category as ExpenseCategory | null) ?? "others";
     byCategory.set(cat, (byCategory.get(cat) ?? 0) + Number(e.amount));
   }
   const topCat = [...byCategory.entries()].sort((a, b) => b[1] - a[1])[0];

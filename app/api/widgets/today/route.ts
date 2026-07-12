@@ -31,7 +31,7 @@ export async function GET() {
   const [{ data: subjects }, { data: expenses }, { data: slots }, { data: profile }] =
     await Promise.all([
       supabase.from("subjects").select("id,name,total_classes,attended_classes,required_percentage"),
-      supabase.from("expenses").select("amount").eq("date", today),
+      supabase.from("expenses").select("amount").eq("transaction_type", "expense").eq("date", today),
       supabase.from("timetable_slots").select("*").eq("day_of_week", dow).order("start_time"),
       supabase.from("user_profiles").select("pulse_score").eq("id", user.id).maybeSingle(),
     ]);

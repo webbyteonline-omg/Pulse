@@ -10,11 +10,11 @@ export function CountdownCard({
   tone,
 }: {
   event: AcademicEvent;
-  tone: "exam" | "holiday";
+  tone: "exam" | "holiday" | "quiz";
 }) {
   const days = daysUntil(event.date);
-  const color = tone === "exam" ? "#FF5C5C" : "#43D98C";
-  const label = tone === "exam" ? "Next exam" : "Next holiday";
+  const color = tone === "holiday" ? "#43D98C" : tone === "quiz" ? "#5AB0FF" : "#FF5C5C";
+  const label = tone === "holiday" ? "Next holiday" : tone === "quiz" ? "Next quiz" : "Next exam";
 
   return (
     <motion.div

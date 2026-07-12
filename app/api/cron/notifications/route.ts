@@ -50,6 +50,7 @@ export async function GET(request: Request) {
       admin
         .from("expenses")
         .select("user_id, amount, category, date")
+        .eq("transaction_type", "expense")
         .gte("date", `${today.slice(0, 7)}-01`)
         .lte("date", today),
     ]);
@@ -257,7 +258,7 @@ async function computeDailyPulseScores(): Promise<number> {
     await Promise.all([
       admin.from("user_stats").select("*"),
       admin.from("subjects").select("*"),
-      admin.from("expenses").select("*").gte("date", monthStart).lte("date", monthEnd),
+      admin.from("expenses").select("*").eq("transaction_type", "expense").gte("date", monthStart).lte("date", monthEnd),
       admin.from("budgets").select("*").eq("month", month).eq("year", year),
       admin.from("daily_checkins").select("*").gte("date", weekStart),
     ]);

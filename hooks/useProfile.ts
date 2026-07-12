@@ -89,20 +89,29 @@ export function useWeekCheckins() {
   });
 }
 
+/**
+ * Upserts today's check-in row. Accepts a *partial* patch so callers can
+ * update just one field (e.g. only `mood`, or only `steps`) without
+ * clobbering whatever else was already logged today — used by both the
+ * dashboard-era mood+steps card and the Health page's per-metric log sheet
+ * (steps / water_ml / calories / sleep_minutes / mood / journal).
+ */
 export function useSaveCheckin() {
   const queryClient = useQueryClient();
   const user = useAuthStore((s) => s.user);
   return useMutation({
-    mutationFn: async (input: { mood: number | null; steps: number | null }) => {
+    mutationFn: async (
+      patch: Partial<Pick<DailyCheckin, "mood" | "steps" | "water_ml" | "calories" | "sleep_minutes" | "journal">>
+    ) => {
       const supabase = getSupabaseBrowser();
       const { error } = await supabase
         .from("daily_checkins")
         .upsert(
-          { user_id: user!.id, date: todayIST(), mood: input.mood, steps: input.steps },
+          { user_id: user!.id, date: todayIST(), ...patch },
           { onConflict: "user_id,date" }
         );
       if (error) throw error;
-      logActivity("checkin", "daily_checkin", { newValue: { ...input } });
+      logActivity("checkin", "daily_checkin", { newValue: { ...patch, journal: undefined } });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["checkin"] });
@@ -155,6 +164,7 @@ export function useLivePulseScore(): { breakdown: PulseBreakdown | null; loading
           supabase
             .from("expenses")
             .select("id,amount,category,date")
+            .eq("transaction_type", "expense")
             .gte("date", `${year}-${mm}-01`)
             .lte("date", `${year}-${mm}-${lastDay}`),
           supabase.from("budgets").select("id,category,amount").eq("month", month).eq("year", year),
@@ -221,6 +231,7 @@ export function useStatsSync(): void {
           supabase
             .from("expenses")
             .select("id,amount,date")
+            .eq("transaction_type", "expense")
             .gte("date", `${year}-${mm}-01`)
             .lte("date", `${year}-${mm}-${lastDay}`),
           supabase.from("budgets").select("id,amount").eq("month", month).eq("year", year),
