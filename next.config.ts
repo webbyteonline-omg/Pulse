@@ -17,8 +17,11 @@ const nextConfig: NextConfig = {
     optimizeCss: true,
     // Tree-shakes these libraries so only the icons/components actually
     // used are bundled instead of the whole package.
-    optimizePackageImports: ["recharts", "framer-motion", "lucide-react"],
+    optimizePackageImports: ["recharts", "framer-motion", "lucide-react", "@supabase/supabase-js"],
   },
+  // Empty object opts this config into Turbopack's dev/build pipeline
+  // (falls back to webpack automatically when Turbopack isn't invoked).
+  turbopack: {},
   images: {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days — app icons rarely change

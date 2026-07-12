@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/reac
 import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
 import { RealtimeProvider } from "@/lib/realtime";
+import { SplashScreen } from "@/components/SplashScreen";
 import { useAuthStore } from "@/store/authStore";
 import { useSettingsStore } from "@/store/settingsStore";
 import { attendanceKeys } from "@/hooks/useAttendance";
@@ -158,6 +159,19 @@ function ThemeSync() {
   return null;
 }
 
+/** Once per browser session, not once per app-open — sessionStorage clears
+ * on tab close, so returning users within the same tab session never see it
+ * again, but a fresh visit always does. */
+function useShowSplash(): [boolean, () => void] {
+  const [show, setShow] = useState(() => {
+    if (typeof window === "undefined") return false;
+    if (sessionStorage.getItem("pulse-splash-shown")) return false;
+    sessionStorage.setItem("pulse-splash-shown", "1");
+    return true;
+  });
+  return [show, () => setShow(false)];
+}
+
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
     () =>
@@ -177,6 +191,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         },
       })
   );
+  const [showSplash, dismissSplash] = useShowSplash();
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -185,6 +200,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <DashboardPrefetcher />
       <ThemeSync />
       <RealtimeProvider>{children}</RealtimeProvider>
+      {/* Overlay, not a replacement — children mount and start resolving
+       * auth/onboarding underneath immediately, so nothing is delayed by
+       * the splash; it just visually covers the app for a beat. */}
+      {showSplash && <SplashScreen onComplete={dismissSplash} />}
     </QueryClientProvider>
   );
 }

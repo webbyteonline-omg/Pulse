@@ -82,17 +82,30 @@ export function AppShellExtras() {
   const router = useRouter();
   const pathname = usePathname();
   const onboardedLocal = useSettingsStore((s) => s.onboarded);
+  const setOnboarded = useSettingsStore((s) => s.setOnboarded);
   const profileQuery = useMyProfile();
 
+  // Optimistic, synchronous-feeling redirect: the locally persisted
+  // `onboarded` flag (zustand + localStorage) is available on first render,
+  // no network round-trip needed. A brand-new user has never set it, so
+  // this fires immediately instead of waiting on useMyProfile() to resolve
+  // — that's what used to let the dashboard flash before bouncing to
+  // /onboarding. If the flag is stale (e.g. cleared storage on a device
+  // where the account IS already onboarded server-side), the second effect
+  // below reconciles it once the profile query lands and cancels the trip.
   useEffect(() => {
     if (pathname.startsWith("/onboarding")) return;
     if (onboardedLocal) return;
-    if (profileQuery.isLoading) return;
-    const profile = profileQuery.data;
-    if (profile && !profile.onboarded) {
-      router.replace("/onboarding");
-    }
-  }, [pathname, onboardedLocal, profileQuery.isLoading, profileQuery.data, router]);
+    router.replace("/onboarding");
+  }, [pathname, onboardedLocal, router]);
+
+  // Reconcile the local flag against the server once we know it — covers
+  // "already onboarded, but local storage doesn't say so yet" without
+  // delaying the optimistic redirect above.
+  useEffect(() => {
+    if (onboardedLocal) return;
+    if (profileQuery.data?.onboarded) setOnboarded(true);
+  }, [onboardedLocal, profileQuery.data, setOnboarded]);
 
   return null;
 }

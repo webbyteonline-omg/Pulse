@@ -60,11 +60,11 @@ export function Header({ title, subtitle, action, mobileAction, showBell, showAv
 
   return (
     <motion.header
-      className={cn(
-        "sticky z-50 -mx-4 md:-mx-8 px-4 md:px-8 mb-4 transition-colors duration-200",
-        scrolled ? "bg-[rgba(13,13,20,0.85)] backdrop-blur-xl" : "bg-bg"
-      )}
-      style={{ top: "env(safe-area-inset-top, 0px)" }}
+      className="sticky z-50 -mx-4 md:-mx-8 px-4 md:px-8 mb-4 bg-bg"
+      style={{
+        top: "env(safe-area-inset-top, 0px)",
+        borderBottom: scrolled ? "1px solid rgba(255,255,255,0.06)" : "1px solid transparent",
+      }}
       animate={{ paddingTop: scrolled ? 10 : 16, paddingBottom: scrolled ? 10 : 16 }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
     >

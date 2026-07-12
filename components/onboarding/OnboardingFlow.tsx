@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
 import { BellRing, Check, Plus } from "lucide-react";
@@ -12,7 +12,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { FriendSearch } from "@/components/friends/FriendSearch";
 import { useCreateSubject, useSubjects } from "@/hooks/useAttendance";
 import { usePushNotifications } from "@/hooks/useNotifications";
-import { useUpdateProfile } from "@/hooks/useProfile";
+import { useMyProfile, useUpdateProfile } from "@/hooks/useProfile";
 import { SUBJECT_COLORS } from "@/lib/utils";
 import { useSettingsStore } from "@/store/settingsStore";
 
@@ -47,9 +47,21 @@ export function OnboardingFlow() {
   const createSubject = useCreateSubject();
   const { data: subjects } = useSubjects();
   const push = usePushNotifications();
+  const profileQuery = useMyProfile();
 
   const [subjectName, setSubjectName] = useState("");
   const [colorIndex, setColorIndex] = useState(0);
+
+  // Safety net for the optimistic redirect in AppShellExtras: if this
+  // device's local "onboarded" flag was stale (cleared storage, new
+  // browser) but the server says the account is already onboarded, bounce
+  // straight back out instead of making the person redo the flow.
+  useEffect(() => {
+    if (profileQuery.data?.onboarded) {
+      setOnboarded(true);
+      router.replace("/dashboard");
+    }
+  }, [profileQuery.data, setOnboarded, router]);
 
   const addSubject = async (name: string) => {
     const trimmed = name.trim();

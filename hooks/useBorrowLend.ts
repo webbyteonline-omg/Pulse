@@ -16,8 +16,11 @@ export function useBorrowLend() {
       const supabase = getSupabaseBrowser();
       const { data, error } = await supabase
         .from("borrow_lend")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .select(
+          "id,user_id,type,person_name,person_user_id,amount,reason,date,due_date,status,settled_at,notified_overdue,created_at"
+        )
+        .order("created_at", { ascending: false })
+        .limit(200);
       if (error) throw error;
       return data;
     },
