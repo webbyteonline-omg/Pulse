@@ -6,23 +6,24 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { AlertBanners } from "@/components/dashboard/AlertBanner";
 import { FriendActivity } from "@/components/dashboard/FriendActivity";
+import { LeaderboardCard } from "@/components/dashboard/LeaderboardCard";
 import { NotificationSheet } from "@/components/dashboard/NotificationSheet";
 import { PulseScoreCard } from "@/components/dashboard/PulseScoreCard";
+import { QuickStats } from "@/components/dashboard/QuickStats";
 import { QuickTiles } from "@/components/dashboard/QuickTiles";
 import { TodayClasses } from "@/components/dashboard/TodayClasses";
 import { UpcomingEvents } from "@/components/dashboard/UpcomingEvents";
 import { AttendanceSummary } from "@/components/dashboard/AttendanceSummary";
-import { SpendingSummary } from "@/components/dashboard/SpendingSummary";
-import { WeatherChip } from "@/components/dashboard/WeatherChip";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { CardSkeleton, RowSkeleton, Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useEvents } from "@/hooks/useAcademic";
+import { useAssignments } from "@/hooks/useAcademicWork";
 import { useSubjects } from "@/hooks/useAttendance";
 import { useBudgets, useExpenses } from "@/hooks/useFinance";
-import { useLivePulseScore, useTodayCheckin } from "@/hooks/useProfile";
+import { useLivePulseScore, useMyProfile, useTodayCheckin } from "@/hooks/useProfile";
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
-import { attendancePercent, daysUntil, nowIST, todayIST } from "@/lib/utils";
+import { attendancePercent, daysUntil, formatINR, nowIST, todayIST } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
@@ -40,6 +41,8 @@ export default function DashboardPage() {
   const budgetsQuery = useBudgets(month, year);
   const checkinQuery = useTodayCheckin();
   const { breakdown } = useLivePulseScore();
+  const profileQuery = useMyProfile();
+  const assignmentsQuery = useAssignments();
 
   const { ref, pull, refreshing } = usePullToRefresh(async () => {
     await queryClient.invalidateQueries();
@@ -72,6 +75,13 @@ export default function DashboardPage() {
     return d >= 0 && d <= 7 && e.event_type !== "holiday";
   }).length;
 
+  const monthSpend = expenses
+    .filter((e) => e.transaction_type !== "income")
+    .reduce((sum, e) => sum + Number(e.amount), 0);
+  const pendingAssignments = (assignmentsQuery.data ?? []).filter(
+    (a) => a.status === "pending"
+  ).length;
+
   const isEmpty =
     !loading && subjects.length === 0 && events.length === 0 && expenses.length === 0;
 
@@ -99,7 +109,6 @@ export default function DashboardPage() {
         showGreeting
         showBell
         onBellClick={() => setNotificationsOpen(true)}
-        action={<WeatherChip />}
       />
 
       {loading ? (
@@ -127,6 +136,17 @@ export default function DashboardPage() {
 
           {breakdown && <PulseScoreCard breakdown={breakdown} />}
 
+          <QuickStats
+            attendancePct={avgAttendance}
+            pendingAssignments={pendingAssignments}
+            spentThisMonth={formatINR(monthSpend)}
+          />
+
+          <LeaderboardCard
+            yourName={profileQuery.data?.display_name ?? profileQuery.data?.username ?? "You"}
+            yourScore={breakdown?.total ?? 0}
+          />
+
           <QuickTiles
             attendancePct={avgAttendance}
             todaySpend={todaySpend}
@@ -138,7 +158,6 @@ export default function DashboardPage() {
           <FriendActivity />
           <UpcomingEvents events={events} />
           <AttendanceSummary subjects={subjects} />
-          <SpendingSummary expenses={expenses} budgets={budgets} />
 
           <LastUpdated at={expensesQuery.dataUpdatedAt} />
         </>

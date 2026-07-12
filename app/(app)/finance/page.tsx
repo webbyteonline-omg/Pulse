@@ -24,7 +24,6 @@ import { CardSkeleton, RowSkeleton, Skeleton } from "@/components/ui/Skeleton";
 import { BudgetBar } from "@/components/finance/BudgetBar";
 import { ExpenseItem } from "@/components/finance/ExpenseItem";
 import { UdharSection } from "@/components/finance/UdharSection";
-import { SpendingSummary } from "@/components/dashboard/SpendingSummary";
 import { summarize, useBorrowLend } from "@/hooks/useBorrowLend";
 import { useBudgets, useDeleteExpense, useExpenses } from "@/hooks/useFinance";
 import { ALL_CATEGORIES, CATEGORY_META, downloadCSV, formatINR, monthLabel, nowIST } from "@/lib/utils";
@@ -39,7 +38,7 @@ type Tab = "overview" | "transactions" | "udhar";
 const TABS: Array<{ id: Tab; label: string }> = [
   { id: "overview", label: "Overview" },
   { id: "transactions", label: "Transactions" },
-  { id: "udhar", label: "Udhar" },
+  { id: "udhar", label: "Borrowed & Lent" },
 ];
 
 type CategoryFilter = "all" | ExpenseCategory;
@@ -237,7 +236,7 @@ export default function FinancePage() {
                     </Card>
                   )}
 
-                  {/* Udhar summary card */}
+                  {/* Borrowed & Lent summary card */}
                   <Link href="/finance/borrow" className="block mb-4">
                     <Card interactive className="p-4 flex items-center gap-3.5">
                       <div className="h-11 w-11 rounded-btn bg-warning-dim grid place-items-center shrink-0">
@@ -256,8 +255,6 @@ export default function FinancePage() {
                   </Link>
                 </>
               )}
-
-              <SpendingSummary expenses={expenses} budgets={budgets} />
 
               <Button
                 variant="secondary"
@@ -331,32 +328,49 @@ export default function FinancePage() {
 
           {tab === "udhar" && <UdharSection />}
 
-          {tab !== "udhar" && (
-            <>
-              {/* Quick Add bar (above bottom nav) */}
-              <div className="fixed bottom-[76px] inset-x-0 z-30 md:static md:mt-4 px-4 pb-2 pointer-events-none">
-                <div className="pointer-events-auto max-w-3xl mx-auto flex items-center gap-2">
-                  <Link
-                    href="/finance/add"
-                    className="flex-1 flex items-center justify-center gap-1.5 h-12 rounded-full bg-primary text-white text-sm font-bold"
-                  >
-                    <ArrowUpRight className="h-4 w-4" /> Add Expense
-                  </Link>
-                  <Link
-                    href="/finance/borrow"
-                    className="shrink-0 flex items-center justify-center gap-1.5 h-12 px-4 rounded-full border border-line bg-card text-ink-dim text-sm font-bold"
-                  >
-                    <HandCoins className="h-4 w-4" /> Udhar
-                  </Link>
-                </div>
-              </div>
-              <div className="h-16 md:hidden" />
-            </>
-          )}
+          {/* Extra bottom breathing room so the fixed quick-add bar below
+              never covers the last card in the scrollable content. */}
+          {tab !== "udhar" && <div className="h-20 md:hidden" />}
         </>
       )}
 
-      {tab === "overview" && <FAB label="Add expense" onClick={() => router.push("/finance/add")} />}
+      {/* Single quick-add bar — this used to be THREE separate controls
+          (a fixed "Add Expense" strip, a "Udhar" shortcut button next to
+          it, AND a floating + FAB) all stacked in the same bottom-right
+          corner, colliding with each other and the bottom nav. Consolidated
+          into one bar, hidden on the Borrowed & Lent tab since that tab has
+          its own dedicated add-entry flow on /finance/borrow. */}
+      {tab !== "udhar" && (
+        <div
+          className="md:hidden fixed inset-x-4 z-40 flex items-center gap-2.5"
+          style={{ bottom: "calc(64px + env(safe-area-inset-bottom, 0px) + 12px)" }}
+        >
+          <Link
+            href="/finance/add"
+            className="flex-[2] flex items-center justify-center gap-1.5 h-[50px] rounded-2xl bg-primary text-white text-[15px] font-semibold"
+          >
+            <ArrowUpRight className="h-4 w-4" /> Add Expense
+          </Link>
+          <Link
+            href="/finance/borrow"
+            className="flex-1 flex items-center justify-center gap-1.5 h-[50px] rounded-2xl text-[14px] font-semibold"
+            style={{
+              background: "#161622",
+              border: "1px solid rgba(108,99,255,0.3)",
+              color: "#9B97FF",
+            }}
+          >
+            <HandCoins className="h-4 w-4" /> Lent/Borrow
+          </Link>
+        </div>
+      )}
+
+      {/* Desktop keeps a static FAB instead of the mobile quick-add bar. */}
+      {tab === "overview" && (
+        <div className="hidden md:block">
+          <FAB label="Add expense" onClick={() => router.push("/finance/add")} />
+        </div>
+      )}
     </div>
   );
 }

@@ -47,6 +47,10 @@ export function AssignmentFormModal({ open, onClose, subjects }: AssignmentFormM
       });
       onClose();
     } catch (err) {
+      // Surface the real Postgres/Supabase error (RLS violation, missing
+      // column, constraint failure, etc.) instead of a generic message —
+      // this is what actually lets you diagnose "couldn't save" reports.
+      console.error("Assignment insert failed:", err);
       setError(err instanceof Error ? err.message : "Couldn't save assignment");
     }
   };
@@ -59,7 +63,6 @@ export function AssignmentFormModal({ open, onClose, subjects }: AssignmentFormM
           placeholder="DBMS Lab Report 3"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          autoFocus
         />
 
         {subjects.length > 0 && (

@@ -70,7 +70,6 @@ export function EventFormModal({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           error={errors.title}
-          autoFocus
         />
 
         <div>

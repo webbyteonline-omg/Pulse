@@ -35,6 +35,11 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   viewportFit: "cover",
+  // interactive-widget=resizes-content: on Android, the on-screen keyboard
+  // shrinks the visual viewport instead of overlaying it, so a fixed
+  // bottom-sheet's content resizes and stays above the keyboard rather than
+  // being covered by it.
+  interactiveWidget: "resizes-content",
 };
 
 // Applies the saved theme before first paint — no flash on load.

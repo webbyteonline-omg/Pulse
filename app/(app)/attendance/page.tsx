@@ -36,8 +36,9 @@ export default function AcademicsPage() {
             onClick={() => setTab(t.id)}
             className="shrink-0 min-h-[32px] px-4 py-1.5 rounded-full text-[13px] font-medium transition-colors"
             style={{
-              backgroundColor: tab === t.id ? "#6C63FF" : "#161622",
-              color: tab === t.id ? "#FFFFFF" : "#8888A8",
+              backgroundColor: tab === t.id ? "#6C63FF" : "rgba(108,99,255,0.12)",
+              color: tab === t.id ? "#FFFFFF" : "#9B97FF",
+              border: tab === t.id ? "1px solid transparent" : "1px solid rgba(108,99,255,0.2)",
             }}
           >
             {t.label}

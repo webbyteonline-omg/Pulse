@@ -70,7 +70,6 @@ export function ExamFormModal({ open, onClose, subjects }: ExamFormModalProps) {
           placeholder="Semester 4 Final — DBMS"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          autoFocus
         />
 
         <div>

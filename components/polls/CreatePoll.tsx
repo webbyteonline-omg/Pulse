@@ -63,7 +63,6 @@ export function CreatePoll({ open, onClose }: { open: boolean; onClose: () => vo
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
           maxLength={200}
-          autoFocus
         />
 
         <div>

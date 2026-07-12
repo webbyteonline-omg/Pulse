@@ -11,9 +11,9 @@ import { summarize, useBorrowLend, useSettle } from "@/hooks/useBorrowLend";
 import { formatDate, formatINR } from "@/lib/utils";
 import type { BorrowLend } from "@/lib/supabase/types";
 
-/** Inline "Udhar" (borrow/lend) tab for the Finance page. Full history,
- * adding entries, and reminders live on the dedicated /finance/borrow page —
- * this is the at-a-glance settle view the spec calls for. */
+/** Inline "Borrowed & Lent" tab for the Finance page. Full history, adding
+ * entries, and reminders live on the dedicated /finance/borrow page — this
+ * is the at-a-glance settle view. */
 export function UdharSection() {
   const entriesQuery = useBorrowLend();
   const settle = useSettle();
@@ -32,7 +32,7 @@ export function UdharSection() {
         illustration="generic"
         title="All settled up! 🎉"
         description="No pending borrow/lend entries with friends right now."
-        actionLabel="Open Udhar tracker"
+        actionLabel="Open Borrow & Lend"
         onAction={() => {
           window.location.href = "/finance/borrow";
         }}
@@ -87,7 +87,7 @@ export function UdharSection() {
       </section>
 
       <Link href="/finance/borrow" className="block text-center text-xs font-semibold text-primary pt-1">
-        Open full Udhar tracker →
+        Open full Borrow & Lend history →
       </Link>
     </div>
   );

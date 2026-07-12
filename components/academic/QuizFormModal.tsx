@@ -59,7 +59,6 @@ export function QuizFormModal({ open, onClose, subjects }: QuizFormModalProps) {
           placeholder="Unit Test 2 — OS"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          autoFocus
         />
 
         {subjects.length > 0 && (

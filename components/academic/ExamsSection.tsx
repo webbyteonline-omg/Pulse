@@ -2,9 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { AnimatePresence } from "framer-motion";
+import { Plus } from "lucide-react";
 import { RowSkeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { FAB } from "@/components/ui/FAB";
 import { CountdownCard } from "@/components/academic/CountdownCard";
 import { ExamCard } from "@/components/academic/ExamCard";
 import { ExamFormModal } from "@/components/academic/ExamFormModal";
@@ -73,21 +73,37 @@ export function ExamsSection() {
           onAction={() => setShowAdd(true)}
         />
       ) : (
-        <div className="space-y-3">
-          <AnimatePresence initial={false}>
-            {sorted.map((e, i) => (
-              <ExamCard
-                key={e.id}
-                exam={e}
-                subject={e.subject_id ? subjectById.get(e.subject_id) : undefined}
-                index={i}
-              />
-            ))}
-          </AnimatePresence>
-        </div>
+        <>
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-base font-semibold text-ink">Your Exams</span>
+            <button
+              onClick={() => setShowAdd(true)}
+              aria-label="Add exam"
+              className="shrink-0 h-9 w-9 grid place-items-center rounded-full"
+              style={{
+                backgroundColor: "rgba(108,99,255,0.12)",
+                border: "1px solid rgba(108,99,255,0.2)",
+                color: "#9B97FF",
+              }}
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="space-y-3">
+            <AnimatePresence initial={false}>
+              {sorted.map((e, i) => (
+                <ExamCard
+                  key={e.id}
+                  exam={e}
+                  subject={e.subject_id ? subjectById.get(e.subject_id) : undefined}
+                  index={i}
+                />
+              ))}
+            </AnimatePresence>
+          </div>
+        </>
       )}
 
-      <FAB label="Add exam" onClick={() => setShowAdd(true)} />
       <ExamFormModal open={showAdd} onClose={() => setShowAdd(false)} subjects={subjects} />
     </>
   );

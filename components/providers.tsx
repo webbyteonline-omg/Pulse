@@ -10,6 +10,7 @@ import { useSettingsStore } from "@/store/settingsStore";
 import { attendanceKeys } from "@/hooks/useAttendance";
 import { academicKeys } from "@/hooks/useAcademic";
 import { financeKeys } from "@/hooks/useFinance";
+import { PROFILE_COLUMNS } from "@/lib/supabase/columns";
 import { nowIST } from "@/lib/utils";
 
 function ServiceWorkerRegistrar() {
@@ -55,10 +56,12 @@ function AuthListener() {
 }
 
 /**
- * Warms the React Query cache for the dashboard's core queries as soon as a
- * user session resolves (fresh login or session restore on app boot), so by
- * the time navigation lands on /dashboard the data is already there —
- * no spinner, no waterfall.
+ * Warms the React Query cache for the app's core queries as soon as a user
+ * session resolves (fresh login or session restore on app boot), so by the
+ * time navigation lands on Dashboard, Friends, or Profile the data is
+ * already there — no spinner, no waterfall. Previously this only warmed
+ * Dashboard's queries, which meant Friends/Profile always paid full fetch
+ * latency on first visit every session — this is the fix for that gap.
  */
 function DashboardPrefetcher() {
   const user = useAuthStore((s) => s.user);
@@ -141,6 +144,67 @@ function DashboardPrefetcher() {
             .order("start_time");
           if (error) throw error;
           return data;
+        },
+      }),
+      // Profile: single small row, keyed identically to useMyProfile.
+      queryClient.prefetchQuery({
+        queryKey: ["profile"],
+        queryFn: async () => {
+          const { data, error } = await supabase
+            .from("user_profiles")
+            .select(PROFILE_COLUMNS)
+            .eq("id", user.id)
+            .maybeSingle();
+          if (error) throw error;
+          return data;
+        },
+      }),
+      // Friends list — keyed identically to useFriends so the Friends tab
+      // reads straight from cache on first visit instead of refetching.
+      queryClient.prefetchQuery({
+        queryKey: ["friends"],
+        queryFn: async () => {
+          const { data: rows, error } = await supabase
+            .from("friendships")
+            .select("friend_id")
+            .eq("user_id", user.id);
+          if (error) throw error;
+          const ids = rows.map((r) => r.friend_id);
+          if (ids.length === 0) return [];
+          const { data: profiles, error: e2 } = await supabase
+            .from("user_profiles")
+            .select(PROFILE_COLUMNS)
+            .in("id", ids);
+          if (e2) throw e2;
+          return profiles;
+        },
+      }),
+      // Friend requests — keyed identically to useFriendRequests, drives
+      // the notification-bell badge too so warming it helps more than just
+      // the Friends tab.
+      queryClient.prefetchQuery({
+        queryKey: ["friend-requests"],
+        queryFn: async () => {
+          const { data: requests, error } = await supabase
+            .from("friend_requests")
+            .select("id,sender_id,receiver_id,status,created_at")
+            .eq("status", "pending")
+            .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`);
+          if (error) throw error;
+          if (requests.length === 0) return [];
+          const otherIds = requests.map((r) =>
+            r.sender_id === user.id ? r.receiver_id : r.sender_id
+          );
+          const { data: profiles } = await supabase
+            .from("user_profiles")
+            .select(PROFILE_COLUMNS)
+            .in("id", otherIds);
+          const byId = new Map((profiles ?? []).map((p) => [p.id, p]));
+          return requests.map((r) => ({
+            ...r,
+            direction: r.receiver_id === user.id ? ("incoming" as const) : ("outgoing" as const),
+            profile: byId.get(r.sender_id === user.id ? r.receiver_id : r.sender_id) ?? null,
+          }));
         },
       }),
     ]);

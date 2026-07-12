@@ -63,7 +63,14 @@ export function useCreateAssignment() {
       const { error } = await supabase
         .from("assignments")
         .insert({ ...input, user_id: user.id, status: "pending" as AssignmentStatus });
-      if (error) throw error;
+      if (error) {
+        // Logged at the source too (not just the form's catch block) so a
+        // failure anywhere this hook is used — not just this one modal —
+        // shows the real Postgres error (RLS denial, missing table/column,
+        // check-constraint violation) in devtools.
+        console.error("assignments insert error:", error);
+        throw error;
+      }
       logActivity("assignment_added", "assignment", { newValue: { title: input.title } });
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: academicWorkKeys.assignments }),
@@ -147,7 +154,10 @@ export function useCreateQuiz() {
       const { error } = await supabase
         .from("quizzes")
         .insert({ ...input, user_id: user.id, status: "upcoming" as QuizStatus });
-      if (error) throw error;
+      if (error) {
+        console.error("quizzes insert error:", error);
+        throw error;
+      }
       logActivity("quiz_added", "quiz", { newValue: { title: input.title } });
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: academicWorkKeys.quizzes }),
@@ -231,7 +241,10 @@ export function useCreateExam() {
       const { error } = await supabase
         .from("exams")
         .insert({ ...input, user_id: user.id, status: "upcoming" as ExamStatus });
-      if (error) throw error;
+      if (error) {
+        console.error("exams insert error:", error);
+        throw error;
+      }
       logActivity("exam_added", "exam", { newValue: { title: input.title } });
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: academicWorkKeys.exams }),
