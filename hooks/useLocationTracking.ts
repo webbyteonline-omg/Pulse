@@ -53,6 +53,10 @@ export function useLocationTracking(): void {
                 user_id: user.id,
                 area: campus ? area : null,
                 encrypted_coords: encrypted,
+                // ~110m-rounded position for the friends map (consented via
+                // the same location-sharing toggle); exact coords stay encrypted
+                approx_lat: Math.round(latitude * 1000) / 1000,
+                approx_lng: Math.round(longitude * 1000) / 1000,
                 updated_at: new Date().toISOString(),
               },
               { onConflict: "user_id" }

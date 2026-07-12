@@ -61,7 +61,7 @@ export function FriendSearch() {
                 const isRequested = requestedIds.has(profile.id);
                 return (
                   <div key={profile.id} className="flex items-center gap-3 p-3">
-                    <Avatar name={profile.display_name ?? profile.username} userId={profile.id} size={36} />
+                    <Avatar name={profile.display_name ?? profile.username} userId={profile.id} size={36} src={profile.avatar_url} />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold truncate">
                         {profile.display_name ?? profile.username}

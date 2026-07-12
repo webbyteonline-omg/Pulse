@@ -44,7 +44,7 @@ export function LeaderboardRow({
         )}
       </div>
       <Link href={entry.isMe ? "/profile" : `/friends/${entry.profile.id}`} className="flex items-center gap-3 flex-1 min-w-0">
-        <Avatar name={name} userId={entry.profile.id} size={36} />
+        <Avatar name={name} userId={entry.profile.id} size={36} src={entry.profile.avatar_url} />
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold truncate">
             {name}

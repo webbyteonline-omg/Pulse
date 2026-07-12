@@ -3,11 +3,29 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useLocationTracking } from "@/hooks/useLocationTracking";
+import { useFriendRequests } from "@/hooks/useFriends";
 import { useStatsSync, useMyProfile } from "@/hooks/useProfile";
 import { useTodayClasses } from "@/hooks/useTimetable";
 import { useSubjects } from "@/hooks/useAttendance";
 import { nowIST, todayIST } from "@/lib/utils";
 import { useSettingsStore } from "@/store/settingsStore";
+
+/** App-icon badge (Badging API): shows pending friend-request count. */
+function useAppBadge() {
+  const { data: requests } = useFriendRequests();
+  useEffect(() => {
+    const nav = navigator as Navigator & {
+      setAppBadge?: (n: number) => Promise<void>;
+      clearAppBadge?: () => Promise<void>;
+    };
+    const count = (requests ?? []).filter((r) => r.direction === "incoming").length;
+    if (count > 0 && nav.setAppBadge) {
+      void nav.setAppBadge(count).catch(() => undefined);
+    } else if (nav.clearAppBadge) {
+      void nav.clearAppBadge().catch(() => undefined);
+    }
+  }, [requests]);
+}
 
 /** While the app is open: nudge "Mark attendance for X?" when a class ends. */
 function useClassEndNudges() {
@@ -59,6 +77,7 @@ export function AppShellExtras() {
   useStatsSync();
   useLocationTracking();
   useClassEndNudges();
+  useAppBadge();
 
   const router = useRouter();
   const pathname = usePathname();

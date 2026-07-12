@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { ChevronRight, ListChecks, Settings, Sparkles, Zap } from "lucide-react";
+import { AvatarPicker } from "@/components/profile/AvatarPicker";
+import { ChevronRight, ListChecks, Settings, Sparkles, Users, Zap } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Card } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -17,6 +19,7 @@ const ScoreGauge = dynamic(
 );
 
 const LINKS = [
+  { href: "/friends", label: "Friends", desc: "Friends, polls & the weekly leaderboard", icon: Users },
   { href: "/profile/wrapped", label: "Wrapped", desc: "Daily, weekly & semester recaps", icon: Sparkles },
   { href: "/profile/pulse-score", label: "Pulse Score", desc: "Breakdown & 30-day history", icon: Zap },
   { href: "/profile/activity", label: "My Activity", desc: "Everything you've done, logged", icon: ListChecks },
@@ -28,6 +31,7 @@ export default function ProfilePage() {
   const displayName = useAuthStore((s) => s.displayName)();
   const profileQuery = useMyProfile();
   const { breakdown } = useLivePulseScore();
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   const profile = profileQuery.data;
 
@@ -36,15 +40,42 @@ export default function ProfilePage() {
       <Header title="Profile" />
 
       <Card gradient className="p-5 mb-5 flex items-center gap-4">
-        <Avatar name={displayName} userId={user?.id} size={56} />
+        <motion.button
+          whileTap={{ scale: 0.9 }}
+          onClick={() => setPickerOpen(true)}
+          aria-label="Change avatar"
+          className="relative"
+        >
+          <Avatar
+            name={displayName}
+            userId={user?.id}
+            size={56}
+            src={profile?.avatar_url}
+          />
+          <span className="absolute -bottom-1 -right-1 grid place-items-center h-5 w-5 rounded-full bg-primary text-white text-[10px] border-2 border-card">
+            ✎
+          </span>
+        </motion.button>
         <div className="flex-1 min-w-0">
           <h2 className="text-lg font-bold truncate">{displayName}</h2>
           <p className="text-sm text-ink-dim truncate">
             {profile ? `@${profile.username}` : user?.email}
           </p>
+          <button
+            onClick={() => setPickerOpen(true)}
+            className="mt-0.5 text-[11px] font-bold text-primary hover:underline"
+          >
+            Change avatar
+          </button>
         </div>
         {breakdown && <ScoreGauge breakdown={breakdown} compact />}
       </Card>
+
+      <AvatarPicker
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        currentUrl={profile?.avatar_url ?? null}
+      />
 
       <div className="space-y-3">
         {LINKS.map((link, i) => (

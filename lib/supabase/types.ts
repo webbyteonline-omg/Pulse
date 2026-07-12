@@ -202,7 +202,28 @@ export type LocationShare = {
   user_id: string;
   area: LocationArea | null;
   encrypted_coords: string | null;
+  approx_lat: number | null;
+  approx_lng: number | null;
   updated_at: string;
+};
+
+export type BorrowLendType = "borrowed" | "lent";
+export type BorrowLendStatus = "pending" | "settled";
+
+export type BorrowLend = {
+  id: string;
+  user_id: string;
+  type: BorrowLendType;
+  person_name: string;
+  person_user_id: string | null;
+  amount: number;
+  reason: string | null;
+  date: string;
+  due_date: string | null;
+  status: BorrowLendStatus;
+  settled_at: string | null;
+  notified_overdue: boolean;
+  created_at: string;
 };
 
 type InsertOf<Row, Optional extends keyof Row> = Omit<Row, Optional> &
@@ -337,8 +358,21 @@ export type Database = {
       };
       location_shares: {
         Row: LocationShare;
-        Insert: InsertOf<LocationShare, "area" | "encrypted_coords" | "updated_at">;
+        Insert: InsertOf<
+          LocationShare,
+          "area" | "encrypted_coords" | "approx_lat" | "approx_lng" | "updated_at"
+        >;
         Update: Partial<LocationShare>;
+        Relationships: [];
+      };
+      borrow_lend: {
+        Row: BorrowLend;
+        Insert: InsertOf<
+          BorrowLend,
+          | "id" | "person_user_id" | "reason" | "date" | "due_date" | "status"
+          | "settled_at" | "notified_overdue" | "created_at"
+        >;
+        Update: Partial<BorrowLend>;
         Relationships: [];
       };
     };

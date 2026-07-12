@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { FAB } from "@/components/ui/FAB";
 import { CardSkeleton, RowSkeleton, Skeleton } from "@/components/ui/Skeleton";
+import { BorrowLendCard } from "@/components/finance/BorrowLendCard";
 import { BudgetBar } from "@/components/finance/BudgetBar";
 import { ExpenseItem } from "@/components/finance/ExpenseItem";
 import { useBudgets, useDeleteExpense, useExpenses } from "@/hooks/useFinance";
@@ -158,6 +159,8 @@ export default function FinancePage() {
               </>
             )}
           </Card>
+
+          <BorrowLendCard />
 
           {/* Donut */}
           {expenses.length > 0 && (

@@ -26,10 +26,10 @@ export function TodayClasses() {
     <section className="mb-6">
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-sm font-bold text-ink-dim uppercase tracking-wider">
-          Today&apos;s classes
+          Upcoming Classes
         </h2>
         <Link href="/timetable" className="text-xs font-semibold text-primary hover:underline">
-          Timetable
+          See All
         </Link>
       </div>
       <Card className="divide-y divide-line/60">
@@ -41,6 +41,11 @@ export function TodayClasses() {
           const endMin = (eh ?? 0) * 60 + (em ?? 0);
           const state =
             nowMinutes >= endMin ? "done" : nowMinutes >= startMin ? "live" : "upcoming";
+          const minsUntil = startMin - nowMinutes;
+          const untilLabel =
+            minsUntil >= 60
+              ? `in ${Math.floor(minsUntil / 60)}h ${minsUntil % 60 > 0 ? `${minsUntil % 60}m` : ""}`.trim()
+              : `in ${minsUntil}m`;
           return (
             <Link
               key={slot.id}
@@ -63,6 +68,11 @@ export function TodayClasses() {
               {state === "live" && (
                 <span className="text-[10px] font-bold text-success bg-success-dim px-2 py-0.5 rounded-full">
                   NOW
+                </span>
+              )}
+              {state === "upcoming" && (
+                <span className="text-[10px] font-bold text-primary bg-primary-dim px-2 py-1 rounded-full shrink-0">
+                  {untilLabel}
                 </span>
               )}
               {state === "done" && subject && (

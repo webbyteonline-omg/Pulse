@@ -5,11 +5,11 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
-  CalendarDays,
-  LayoutDashboard,
+  BookOpen,
+  House,
   LogOut,
-  UserRound,
-  Users,
+  Map,
+  User,
   Wallet,
 } from "lucide-react";
 import { PulseLogo } from "@/components/auth/AuthCard";
@@ -18,25 +18,20 @@ import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
 
 export const NAV_ITEMS = [
-  { href: "/dashboard", label: "Home", icon: LayoutDashboard, match: ["/dashboard"] },
+  { href: "/dashboard", label: "Home", icon: House, match: ["/dashboard"] },
   {
     href: "/academic",
     label: "Academic",
-    icon: CalendarDays,
+    icon: BookOpen,
     match: ["/academic", "/attendance", "/timetable"],
   },
+  { href: "/map", label: "Map", icon: Map, match: ["/map"] },
   { href: "/finance", label: "Finance", icon: Wallet, match: ["/finance"] },
-  {
-    href: "/friends",
-    label: "Friends",
-    icon: Users,
-    match: ["/friends", "/polls", "/leaderboard"],
-  },
   {
     href: "/profile",
     label: "Profile",
-    icon: UserRound,
-    match: ["/profile", "/settings"],
+    icon: User,
+    match: ["/profile", "/settings", "/friends", "/polls", "/leaderboard"],
   },
 ] as const;
 

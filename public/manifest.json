@@ -6,6 +6,7 @@
   "id": "/dashboard",
   "scope": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
   "orientation": "portrait",
   "background_color": "#0F0F13",
   "theme_color": "#6C63FF",
@@ -38,14 +39,36 @@
   ],
   "shortcuts": [
     {
-      "name": "Add expense",
-      "url": "/finance/add",
-      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+      "name": "Today's Attendance",
+      "short_name": "Attendance",
+      "url": "/attendance",
+      "icons": [{ "src": "/icons/attendance.png", "sizes": "96x96" }]
     },
     {
-      "name": "Attendance",
-      "url": "/attendance",
-      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+      "name": "Add Expense",
+      "short_name": "Expense",
+      "url": "/finance/add",
+      "icons": [{ "src": "/icons/finance.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Today's Classes",
+      "short_name": "Classes",
+      "url": "/academic",
+      "icons": [{ "src": "/icons/academic.png", "sizes": "96x96" }]
+    }
+  ],
+  "widgets": [
+    {
+      "name": "Pulse Today",
+      "description": "Today's attendance, spend and classes at a glance",
+      "tag": "pulse-today",
+      "template": "pulse-today-widget",
+      "ms_ac_template": "/widgets/pulse-today.json",
+      "data": "/api/widgets/today",
+      "type": "application/json",
+      "screenshots": [],
+      "icons": [{ "src": "/icons/widget.png", "sizes": "192x192" }],
+      "backgrounds": []
     }
   ]
 }

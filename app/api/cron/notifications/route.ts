@@ -189,6 +189,33 @@ export async function GET(request: Request) {
     await admin.from("academic_events").update({ notified_1day: true }).in("id", ids1);
   }
 
+  // ---- Overdue borrow/lend reminders ---------------------------------------------
+  const { data: overdue } = await admin
+    .from("borrow_lend")
+    .select("*")
+    .eq("status", "pending")
+    .eq("notified_overdue", false)
+    .lt("due_date", today);
+  for (const entry of overdue ?? []) {
+    const lent = entry.type === "lent";
+    await sendPushToUser(admin, entry.user_id, {
+      title: lent
+        ? `💸 ${entry.person_name} still owes you ₹${Number(entry.amount).toFixed(0)}`
+        : `⏰ You owe ${entry.person_name} ₹${Number(entry.amount).toFixed(0)}`,
+      body: lent
+        ? "It's past the due date — send them a reminder from Pulse."
+        : "It's past the due date — settle up when you can.",
+      url: "/finance/borrow",
+      tag: `bl-${entry.id}`,
+    });
+  }
+  if ((overdue ?? []).length > 0) {
+    await admin
+      .from("borrow_lend")
+      .update({ notified_overdue: true })
+      .in("id", (overdue ?? []).map((e) => e.id));
+  }
+
   // ---- Daily pulse score for every user ----------------------------------------
   const scoresWritten = await computeDailyPulseScores();
 

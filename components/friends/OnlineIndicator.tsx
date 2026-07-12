@@ -21,20 +21,35 @@ export function Avatar({
   userId,
   size = 40,
   showOnline = true,
+  src,
 }: {
   name: string;
   userId?: string;
   size?: number;
   showOnline?: boolean;
+  /** Avatar image URL (e.g. DiceBear). Falls back to initial circle. */
+  src?: string | null;
 }) {
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }}>
-      <div
-        className="w-full h-full rounded-full bg-primary/20 text-primary grid place-items-center font-bold"
-        style={{ fontSize: size * 0.4 }}
-      >
-        {(name || "?").charAt(0).toUpperCase()}
-      </div>
+      {src ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={src}
+          alt={name}
+          width={size}
+          height={size}
+          className="w-full h-full rounded-full bg-primary/15 object-cover"
+          loading="lazy"
+        />
+      ) : (
+        <div
+          className="w-full h-full rounded-full bg-primary/20 text-primary grid place-items-center font-bold"
+          style={{ fontSize: size * 0.4 }}
+        >
+          {(name || "?").charAt(0).toUpperCase()}
+        </div>
+      )}
       {showOnline && userId && (
         <span className="absolute -bottom-0.5 -right-0.5">
           <OnlineIndicator userId={userId} />

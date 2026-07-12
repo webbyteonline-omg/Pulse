@@ -54,6 +54,7 @@ function FriendsContent() {
                     name={request.profile?.display_name ?? request.profile?.username ?? "?"}
                     userId={request.sender_id}
                     size={36}
+                    src={request.profile?.avatar_url}
                   />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold truncate">
@@ -116,6 +117,7 @@ function FriendsContent() {
                   name={request.profile?.display_name ?? request.profile?.username ?? "?"}
                   size={32}
                   showOnline={false}
+                  src={request.profile?.avatar_url}
                 />
                 <p className="flex-1 text-sm truncate">
                   @{request.profile?.username ?? "unknown"}

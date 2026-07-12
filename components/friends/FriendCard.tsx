@@ -16,7 +16,7 @@ export function FriendCard({ profile, index = 0 }: { profile: UserProfile; index
     >
       <Link href={`/friends/${profile.id}`}>
         <Card interactive className="p-4 flex items-center gap-3">
-          <Avatar name={profile.display_name ?? profile.username} userId={profile.id} />
+          <Avatar name={profile.display_name ?? profile.username} userId={profile.id} src={profile.avatar_url} />
           <div className="flex-1 min-w-0">
             <p className="font-semibold truncate">{profile.display_name ?? profile.username}</p>
             <p className="text-[11px] text-ink-dim">@{profile.username}</p>

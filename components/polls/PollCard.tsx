@@ -43,6 +43,7 @@ export function PollCard({ poll, index = 0 }: { poll: PollWithMeta; index?: numb
             name={poll.creator?.display_name ?? poll.creator?.username ?? "?"}
             userId={poll.creator_id}
             size={30}
+            src={poll.creator?.avatar_url}
           />
           <div className="flex-1 min-w-0">
             <p className="text-xs text-ink-dim truncate">
