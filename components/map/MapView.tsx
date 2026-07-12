@@ -1,6 +1,8 @@
 "use client";
 
-import "leaflet/dist/leaflet.css";
+// leaflet/dist/leaflet.css is imported once globally in app/globals.css
+// (shared by CampusMap.tsx and FriendsMap.tsx too) — no per-component
+// import needed here.
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
@@ -10,6 +12,7 @@ import { Card } from "@/components/ui/Card";
 import { WeatherChip } from "@/components/dashboard/WeatherChip";
 import { SvgCampusMap } from "./SvgCampusMap";
 import { CityMapMarkers } from "./CityMapMarkers";
+import CampusMap, { CAT_COLORS, CAT_EMOJI, type CampusPlace } from "./CampusMap";
 import { formatTime } from "@/components/timetable/SlotCard";
 import { useTodayClasses } from "@/hooks/useTimetable";
 import { useSubjects } from "@/hooks/useAttendance";
@@ -32,9 +35,17 @@ const FILTERS: Array<{ id: Filter; label: string }> = [
   { id: "hangout", label: "🎯 Hangout" },
 ];
 
+/** CampusMap.tsx's 5 categories are a subset of LocationCategory (no
+ * "hangout"/"misc") — those two fall back to showing everything on the
+ * satellite tab rather than filtering to nothing. */
+function toSatelliteFilter(f: Filter): "all" | CampusPlace["cat"] {
+  if (f === "hangout" || f === "misc") return "all";
+  return f;
+}
+
 export function MapView() {
   const theme = useSettingsStore((s) => s.theme);
-  const [tab, setTab] = useState<"campus" | "city">("campus");
+  const [tab, setTab] = useState<"campus" | "city" | "satellite">("campus");
   const [filter, setFilter] = useState<Filter>("all");
   const [selected, setSelected] = useState<CampusLocation | null>(null);
   const [userPos, setUserPos] = useState<[number, number] | null>(null);
@@ -71,9 +82,9 @@ export function MapView() {
 
   return (
     <div>
-      {/* Campus | City toggle */}
+      {/* Campus | City | Satellite toggle */}
       <div className="flex items-center gap-1 bg-card border border-line rounded-btn p-1 mb-3">
-        {(["campus", "city"] as const).map((t) => (
+        {(["campus", "city", "satellite"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -81,7 +92,7 @@ export function MapView() {
               tab === t ? "bg-primary text-white" : "text-ink-dim"
             }`}
           >
-            {t === "campus" ? "🏫 Campus" : "🗺️ City Map"}
+            {t === "campus" ? "🏫 Campus" : t === "city" ? "🗺️ City Map" : "🛰️ Satellite"}
           </button>
         ))}
       </div>
@@ -111,13 +122,31 @@ export function MapView() {
           selected={selected}
           onSelect={setSelected}
         />
-      ) : (
+      ) : tab === "city" ? (
         <div className="rounded-card overflow-hidden border border-line" style={{ height: "55dvh" }}>
           <MapContainer center={CAMPUS_CENTER} zoom={14} minZoom={11} maxZoom={19} className="h-full w-full" zoomControl={false} attributionControl={false}>
             <TileLayer url={theme === "light" ? LIGHT_TILES : DARK_TILES} />
             <CityMapMarkers filter={filter} onSelect={setSelected} userPos={userPos} />
           </MapContainer>
         </div>
+      ) : (
+        <>
+          <div className="rounded-card overflow-hidden border border-line" style={{ height: "55dvh" }}>
+            <CampusMap filter={toSatelliteFilter(filter)} />
+          </div>
+          {/* Legend — satellite imagery has no built-in labels, so the
+              color/emoji key matters more here than on the other two tabs. */}
+          <div className="flex flex-wrap gap-3 px-4 py-2.5 mt-2 rounded-input bg-card border border-line">
+            {Object.entries(CAT_COLORS).map(([cat, color]) => (
+              <div key={cat} className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full" style={{ background: color }} />
+                <span className="text-[11px] text-ink-dim capitalize">
+                  {CAT_EMOJI[cat as CampusPlace["cat"]]} {cat}
+                </span>
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       {/* Friends on campus */}

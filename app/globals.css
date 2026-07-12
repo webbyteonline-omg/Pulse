@@ -136,3 +136,27 @@ html.light input[type="time"]::-webkit-calendar-picker-indicator {
     padding-top: 16px;
   }
 }
+
+/* ============================================================
+   Leaflet — shared by CampusMap.tsx, FriendsMap.tsx, MapView.tsx.
+   Imported globally (once) rather than per-component so every map
+   on the site gets identical dark-themed popups without each
+   component needing its own CSS import.
+   ============================================================ */
+@import "leaflet/dist/leaflet.css";
+
+.pulse-popup .leaflet-popup-content-wrapper {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+.pulse-popup .leaflet-popup-content {
+  margin: 0 !important;
+}
+.pulse-popup .leaflet-popup-tip {
+  background: #1c1c2e !important;
+}
+.leaflet-container {
+  background: #0a0a12 !important;
+}

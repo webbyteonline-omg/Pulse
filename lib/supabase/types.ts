@@ -264,6 +264,18 @@ export type LocationShare = {
   updated_at: string;
 };
 
+/** Exact-coordinate live location for the Friends-page map — separate from
+ * LocationShare's coarse campus/off-campus + encrypted system above. */
+export type UserLocation = {
+  id: string;
+  user_id: string;
+  latitude: number;
+  longitude: number;
+  is_sharing: boolean;
+  last_updated: string;
+  updated_at: string;
+};
+
 export type BorrowLendType = "borrowed" | "lent";
 export type BorrowLendStatus = "pending" | "settled";
 
@@ -438,6 +450,12 @@ export type Database = {
           "area" | "encrypted_coords" | "approx_lat" | "approx_lng" | "updated_at"
         >;
         Update: Partial<LocationShare>;
+        Relationships: [];
+      };
+      user_locations: {
+        Row: UserLocation;
+        Insert: InsertOf<UserLocation, "id" | "is_sharing" | "last_updated" | "updated_at">;
+        Update: Partial<UserLocation>;
         Relationships: [];
       };
       borrow_lend: {

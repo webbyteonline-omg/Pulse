@@ -38,6 +38,18 @@ const nextConfig: NextConfig = {
       source: "/manifest.json",
       headers: [{ key: "Cache-Control", value: "public, max-age=3600" }],
     },
+    {
+      // Digital Asset Links — required for the TWA (Android app wrapper) to
+      // verify it's allowed to open this domain's links without showing a
+      // browser address bar. Served with an explicit JSON content-type and
+      // open CORS since Android's verifier fetches it directly, not via the
+      // app's own origin.
+      source: "/.well-known/assetlinks.json",
+      headers: [
+        { key: "Content-Type", value: "application/json" },
+        { key: "Access-Control-Allow-Origin", value: "*" },
+      ],
+    },
   ],
 };
 

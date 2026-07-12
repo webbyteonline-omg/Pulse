@@ -4,17 +4,17 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { BookOpen, House, Users, Wallet } from "lucide-react";
+import { BookOpen, House, MapPin, Users, Wallet } from "lucide-react";
 import { isNavActive } from "./Sidebar";
 import { cn } from "@/lib/utils";
 
 /**
- * Bottom nav v4 — exact design spec:
- * 4 tabs only (Home / Academics / Expense / Friends), NO center FAB. Profile
- * is reached via the avatar in the page header instead. Active tab shows
- * icon + label in primary purple with a soft glow; inactive is icon only,
- * muted (#555570). 64px tall + safe-area-inset-bottom padding. Pure flat
- * bar — no border, no shadow. Backdrop-blurs once the page has scrolled.
+ * Bottom nav v5 — 5 tabs (Home / Academics / Map / Expense / Friends), NO
+ * center FAB. Profile is reached via the avatar in the page header instead.
+ * Active tab shows icon + label in primary purple with a soft glow;
+ * inactive is icon only, muted (#555570). 64px tall + safe-area-inset-bottom
+ * padding. Pure flat bar — no border, no shadow. Backdrop-blurs once the
+ * page has scrolled.
  */
 
 const TABS = [
@@ -25,6 +25,7 @@ const TABS = [
     icon: BookOpen,
     match: ["/academic", "/attendance", "/timetable"],
   },
+  { href: "/map", label: "Map", icon: MapPin, match: ["/map"] },
   { href: "/finance", label: "Expense", icon: Wallet, match: ["/finance"] },
   {
     href: "/friends",

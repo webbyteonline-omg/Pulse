@@ -2,15 +2,23 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
 import { UserPlus } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { RowSkeleton } from "@/components/ui/Skeleton";
+import { RowSkeleton, Skeleton } from "@/components/ui/Skeleton";
 import { FriendCard } from "@/components/friends/FriendCard";
 import { FriendsOverview } from "@/components/friends/FriendsOverview";
 import { AddFriendSheet } from "@/components/friends/AddFriendSheet";
 import { RequestsPanel } from "@/components/friends/RequestsPanel";
 import { useFriendRequests, useFriends } from "@/hooks/useFriends";
+import { useLocationSharing } from "@/hooks/useLocationSharing";
+
+// Leaflet touches `window` — client-only.
+const FriendsMap = dynamic(() => import("@/components/friends/FriendsMap"), {
+  ssr: false,
+  loading: () => <Skeleton className="h-[320px] w-full rounded-card" />,
+});
 
 type Tab = "friends" | "requests";
 
@@ -20,6 +28,7 @@ function FriendsContent() {
   const requestsQuery = useFriendRequests();
   const [tab, setTab] = useState<Tab>("friends");
   const [addOpen, setAddOpen] = useState(false);
+  const { isSharing, toggleSharing, permissionDenied } = useLocationSharing();
 
   useEffect(() => {
     if (searchParams.get("tab") === "requests") setTab("requests");
@@ -95,6 +104,50 @@ function FriendsContent() {
               ))}
             </div>
           )}
+
+          {/* Friends on campus — live location sharing */}
+          <div className="mt-6">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <p className="text-base font-bold text-ink">Friends on campus</p>
+                <p className="text-xs text-ink-dim mt-0.5">Real-time locations of friends</p>
+              </div>
+              <button
+                onClick={toggleSharing}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors"
+                style={{
+                  background: isSharing ? "rgba(67,217,140,0.13)" : "rgba(108,99,255,0.13)",
+                  border: `1px solid ${isSharing ? "rgba(67,217,140,0.27)" : "rgba(108,99,255,0.27)"}`,
+                  color: isSharing ? "#43D98C" : "#6C63FF",
+                }}
+              >
+                <span
+                  className="h-1.5 w-1.5 rounded-full"
+                  style={{ background: isSharing ? "#43D98C" : "#6C63FF" }}
+                />
+                {isSharing ? "Sharing" : "Share location"}
+              </button>
+            </div>
+
+            {permissionDenied && (
+              <div
+                className="rounded-input px-3.5 py-2.5 mb-3"
+                style={{ background: "rgba(255,92,92,0.09)", border: "1px solid rgba(255,92,92,0.2)" }}
+              >
+                <p className="text-[13px]" style={{ color: "#FF5C5C" }}>
+                  Location permission denied. Enable it in your browser settings.
+                </p>
+              </div>
+            )}
+
+            <div className="rounded-card overflow-hidden border border-line" style={{ height: 320 }}>
+              <FriendsMap />
+            </div>
+
+            <p className="text-center text-[11px] text-ink-faint mt-2 leading-relaxed">
+              Only your friends can see your location. Turn off sharing anytime.
+            </p>
+          </div>
         </>
       ) : (
         <RequestsPanel />

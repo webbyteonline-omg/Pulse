@@ -10,7 +10,9 @@
   "orientation": "portrait",
   "background_color": "#0D0D14",
   "theme_color": "#0D0D14",
+  "lang": "en",
   "categories": ["education", "productivity", "finance"],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/icons/icon-192.png",
