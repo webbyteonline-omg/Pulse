@@ -41,7 +41,7 @@ export function SlotCard({
         <button
           onClick={() => onDelete(slot.id)}
           aria-label="Remove class"
-          className="absolute -top-1.5 -right-1.5 h-6 w-6 grid place-items-center rounded-full bg-card border border-line text-ink-faint hover:text-danger opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+          className="absolute -top-1.5 -right-1.5 h-6 w-6 grid place-items-center rounded-full clay text-ink-faint hover:text-danger opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
         >
           <Trash2 className="h-3 w-3" />
         </button>

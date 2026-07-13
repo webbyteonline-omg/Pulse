@@ -14,7 +14,7 @@ export interface SubTab {
 export function SubTabs({ tabs, layoutId }: { tabs: SubTab[]; layoutId: string }) {
   const pathname = usePathname();
   return (
-    <div className="flex items-center gap-1 bg-card border border-line rounded-btn p-1 mb-5">
+    <div className="flex items-center gap-1 clay rounded-btn p-1 mb-5">
       {tabs.map((tab) => {
         const active = pathname === tab.href || pathname.startsWith(`${tab.href}/`);
         return (

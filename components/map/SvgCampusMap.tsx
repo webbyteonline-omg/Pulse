@@ -206,16 +206,16 @@ export function SvgCampusMap({
 
       {/* Controls */}
       <div className="absolute right-3 top-3 z-10 flex flex-col gap-2">
-        <button onClick={() => zoomBy(0.25)} aria-label="Zoom in" className="grid place-items-center h-10 w-10 rounded-btn bg-card/90 border border-line text-ink">
+        <button onClick={() => zoomBy(0.25)} aria-label="Zoom in" className="grid place-items-center h-10 w-10 rounded-btn clay text-ink">
           <Plus className="h-4 w-4" />
         </button>
-        <button onClick={() => zoomBy(-0.25)} aria-label="Zoom out" className="grid place-items-center h-10 w-10 rounded-btn bg-card/90 border border-line text-ink">
+        <button onClick={() => zoomBy(-0.25)} aria-label="Zoom out" className="grid place-items-center h-10 w-10 rounded-btn clay text-ink">
           <Minus className="h-4 w-4" />
         </button>
         <button
           onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }); }}
           aria-label="Recenter"
-          className="grid place-items-center h-10 w-10 rounded-btn bg-card/90 border border-line text-[10px] font-black text-ink"
+          className="grid place-items-center h-10 w-10 rounded-btn clay text-[10px] font-black text-ink"
         >
           ⌂
         </button>
@@ -238,7 +238,7 @@ export function SvgCampusMap({
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 16 }}
-            className="absolute bottom-4 left-4 z-10 bg-card border border-line rounded-card px-4 py-3 shadow-xl"
+            className="absolute bottom-4 left-4 z-10 clay rounded-card px-4 py-3 shadow-xl"
           >
             <p className="text-sm font-bold">{selected.icon} {selected.name}</p>
             <p className="text-[10px] font-bold uppercase mt-0.5" style={{ color: CATEGORY_COLORS[selected.category] }}>
@@ -254,7 +254,7 @@ export function SvgCampusMap({
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 bg-card border border-line rounded-full px-4 py-2 text-xs font-bold shadow-xl whitespace-nowrap"
+            className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 clay rounded-full px-4 py-2 text-xs font-bold shadow-xl whitespace-nowrap"
             role="status"
           >
             {gpsMessage}

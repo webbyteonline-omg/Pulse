@@ -72,7 +72,7 @@ export function QuickTiles({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 * i }}
             whileTap={{ scale: 0.95 }}
-            className="bg-card border border-line rounded-card px-2 py-3 flex flex-col items-center text-center h-full"
+            className="clay rounded-card px-2 py-3 flex flex-col items-center text-center h-full"
           >
             <span
               className="grid place-items-center h-8 w-8 rounded-lg mb-1.5"

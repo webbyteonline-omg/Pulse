@@ -19,7 +19,7 @@ export function AttendanceSummary({ subjects }: { subjects: Subject[] }) {
           View all
         </Link>
       </div>
-      <div className="bg-card border border-line rounded-card divide-y divide-line">
+      <div className="clay rounded-card divide-y divide-line">
         {subjects.slice(0, 5).map((subject, i) => {
           const pct = attendancePercent(subject.attended_classes, subject.total_classes);
           const health = attendanceHealth(

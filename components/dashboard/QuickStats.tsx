@@ -11,7 +11,7 @@ interface StatCardProps {
 
 function StatCard({ emoji, label, value, warning }: StatCardProps) {
   return (
-    <div className="rounded-2xl px-4 py-3.5 bg-card border border-line">
+    <div className="clay rounded-2xl px-4 py-3.5">
       <p className="text-[12px] mb-1 text-ink-dim">
         {emoji} {label}
       </p>

@@ -83,13 +83,13 @@ export function MapView() {
   return (
     <div>
       {/* Campus | City | Satellite toggle */}
-      <div className="flex items-center gap-1 bg-card border border-line rounded-btn p-1 mb-3">
+      <div className="flex items-center gap-1 clay rounded-btn p-1 mb-3">
         {(["campus", "city", "satellite"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
             className={`flex-1 h-10 rounded-input text-xs font-bold transition-colors ${
-              tab === t ? "bg-primary text-white" : "text-ink-dim"
+              tab === t ? "clay-purple-btn" : "text-ink-dim"
             }`}
           >
             {t === "campus" ? "🏫 Campus" : t === "city" ? "🗺️ City Map" : "🛰️ Satellite"}
@@ -104,7 +104,7 @@ export function MapView() {
             key={f.id}
             onClick={() => setFilter(f.id)}
             className={`shrink-0 min-h-[44px] px-3.5 rounded-full text-xs font-bold border transition-colors ${
-              filter === f.id ? "bg-primary text-white border-primary" : "bg-card border-line text-ink-dim"
+              filter === f.id ? "clay-purple-btn border-primary" : "bg-card border-line text-ink-dim"
             }`}
           >
             {f.label}
@@ -136,7 +136,7 @@ export function MapView() {
           </div>
           {/* Legend — satellite imagery has no built-in labels, so the
               color/emoji key matters more here than on the other two tabs. */}
-          <div className="flex flex-wrap gap-3 px-4 py-2.5 mt-2 rounded-input bg-card border border-line">
+          <div className="flex flex-wrap gap-3 px-4 py-2.5 mt-2 rounded-input clay">
             {Object.entries(CAT_COLORS).map(([cat, color]) => (
               <div key={cat} className="flex items-center gap-1.5">
                 <span className="h-2 w-2 rounded-full" style={{ background: color }} />

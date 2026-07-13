@@ -50,7 +50,7 @@ export function WeatherChip() {
   if (!data) return null;
 
   return (
-    <div className="flex flex-col items-center gap-0.5 bg-card border border-line rounded-btn px-3 py-1.5 shrink-0">
+    <div className="flex flex-col items-center gap-0.5 clay rounded-btn px-3 py-1.5 shrink-0">
       <WeatherIcon code={data.code} />
       <p className="text-xs font-bold leading-none">
         {data.temp}°C <span className="text-[9px] text-ink-dim font-semibold">{describe(data.code)}</span>

@@ -29,25 +29,25 @@ export function SubjectCard({ subject, index = 0 }: { subject: Subject; index?: 
       transition={{ delay: 0.04 * index, duration: 0.1 }}
       layout
     >
-      <Card className="p-4">
+      <Card className="p-3">
         <button
           className="w-full text-left"
           onClick={() => router.push(`/attendance/${subject.id}`)}
         >
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             <span
-              className="h-3 w-3 rounded-full shrink-0"
+              className="h-2.5 w-2.5 rounded-full shrink-0"
               style={{ backgroundColor: subject.color }}
             />
-            <h3 className="flex-1 min-w-0 font-semibold truncate">{subject.name}</h3>
-            <span className="text-sm text-ink-dim tabular-nums">
+            <h3 className="flex-1 min-w-0 text-[14px] font-semibold truncate">{subject.name}</h3>
+            <span className="text-xs text-ink-dim tabular-nums">
               {subject.attended_classes}/{subject.total_classes}
             </span>
-            <span className="text-base font-bold tabular-nums w-14 text-right" style={{ color }}>
+            <span className="text-sm font-bold tabular-nums w-12 text-right" style={{ color }}>
               {hasClasses ? `${pct}%` : "—"}
             </span>
           </div>
-          <div className="mt-3 h-2 rounded-full bg-line overflow-hidden">
+          <div className="mt-2 h-1.5 rounded-full bg-line overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${hasClasses ? Math.min(100, pct) : 0}%` }}
@@ -58,12 +58,12 @@ export function SubjectCard({ subject, index = 0 }: { subject: Subject; index?: 
           </div>
         </button>
 
-        <div className="mt-3 grid grid-cols-2 gap-2">
+        <div className="mt-2.5 grid grid-cols-2 gap-2">
           <motion.button
             whileTap={{ scale: 0.95 }}
             disabled={mark.isPending}
             onClick={() => mark.mutate({ subject, status: "present" })}
-            className="flex items-center justify-center gap-1.5 h-9 rounded-btn bg-success-dim text-success text-xs font-bold border border-success/25 hover:bg-success/25 transition-colors disabled:opacity-50"
+            className="flex items-center justify-center gap-1.5 h-8 rounded-btn bg-success-dim text-success text-xs font-bold border border-success/25 hover:bg-success/25 transition-colors disabled:opacity-50"
           >
             <Check className="h-3.5 w-3.5" /> Present
           </motion.button>
@@ -71,7 +71,7 @@ export function SubjectCard({ subject, index = 0 }: { subject: Subject; index?: 
             whileTap={{ scale: 0.95 }}
             disabled={mark.isPending}
             onClick={() => mark.mutate({ subject, status: "absent" })}
-            className="flex items-center justify-center gap-1.5 h-9 rounded-btn bg-danger-dim text-danger text-xs font-bold border border-danger/25 hover:bg-danger/25 transition-colors disabled:opacity-50"
+            className="flex items-center justify-center gap-1.5 h-8 rounded-btn bg-danger-dim text-danger text-xs font-bold border border-danger/25 hover:bg-danger/25 transition-colors disabled:opacity-50"
           >
             <X className="h-3.5 w-3.5" /> Absent
           </motion.button>

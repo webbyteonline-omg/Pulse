@@ -139,7 +139,7 @@ export default function GroupDetailPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 bg-card border border-line rounded-btn p-1 mb-4">
+      <div className="flex items-center gap-1 clay rounded-btn p-1 mb-4">
         {(
           [
             { id: "leaderboard" as const, label: "Leaderboard" },
@@ -150,7 +150,7 @@ export default function GroupDetailPage() {
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`flex-1 h-10 rounded-input text-xs font-bold transition-colors ${
-              tab === t.id ? "bg-primary text-white" : "text-ink-dim hover:text-ink"
+              tab === t.id ? "clay-purple-btn" : "text-ink-dim hover:text-ink"
             }`}
           >
             {t.label}
@@ -192,7 +192,7 @@ export default function GroupDetailPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-card border border-line rounded-full px-4 py-2.5 text-xs font-bold shadow-2xl whitespace-nowrap"
+            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 clay rounded-full px-4 py-2.5 text-xs font-bold shadow-2xl whitespace-nowrap"
             role="status"
           >
             {toast}

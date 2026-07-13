@@ -43,7 +43,7 @@ export function ExamCard({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: 40 }}
       transition={{ delay: Math.min(0.3, 0.03 * index) }}
-      className="bg-card border border-line rounded-card p-4"
+      className="clay rounded-card p-4"
       style={{ borderLeftColor: meta.color, borderLeftWidth: 3 }}
     >
       <div className="flex items-start gap-3">

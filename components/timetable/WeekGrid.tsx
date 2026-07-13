@@ -87,14 +87,14 @@ export function WeekGrid({
     <div>
       {/* Mobile: day switcher */}
       <div className="md:hidden">
-        <div className="flex gap-1 mb-3 bg-card border border-line rounded-btn p-1">
+        <div className="flex gap-1 mb-3 clay rounded-btn p-1">
           {DAYS.map((day) => (
             <button
               key={day.dow}
               onClick={() => setMobileDay(day.dow)}
               className={`flex-1 h-10 rounded-input text-[11px] font-bold transition-colors ${
                 mobileDay === day.dow
-                  ? "bg-primary text-white"
+                  ? "clay-purple-btn"
                   : day.dow === todayDow
                     ? "text-primary"
                     : "text-ink-dim"

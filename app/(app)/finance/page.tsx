@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -113,7 +114,7 @@ export default function FinancePage() {
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`shrink-0 min-h-[44px] px-4 rounded-full text-xs font-bold transition-colors ${
-              tab === t.id ? "bg-primary text-white" : "bg-card border border-line text-ink-dim"
+              tab === t.id ? "clay-purple-btn" : "clay-soft text-ink-dim"
             }`}
           >
             {t.label}
@@ -123,11 +124,11 @@ export default function FinancePage() {
 
       {tab !== "udhar" && (
         <div className="flex items-center justify-center gap-3 mb-4">
-          <button onClick={() => navigateMonth(-1)} aria-label="Previous month" className="p-2.5 rounded-btn bg-card border border-line text-ink-dim">
+          <button onClick={() => navigateMonth(-1)} aria-label="Previous month" className="clay p-2.5 rounded-btn text-ink-dim">
             <ChevronLeft className="h-4 w-4" />
           </button>
           <span className="text-sm font-bold w-40 text-center">{monthLabel(month, year)}</span>
-          <button onClick={() => navigateMonth(1)} aria-label="Next month" className="p-2.5 rounded-btn bg-card border border-line text-ink-dim">
+          <button onClick={() => navigateMonth(1)} aria-label="Next month" className="clay p-2.5 rounded-btn text-ink-dim">
             <ChevronRight className="h-4 w-4" />
           </button>
         </div>
@@ -142,8 +143,28 @@ export default function FinancePage() {
         <>
           {tab === "overview" && (
             <>
+              {/* Wallet hero banner */}
+              <div className="clay mb-4 flex items-center gap-3 overflow-hidden rounded-hero p-4">
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-extrabold text-ink">Your DockIn Wallet</p>
+                  <p className="mt-0.5 text-xs leading-relaxed text-ink-dim">
+                    Every ₹ tracked — spends, budgets &amp; udhaar in one place.
+                  </p>
+                </div>
+                <div className="relative h-20 w-24 shrink-0">
+                  <Image
+                    src="/dockin/finance-hero.png"
+                    alt="DockIn wallet"
+                    fill
+                    sizes="96px"
+                    quality={90}
+                    className="object-contain"
+                  />
+                </div>
+              </div>
+
               {/* Total Spent gradient card */}
-              <div className="relative overflow-hidden rounded-hero p-4 mb-4 bg-pulse-gradient text-white">
+              <div className="relative overflow-hidden rounded-hero p-4 mb-4 bg-clay-violet text-white">
                 <div aria-hidden className="absolute -right-8 -top-10 h-36 w-36 rounded-full bg-white/15 blur-2xl" />
                 <button
                   onClick={() => setHideBalance((v) => !v)}
@@ -221,13 +242,13 @@ export default function FinancePage() {
                   <div className="grid grid-cols-2 gap-2.5 mb-4">
                     <Link
                       href="/finance/add"
-                      className="h-11 rounded-xl bg-primary text-white text-sm font-semibold flex items-center justify-center gap-1.5"
+                      className="h-11 rounded-xl clay-purple-btn text-sm font-semibold flex items-center justify-center gap-1.5"
                     >
                       <ArrowUpRight className="h-4 w-4" /> Add Expense
                     </Link>
                     <Link
                       href="/finance/borrow"
-                      className="h-11 rounded-xl bg-card border border-line text-ink text-sm font-semibold flex items-center justify-center gap-1.5"
+                      className="h-11 rounded-xl clay text-ink text-sm font-semibold flex items-center justify-center gap-1.5"
                     >
                       <HandCoins className="h-4 w-4" /> Lent/Borrow
                     </Link>
@@ -278,7 +299,7 @@ export default function FinancePage() {
                 <button
                   onClick={() => setCategoryFilter("all")}
                   className={`shrink-0 min-h-[36px] px-3.5 rounded-full text-xs font-bold border transition-colors ${
-                    categoryFilter === "all" ? "bg-primary text-white border-primary" : "bg-card border-line text-ink-dim"
+                    categoryFilter === "all" ? "clay-purple-btn border-primary" : "bg-card border-line text-ink-dim"
                   }`}
                 >
                   All

@@ -83,7 +83,7 @@ export default function GroupMembersPage() {
         <h1 className="text-lg font-bold flex-1 truncate">Members ({members.length})</h1>
         <button
           onClick={() => setAddOpen(true)}
-          className="flex items-center gap-1 px-3 h-9 rounded-full bg-primary text-white text-xs font-bold shrink-0"
+          className="flex items-center gap-1 px-3 h-9 rounded-full clay-purple-btn text-xs font-bold shrink-0"
         >
           <Plus className="h-3.5 w-3.5" /> Add
         </button>
@@ -186,7 +186,7 @@ export default function GroupMembersPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-card border border-line rounded-full px-4 py-2.5 text-xs font-bold shadow-2xl whitespace-nowrap"
+            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 clay rounded-full px-4 py-2.5 text-xs font-bold shadow-2xl whitespace-nowrap"
             role="status"
           >
             {toast}

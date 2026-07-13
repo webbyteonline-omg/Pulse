@@ -50,8 +50,8 @@ export function AddFriendSheet({ open, onClose }: { open: boolean; onClose: () =
 
   const shareInvite = async () => {
     const shareData = {
-      title: "Join me on Pulse",
-      text: "Track attendance, budgets, and campus life together on Pulse.",
+      title: "Join me on DockIn",
+      text: "Track attendance, budgets, and campus life together on DockIn.",
       url: inviteLink,
     };
     if (navigator.share) {
@@ -97,7 +97,7 @@ export function AddFriendSheet({ open, onClose }: { open: boolean; onClose: () =
         )}
 
         {isSearching && (
-          <div className="bg-input border border-line rounded-card divide-y divide-line/60 overflow-hidden">
+          <div className="clay-inset rounded-card divide-y divide-line/60 overflow-hidden">
             {showSkeleton ? (
               <div className="p-3">
                 <RowSkeleton rows={2} />
@@ -158,7 +158,7 @@ export function AddFriendSheet({ open, onClose }: { open: boolean; onClose: () =
                             });
                           }}
                           aria-label={`Add ${profile.username}`}
-                          className="shrink-0 min-h-[44px] flex items-center gap-1.5 px-3.5 rounded-full bg-primary text-white text-[11px] font-bold hover:bg-primary/90 transition-colors"
+                          className="shrink-0 min-h-[44px] flex items-center gap-1.5 px-3.5 rounded-full clay-purple-btn text-[11px] font-bold hover:bg-primary/90 transition-colors"
                         >
                           <UserPlus className="h-3.5 w-3.5" /> Add
                         </motion.button>
@@ -171,11 +171,11 @@ export function AddFriendSheet({ open, onClose }: { open: boolean; onClose: () =
           </div>
         )}
 
-        {/* Invite a friend to Pulse */}
+        {/* Invite a friend to DockIn */}
         <div className="pt-1 border-t border-line/60">
-          <p className="pt-4 text-sm font-semibold mb-1">Invite a friend to Pulse</p>
+          <p className="pt-4 text-sm font-semibold mb-1">Invite a friend to DockIn</p>
           <p className="text-xs text-ink-dim mb-3">
-            Not on Pulse yet? Send them your invite link.
+            Not on DockIn yet? Send them your invite link.
           </p>
           <button
             onClick={shareInvite}

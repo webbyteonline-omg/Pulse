@@ -127,13 +127,13 @@ function AddExpenseContent() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 bg-card border border-line rounded-btn p-1 mb-5">
+      <div className="flex items-center gap-1 clay-soft rounded-btn p-1 mb-5">
         {TABS.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`flex-1 h-9 rounded-input text-xs font-bold transition-colors ${
-              tab === t.id ? "bg-primary text-white" : "text-ink-dim hover:text-ink"
+              tab === t.id ? "clay-purple-btn" : "text-ink-dim hover:text-ink"
             }`}
           >
             {t.label}

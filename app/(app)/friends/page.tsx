@@ -2,26 +2,18 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import dynamic from "next/dynamic";
-import { UserPlus, Users } from "lucide-react";
+import { MapPin, UserPlus, Users } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { RowSkeleton, Skeleton } from "@/components/ui/Skeleton";
+import { RowSkeleton } from "@/components/ui/Skeleton";
 import { FriendCard } from "@/components/friends/FriendCard";
 import { FriendsOverview } from "@/components/friends/FriendsOverview";
 import { AddFriendSheet } from "@/components/friends/AddFriendSheet";
 import { RequestsPanel } from "@/components/friends/RequestsPanel";
 import { GroupAvatar } from "@/components/groups/GroupAvatar";
 import { useFriendRequests, useFriends } from "@/hooks/useFriends";
-import { useLocationSharing } from "@/hooks/useLocationSharing";
 import { useMyGroups } from "@/hooks/useGroups";
 import Link from "next/link";
-
-// Leaflet touches `window` — client-only.
-const FriendsMap = dynamic(() => import("@/components/friends/FriendsMap"), {
-  ssr: false,
-  loading: () => <Skeleton className="h-[320px] w-full rounded-card" />,
-});
 
 type Tab = "friends" | "requests";
 
@@ -32,7 +24,6 @@ function FriendsContent() {
   const groupsQuery = useMyGroups();
   const [tab, setTab] = useState<Tab>("friends");
   const [addOpen, setAddOpen] = useState(false);
-  const { isSharing, toggleSharing, permissionDenied } = useLocationSharing();
 
   useEffect(() => {
     if (searchParams.get("tab") === "requests") setTab("requests");
@@ -50,7 +41,7 @@ function FriendsContent() {
           <button
             onClick={() => setAddOpen(true)}
             aria-label="Add friend"
-            className="grid place-items-center h-11 w-11 rounded-btn bg-card border border-line text-ink-dim hover:text-ink transition-colors"
+            className="grid place-items-center h-11 w-11 rounded-btn clay text-ink-dim hover:text-ink transition-colors"
           >
             <UserPlus className="h-[18px] w-[18px]" />
           </button>
@@ -59,7 +50,7 @@ function FriendsContent() {
           <button
             onClick={() => setAddOpen(true)}
             aria-label="Add friend"
-            className="hidden md:grid place-items-center h-11 w-11 rounded-btn bg-card border border-line text-ink-dim hover:text-ink transition-colors"
+            className="hidden md:grid place-items-center h-11 w-11 rounded-btn clay text-ink-dim hover:text-ink transition-colors"
           >
             <UserPlus className="h-[18px] w-[18px]" />
           </button>
@@ -68,7 +59,7 @@ function FriendsContent() {
       />
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 bg-card border border-line rounded-btn p-1 mb-6">
+      <div className="flex items-center gap-1 clay rounded-btn p-1 mb-4">
         {(
           [
             { id: "friends" as const, label: "My Friends" },
@@ -79,7 +70,7 @@ function FriendsContent() {
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`relative flex-1 h-10 grid place-items-center rounded-input text-xs font-bold transition-colors ${
-              tab === t.id ? "bg-primary text-white" : "text-ink-dim hover:text-ink"
+              tab === t.id ? "clay-purple-btn" : "text-ink-dim hover:text-ink"
             }`}
           >
             {t.label}
@@ -146,49 +137,17 @@ function FriendsContent() {
             </div>
           )}
 
-          {/* Friends on campus — live location sharing */}
-          <div className="mt-6">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <p className="text-base font-bold text-ink">Friends on campus</p>
-                <p className="text-xs text-ink-dim mt-0.5">Real-time locations of friends</p>
-              </div>
-              <button
-                onClick={toggleSharing}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors"
-                style={{
-                  background: isSharing ? "rgba(67,217,140,0.13)" : "rgba(108,99,255,0.13)",
-                  border: `1px solid ${isSharing ? "rgba(67,217,140,0.27)" : "rgba(108,99,255,0.27)"}`,
-                  color: isSharing ? "#43D98C" : "#6C63FF",
-                }}
-              >
-                <span
-                  className="h-1.5 w-1.5 rounded-full"
-                  style={{ background: isSharing ? "#43D98C" : "#6C63FF" }}
-                />
-                {isSharing ? "Sharing" : "Share location"}
-              </button>
+          {/* Friends on campus — compact link instead of an inline map */}
+          <Link
+            href="/map"
+            className="mt-4 flex items-center gap-2.5 px-3.5 py-3 rounded-card clay hover:bg-card-hover transition-colors"
+          >
+            <div className="h-9 w-9 rounded-btn bg-primary/15 grid place-items-center shrink-0">
+              <MapPin className="h-4 w-4 text-primary" />
             </div>
-
-            {permissionDenied && (
-              <div
-                className="rounded-input px-3.5 py-2.5 mb-3"
-                style={{ background: "rgba(255,92,92,0.09)", border: "1px solid rgba(255,92,92,0.2)" }}
-              >
-                <p className="text-[13px]" style={{ color: "#FF5C5C" }}>
-                  Location permission denied. Enable it in your browser settings.
-                </p>
-              </div>
-            )}
-
-            <div className="rounded-card overflow-hidden border border-line" style={{ height: 320 }}>
-              <FriendsMap />
-            </div>
-
-            <p className="text-center text-[11px] text-ink-faint mt-2 leading-relaxed">
-              Only your friends can see your location. Turn off sharing anytime.
-            </p>
-          </div>
+            <span className="flex-1 text-[13px] font-semibold text-ink">Find your friends on campus</span>
+            <span className="text-xs font-semibold text-primary shrink-0">Open →</span>
+          </Link>
         </>
       ) : (
         <RequestsPanel />

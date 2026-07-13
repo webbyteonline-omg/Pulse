@@ -36,7 +36,7 @@ export async function POST(request: Request) {
 
   await sendPushToUser(admin, parsed.data.receiverId, {
     title: `👥 ${name} sent you a friend request`,
-    body: "Open Pulse to accept or reject.",
+    body: "Open DockIn to accept or reject.",
     url: "/friends?tab=requests",
     tag: `freq-${req.id}`,
   });

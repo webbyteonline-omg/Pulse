@@ -37,8 +37,8 @@ export function GroupLeaderboard({ groupId }: { groupId: string }) {
             onClick={() => setPeriod(p.id)}
             className={`shrink-0 px-4 py-1.5 rounded-full text-[13px] font-medium transition-colors ${
               period === p.id
-                ? "bg-primary text-white"
-                : "bg-card border border-line text-ink-dim"
+                ? "clay-purple-btn"
+                : "clay text-ink-dim"
             }`}
           >
             {p.label}

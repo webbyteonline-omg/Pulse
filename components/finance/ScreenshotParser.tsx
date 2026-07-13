@@ -93,7 +93,7 @@ export function ScreenshotParser({ onParsed }: { onParsed: (parsed: ParsedSMS) =
 
       {stage.kind === "extracted" && (
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-          <div className="rounded-input bg-input border border-line p-3">
+          <div className="clay-inset rounded-input p-3">
             <p className="text-[11px] font-bold uppercase tracking-wider text-ink-faint mb-1">
               Extracted text
             </p>

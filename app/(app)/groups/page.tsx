@@ -29,7 +29,7 @@ export default function GroupsPage() {
           <Link
             href="/groups/create"
             aria-label="Create group"
-            className="grid place-items-center h-9 w-9 rounded-full bg-primary text-white"
+            className="grid place-items-center h-9 w-9 rounded-full clay-purple-btn"
           >
             <Plus className="h-5 w-5" />
           </Link>
@@ -38,7 +38,7 @@ export default function GroupsPage() {
           <Link
             href="/groups/create"
             aria-label="Create group"
-            className="hidden md:grid place-items-center h-9 w-9 rounded-full bg-primary text-white"
+            className="hidden md:grid place-items-center h-9 w-9 rounded-full clay-purple-btn"
           >
             <Plus className="h-5 w-5" />
           </Link>

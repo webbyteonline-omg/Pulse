@@ -13,7 +13,7 @@ const THEMES: Array<{
   line: string;
   ink: string;
 }> = [
-  { id: "dark", label: "Dark", desc: "The Pulse default", bg: "#0F0F13", card: "#1A1A24", line: "#2A2A3A", ink: "#F0F0F5" },
+  { id: "dark", label: "Dark", desc: "The DockIn default", bg: "#0F0F13", card: "#1A1A24", line: "#2A2A3A", ink: "#F0F0F5" },
   { id: "light", label: "Light", desc: "For bright rooms", bg: "#F5F5FA", card: "#FFFFFF", line: "#E0E0EC", ink: "#0F0F13" },
   { id: "amoled", label: "AMOLED", desc: "Pure black, saves battery", bg: "#000000", card: "#0A0A0A", line: "#1A1A1A", ink: "#FFFFFF" },
 ];

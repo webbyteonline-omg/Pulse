@@ -120,7 +120,7 @@ export function SemesterWrapped({ onClose }: { onClose: () => void }) {
         ]
       : []),
     ...(daysUsing !== null
-      ? [{ label: "Days with Pulse", value: `${daysUsing}`, sub: "thanks for being here 💜" }]
+      ? [{ label: "Days with DockIn", value: `${daysUsing}`, sub: "thanks for being here 💜" }]
       : []),
   ];
 

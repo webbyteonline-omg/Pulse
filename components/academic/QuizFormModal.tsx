@@ -69,7 +69,7 @@ export function QuizFormModal({ open, onClose, subjects }: QuizFormModalProps) {
                 type="button"
                 onClick={() => setSubjectId(null)}
                 className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-colors ${
-                  subjectId === null ? "bg-primary text-white border-primary" : "border-line text-ink-dim"
+                  subjectId === null ? "clay-purple-btn border-primary" : "border-line text-ink-dim"
                 }`}
               >
                 None

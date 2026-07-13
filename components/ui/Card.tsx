@@ -18,9 +18,8 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
       ref={ref}
       whileTap={interactive ? { scale: 0.985 } : undefined}
       className={cn(
-        "bg-card border border-line rounded-card",
-        gradient &&
-          "bg-gradient-to-br from-card via-card to-primary/[0.07] border-line",
+        "clay rounded-card",
+        gradient && "bg-gradient-to-br from-card via-card to-primary/[0.07]",
         interactive && "cursor-pointer transition-colors hover:bg-card-hover",
         className
       )}

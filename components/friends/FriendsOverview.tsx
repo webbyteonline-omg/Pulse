@@ -119,7 +119,7 @@ export function FriendsOverview() {
         <h2 className="text-lg font-semibold mb-3">Quick Actions</h2>
         <div className="grid grid-cols-4 gap-2">
           {quickActions.map((a) => (
-            <Link key={a.label} href={a.href} className="flex flex-col items-center gap-1.5 bg-card border border-line rounded-card py-3 px-1">
+            <Link key={a.label} href={a.href} className="flex flex-col items-center gap-1.5 clay rounded-card py-3 px-1">
               <span className="grid place-items-center h-10 w-10 rounded-full" style={{ backgroundColor: `${a.color}22` }}>
                 <a.icon className="h-4.5 w-4.5" style={{ color: a.color, height: 18, width: 18 }} />
               </span>

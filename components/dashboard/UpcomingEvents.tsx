@@ -36,7 +36,7 @@ export function UpcomingEvents({ events }: { events: AcademicEvent[] }) {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.04 * i }}
                 whileTap={{ scale: 0.96 }}
-                className="w-40 rounded-card border p-3.5 bg-card"
+                className="clay w-40 rounded-card p-3.5"
                 style={{ borderColor: `${meta.color}44` }}
               >
                 <div className="flex items-center gap-1.5">

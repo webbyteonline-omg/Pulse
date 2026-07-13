@@ -29,7 +29,7 @@ export function GroupCard({ group, memberCount, yourRank, previewMembers }: Grou
   return (
     <Link
       href={`/groups/${group.id}`}
-      className="flex items-center gap-3 p-3.5 rounded-card bg-card border border-line hover:bg-card-hover transition-colors"
+      className="flex items-center gap-3 p-3.5 rounded-card clay hover:bg-card-hover transition-colors"
     >
       <GroupAvatar group={group} size={56} />
 

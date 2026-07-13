@@ -96,7 +96,7 @@ function TargetRow({
   reached: boolean;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-btn border border-line bg-bg px-3.5 py-2.5">
+    <div className="flex items-center gap-3 clay-inset rounded-btn px-3.5 py-2.5">
       <Target className="h-4 w-4 text-primary shrink-0" />
       <span className="flex-1 text-sm text-ink-dim">{label}</span>
       <span className="text-sm font-bold">

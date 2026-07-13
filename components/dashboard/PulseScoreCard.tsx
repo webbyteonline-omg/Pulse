@@ -66,7 +66,7 @@ export function PulseScoreCard({ breakdown }: { breakdown: PulseBreakdown }) {
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         whileTap={{ scale: 0.985 }}
-        className="relative overflow-hidden rounded-card border border-primary/25 p-5"
+        className="clay relative overflow-hidden rounded-card p-5"
         style={{
           background:
             "linear-gradient(135deg, rgb(var(--card)) 30%, #6C63FF22 75%, #9B4DFF2E 100%)",
@@ -144,7 +144,7 @@ export function PulseScoreCard({ breakdown }: { breakdown: PulseBreakdown }) {
               </svg>
             ) : (
               <p className="text-xs text-ink-dim">
-                Your score trend appears here after a few days of using Pulse.
+                Your score trend appears here after a few days of using DockIn.
               </p>
             )}
             <p className="text-[10px] text-ink-faint mt-1">Tap for full breakdown →</p>

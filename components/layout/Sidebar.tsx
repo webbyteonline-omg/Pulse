@@ -68,7 +68,7 @@ export function Sidebar() {
     <aside className="hidden md:flex flex-col w-60 shrink-0 border-r border-line bg-card/50 min-h-dvh sticky top-0">
       <div className="flex items-center gap-3 px-5 py-6">
         <PulseLogo size={30} />
-        <span className="text-lg font-bold tracking-tight">Pulse</span>
+        <span className="text-lg font-bold tracking-tight">DockIn</span>
       </div>
 
       <nav className="flex-1 px-3 space-y-1" aria-label="Main">

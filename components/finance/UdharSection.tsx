@@ -109,7 +109,7 @@ function UdharRow({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: 40 }}
-      className="flex items-center gap-3 bg-card border border-line rounded-card p-3.5"
+      className="flex items-center gap-3 clay rounded-card p-3.5"
     >
       <Avatar name={entry.person_name} userId={entry.person_user_id ?? undefined} size={40} showOnline={false} />
       <div className="flex-1 min-w-0">

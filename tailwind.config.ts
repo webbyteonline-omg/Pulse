@@ -27,18 +27,43 @@ const config: Config = {
         warning: { DEFAULT: "#FFB347", dim: "#FFB34726" },
         danger: { DEFAULT: "#FF5C5C", dim: "#FF5C5C26" },
         ink: { DEFAULT: v("ink"), dim: v("ink-dim"), faint: v("ink-faint") },
+        // DockIn "clay" palette — claymorphism accent colors (theme-invariant
+        // brand hues). Each has a -dim (26% alpha) variant for tinted fills.
+        clay: {
+          purple: "#7C5CFC",
+          "purple-dim": "#7C5CFC26",
+          pink: "#FB6F92",
+          "pink-dim": "#FB6F9226",
+          orange: "#F59E42",
+          "orange-dim": "#F59E4226",
+          green: "#2FBF87",
+          "green-dim": "#2FBF8726",
+          yellow: "#EFC94C",
+          "yellow-dim": "#EFC94C26",
+          blue: "#4F86F7",
+          "blue-dim": "#4F86F726",
+          red: "#EF4E4E",
+          "red-dim": "#EF4E4E26",
+          teal: "#4BC4C9",
+          "teal-dim": "#4BC4C926",
+        },
       },
       borderRadius: {
         card: "20px",
         hero: "24px",
         btn: "14px",
         input: "10px",
+        clay: "28px",
+        "clay-lg": "36px",
       },
       backgroundImage: {
         "pulse-gradient": "linear-gradient(135deg, #6C63FF, #4FACFE)",
+        // DockIn signature violet gradient (buttons, logo, accents)
+        "clay-violet": "linear-gradient(145deg, #8B6BFF, #6C4FE8)",
+        "clay-violet-h": "linear-gradient(90deg, #8B6BFF, #6C4FE8)",
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        sans: ["var(--font-poppins)", "var(--font-inter)", "system-ui", "sans-serif"],
       },
       keyframes: {
         shimmer: {

@@ -21,7 +21,7 @@ export function CountdownCard({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.15, ease: [0.22, 1, 0.36, 1] }}
-      className="relative overflow-hidden rounded-card border p-5"
+      className="clay relative overflow-hidden rounded-card p-5"
       style={{
         borderColor: `${color}40`,
         background: `linear-gradient(135deg, #1A1A24 55%, ${color}14 100%)`,

@@ -348,6 +348,30 @@ export type ExamInsert = InsertOf<
   "id" | "subject_id" | "exam_type" | "syllabus" | "status" | "score" | "max_score" | "created_at"
 >;
 
+// --- Snaps: ephemeral view-once photos between friends ---
+export type Snap = {
+  id: string;
+  sender_id: string;
+  recipient_id: string;
+  image_url: string;
+  caption: string | null;
+  created_at: string;
+  expires_at: string;
+  viewed_at: string | null;
+};
+export type SnapInsert = InsertOf<Snap, "id" | "caption" | "created_at" | "expires_at" | "viewed_at">;
+
+// --- Direct messages (1:1 chat) ---
+export type DirectMessage = {
+  id: string;
+  sender_id: string;
+  recipient_id: string;
+  body: string;
+  created_at: string;
+  read_at: string | null;
+};
+export type DirectMessageInsert = InsertOf<DirectMessage, "id" | "created_at" | "read_at">;
+
 export type Database = {
   public: {
     Tables: {
@@ -522,6 +546,18 @@ export type Database = {
         Row: Exam;
         Insert: ExamInsert;
         Update: Partial<Exam>;
+        Relationships: [];
+      };
+      snaps: {
+        Row: Snap;
+        Insert: SnapInsert;
+        Update: Partial<Snap>;
+        Relationships: [];
+      };
+      direct_messages: {
+        Row: DirectMessage;
+        Insert: DirectMessageInsert;
+        Update: Partial<DirectMessage>;
         Relationships: [];
       };
     };

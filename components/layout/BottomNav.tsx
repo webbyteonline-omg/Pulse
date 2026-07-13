@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { BookOpen, House, MapPin, Users, Wallet } from "lucide-react";
 import { isNavActive } from "./Sidebar";
@@ -39,7 +39,7 @@ const TABS = [
   },
 ] as const;
 
-const MORE_MATCH = ["/groups", "/health", "/profile", "/settings", "/privacy"];
+const MORE_MATCH = ["/groups", "/health", "/profile", "/settings", "/privacy", "/snaps", "/chats"];
 
 function NavTab({
   href,
@@ -78,21 +78,21 @@ function NavTab({
         {active && (
           <motion.span
             layoutId="nav-glow"
-            className="absolute -inset-2.5 rounded-full bg-primary/15 blur-[2px]"
+            className="absolute -inset-2.5 rounded-full bg-clay-purple/20 blur-[2px]"
             transition={{ type: "spring", stiffness: 500, damping: 34 }}
           />
         )}
         <Icon
           className={cn(
             "relative h-[23px] w-[23px] transition-colors duration-150",
-            active ? "text-primary" : "text-[#555570]"
+            active ? "text-clay-purple" : "text-ink-dim"
           )}
           strokeWidth={active ? 2.4 : 2}
         />
         {active && (
           <motion.span
             layoutId="nav-label"
-            className="relative text-[10px] font-bold text-primary leading-none"
+            className="relative text-[10px] font-bold text-clay-purple leading-none"
           >
             {label}
           </motion.span>
@@ -120,7 +120,7 @@ function MoreTab({ active, onClick }: { active: boolean; onClick: () => void }) 
         {active && (
           <motion.span
             layoutId="nav-glow"
-            className="absolute -inset-2.5 rounded-full bg-primary/15 blur-[2px]"
+            className="absolute -inset-2.5 rounded-full bg-clay-purple/20 blur-[2px]"
             transition={{ type: "spring", stiffness: 500, damping: 34 }}
           />
         )}
@@ -128,13 +128,13 @@ function MoreTab({ active, onClick }: { active: boolean; onClick: () => void }) 
           size={23}
           className={cn(
             "relative transition-colors duration-150",
-            active ? "text-primary" : "text-[#555570]"
+            active ? "text-clay-purple" : "text-ink-dim"
           )}
         />
         {active && (
           <motion.span
             layoutId="nav-label"
-            className="relative text-[10px] font-bold text-primary leading-none"
+            className="relative text-[10px] font-bold text-clay-purple leading-none"
           >
             More
           </motion.span>
@@ -156,16 +156,30 @@ export function BottomNav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Stable references — BottomNav re-renders on every scroll tick (via
+  // `scrolled`), and scrolling INSIDE the open menu sheet bubbles to that
+  // same window scroll listener. An inline `() => setMoreOpen(...)` here
+  // would get a new identity on each of those re-renders, which fed into
+  // Modal's `useEffect([open, onClose])` and caused it to re-fire mid-open
+  // — repeatedly pushing a history entry and then immediately calling
+  // `history.back()` in the cleanup, which is what made every tap inside
+  // the sheet unresponsive (the page was churning through history entries
+  // under it). useCallback keeps these identities stable across re-renders.
+  const openMore = useCallback(() => setMoreOpen(true), []);
+  const closeMore = useCallback(() => setMoreOpen(false), []);
+
   return (
     <>
       <nav
         aria-label="Main"
-        className={cn(
-          "md:hidden fixed bottom-0 inset-x-0 z-40 pb-safe transition-[backdrop-filter,background-color] duration-200",
-          scrolled ? "bg-bg/80 backdrop-blur-lg" : "bg-bg"
-        )}
+        className="md:hidden fixed bottom-0 inset-x-0 z-40 pointer-events-none px-4 pt-2 pb-[calc(env(safe-area-inset-bottom,0px)+10px)]"
       >
-        <div className="flex items-stretch h-16">
+        <div
+          className={cn(
+            "clay pointer-events-auto mx-auto flex h-16 max-w-md items-stretch rounded-clay px-1.5",
+            scrolled && "backdrop-blur-lg"
+          )}
+        >
           {TABS.map((item) => (
             <NavTab
               key={item.href}
@@ -175,11 +189,11 @@ export function BottomNav() {
               active={isNavActive(pathname, item.match)}
             />
           ))}
-          <MoreTab active={isNavActive(pathname, MORE_MATCH)} onClick={() => setMoreOpen(true)} />
+          <MoreTab active={isNavActive(pathname, MORE_MATCH)} onClick={openMore} />
         </div>
       </nav>
 
-      <MoreMenuSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
+      <MoreMenuSheet open={moreOpen} onClose={closeMore} />
     </>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { PulseLogo } from "@/components/auth/AuthCard";
+import { DockInLogo } from "@/components/auth/AuthCard";
 
 /**
  * Custom animated splash shown once per browser session, replacing the
@@ -38,10 +38,10 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
             style={{
               width: 72,
               height: 72,
-              background: "linear-gradient(135deg, #6C63FF, #4FACFE)",
+              background: "linear-gradient(145deg, #8B6BFF, #6C4FE8)",
             }}
           >
-            <PulseLogo size={40} />
+            <DockInLogo size={40} />
           </motion.div>
 
           <motion.p
@@ -51,7 +51,7 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
             className="font-bold tracking-tight"
             style={{ fontSize: 28, color: "#FFFFFF", letterSpacing: -0.5 }}
           >
-            Pulse
+            DockIn
           </motion.p>
 
           <motion.p

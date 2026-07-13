@@ -18,7 +18,7 @@ export function Skeleton({ className }: { className?: string }) {
 /** Skeleton matching a stat-card shape. */
 export function CardSkeleton({ className }: { className?: string }) {
   return (
-    <div className={cn("bg-card border border-line rounded-card p-4 space-y-3", className)}>
+    <div className={cn("clay rounded-card p-4 space-y-3", className)}>
       <Skeleton className="h-3 w-20" />
       <Skeleton className="h-7 w-28" />
       <Skeleton className="h-3 w-16" />
@@ -31,7 +31,7 @@ export function RowSkeleton({ rows = 3 }: { rows?: number }) {
   return (
     <div className="space-y-3">
       {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="bg-card border border-line rounded-card p-4 flex items-center gap-3">
+        <div key={i} className="clay rounded-card p-4 flex items-center gap-3">
           <Skeleton className="h-10 w-10 rounded-full shrink-0" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-3.5 w-2/5" />

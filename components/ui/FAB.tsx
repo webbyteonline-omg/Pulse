@@ -22,7 +22,7 @@ export function FAB({ onClick, label, icon }: FABProps) {
       transition={{ type: "spring", stiffness: 400, damping: 22 }}
       onClick={onClick}
       aria-label={label}
-      className="md:hidden fixed bottom-24 right-4 z-40 h-14 w-14 rounded-full bg-primary text-white grid place-items-center shadow-[0_8px_28px_-6px_#6C63FFAA]"
+      className="md:hidden fixed bottom-24 right-4 z-40 h-14 w-14 rounded-full clay-purple-btn grid place-items-center shadow-[0_8px_28px_-6px_#6C63FFAA]"
     >
       {icon ?? <Plus className="h-6 w-6" />}
     </motion.button>

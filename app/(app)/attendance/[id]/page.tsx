@@ -102,7 +102,7 @@ export default function SubjectDetailPage({ params }: { params: Promise<{ id: st
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + i * 0.06 }}
-              className="rounded-btn bg-bg/60 border border-line py-3"
+              className="clay-inset rounded-btn py-3"
             >
               <p className="text-xl font-bold tabular-nums">{stat.value}</p>
               <p className="text-[11px] text-ink-dim">{stat.label}</p>

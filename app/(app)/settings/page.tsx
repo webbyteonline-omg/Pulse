@@ -194,7 +194,7 @@ export default function SettingsPage() {
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold">Live location tracking</p>
             <p className="text-xs text-ink-dim">
-              Updates every 30s while Pulse is open. Coordinates are encrypted on your device.
+              Updates every 30s while DockIn is open. Coordinates are encrypted on your device.
             </p>
           </div>
           <Toggle
@@ -253,7 +253,7 @@ export default function SettingsPage() {
               const file = e.target.files?.[0];
               if (!file) return;
               const ok = await importKeyFile(file);
-              setKeyMessage(ok ? "Key imported — encrypted data from your other device is readable now." : "That file isn't a valid Pulse key.");
+              setKeyMessage(ok ? "Key imported — encrypted data from your other device is readable now." : "That file isn't a valid DockIn key.");
               e.target.value = "";
             }}
           />
@@ -310,7 +310,7 @@ export default function SettingsPage() {
             value={settings.reminderTime}
             onChange={(e) => settings.setReminderTime(e.target.value)}
             aria-label="Daily reminder time"
-            className="h-11 px-3 rounded-input bg-input border border-line text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="h-11 px-3 rounded-input clay-inset text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
           />
         </div>
       </Card>
@@ -335,7 +335,7 @@ export default function SettingsPage() {
                 )
               }
               aria-label="Default required attendance percentage"
-              className="w-20 h-11 px-3 pr-7 rounded-input bg-input border border-line text-sm text-right tabular-nums focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="w-20 h-11 px-3 pr-7 rounded-input clay-inset text-sm text-right tabular-nums focus:outline-none focus:ring-2 focus:ring-primary/50"
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-dim">%</span>
           </div>

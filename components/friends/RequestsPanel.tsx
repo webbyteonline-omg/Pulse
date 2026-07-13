@@ -137,7 +137,7 @@ function SentRow({ request }: { request: RequestWithProfile }) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: 40 }}
-      className="flex items-center gap-3 bg-card border border-line rounded-card p-3.5"
+      className="flex items-center gap-3 clay rounded-card p-3.5"
     >
       <Avatar
         name={request.profile?.display_name ?? request.profile?.username ?? "?"}

@@ -62,13 +62,13 @@ function PollsContent() {
       />
       <SubTabs tabs={SOCIAL_TABS} layoutId="social-tabs" />
 
-      <div className="flex items-center gap-1 bg-card border border-line rounded-btn p-1 mb-4">
+      <div className="flex items-center gap-1 clay rounded-btn p-1 mb-4">
         {TABS.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`flex-1 h-10 rounded-input text-xs font-bold transition-colors ${
-              tab === t.id ? "bg-primary text-white" : "text-ink-dim hover:text-ink"
+              tab === t.id ? "clay-purple-btn" : "text-ink-dim hover:text-ink"
             }`}
           >
             {t.label}

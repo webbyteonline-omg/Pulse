@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ChevronRight, Lock, MapPin, Settings, Sparkles, UserCircle, Users } from "lucide-react";
+import { Camera, ChevronRight, Lock, MapPin, MessageCircle, Settings, Sparkles, UserCircle, Users } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { useToast } from "@/hooks/useToast";
 
@@ -17,6 +17,8 @@ interface MenuItem {
 }
 
 const MAIN_ITEMS: MenuItem[] = [
+  { icon: Camera, label: "Snaps", onTap: (nav) => nav("/snaps") },
+  { icon: MessageCircle, label: "Chats", onTap: (nav) => nav("/chats") },
   { icon: Users, label: "Groups", onTap: (nav) => nav("/groups") },
   { icon: MapPin, label: "Campus Map", onTap: (nav) => nav("/map") },
   { icon: Sparkles, label: "Health", onTap: (nav) => nav("/health") },
@@ -28,7 +30,7 @@ const MORE_ITEMS: MenuItem[] = [
   { icon: Lock, label: "Privacy Policy", onTap: (nav) => nav("/privacy") },
   {
     icon: Sparkles,
-    label: "About Pulse",
+    label: "About DockIn",
     onTap: (_nav, toast) => toast("Built by Sachin, BU 2025–29"),
   },
 ];
@@ -84,7 +86,7 @@ export function MoreMenuSheet({ open, onClose }: MoreMenuSheetProps) {
 
       {toast && (
         <div
-          className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[60] bg-card border border-line rounded-full px-4 py-2.5 text-xs font-bold shadow-2xl whitespace-nowrap"
+          className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[60] clay rounded-full px-4 py-2.5 text-xs font-bold shadow-2xl whitespace-nowrap"
           role="status"
         >
           {toast}

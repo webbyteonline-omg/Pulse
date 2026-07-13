@@ -91,7 +91,7 @@ export function CheckinCard() {
             aria-label="Steps today"
             value={steps}
             onChange={(e) => setSteps(e.target.value)}
-            className="w-full h-11 pl-9 pr-3 rounded-input bg-input border border-line text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="w-full h-11 pl-9 pr-3 rounded-input clay-inset text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
           />
         </div>
         <Button

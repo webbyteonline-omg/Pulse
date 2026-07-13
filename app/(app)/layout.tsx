@@ -13,7 +13,7 @@ import { OfflineBanner } from "@/components/ui/OfflineBanner";
 // on every single navigation — removed for latency, not just cleanliness.
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-dvh">
+    <div className="clay-page flex min-h-dvh">
       <RoutePrefetcher />
       <OfflineBanner />
       <Sidebar />

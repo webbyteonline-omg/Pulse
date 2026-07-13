@@ -20,19 +20,20 @@ export function OverallCard({ subjects }: { subjects: Subject[] }) {
   const color = pct >= required + 5 ? "#43D98C" : pct >= required ? "#FFB347" : "#FF5C5C";
   const status = pct >= required + 5 ? "Good" : pct >= required ? "On edge" : "At risk";
 
-  const r = 52;
+  const r = 40;
   const c = 2 * Math.PI * r;
+  const size = 96;
 
   return (
-    <Card className="p-5 mb-5">
-      <h2 className="text-lg font-semibold mb-4">Overall Attendance</h2>
-      <div className="flex items-center gap-5">
+    <Card className="p-4 mb-4">
+      <h2 className="text-[15px] font-semibold mb-3">Overall Attendance</h2>
+      <div className="flex items-center gap-4">
         {/* Donut */}
-        <div className="relative grid place-items-center shrink-0" style={{ width: 128, height: 128 }}>
-          <svg width={128} height={128} className="-rotate-90">
-            <circle cx={64} cy={64} r={r} fill="none" stroke="rgb(var(--line))" strokeWidth={12} />
+        <div className="relative grid place-items-center shrink-0" style={{ width: size, height: size }}>
+          <svg width={size} height={size} className="-rotate-90">
+            <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgb(var(--line))" strokeWidth={10} />
             <motion.circle
-              cx={64} cy={64} r={r} fill="none" stroke={color} strokeWidth={12} strokeLinecap="round"
+              cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={10} strokeLinecap="round"
               strokeDasharray={c}
               initial={{ strokeDashoffset: c }}
               animate={{ strokeDashoffset: c * (1 - Math.min(100, pct) / 100) }}
@@ -40,24 +41,24 @@ export function OverallCard({ subjects }: { subjects: Subject[] }) {
             />
           </svg>
           <div className="absolute text-center">
-            <p className="text-3xl font-black tabular-nums">{Math.round(pct)}%</p>
-            <p className="text-[10px] font-bold" style={{ color }}>● {status}</p>
+            <p className="text-xl font-black tabular-nums">{Math.round(pct)}%</p>
+            <p className="text-[9px] font-bold" style={{ color }}>● {status}</p>
           </div>
         </div>
 
         {/* Stat rows */}
-        <div className="flex-1 space-y-2.5">
+        <div className="flex-1 space-y-1.5">
           {[
             { label: "Classes Attended", value: attended, icon: CheckCircle2, color: "#43D98C" },
             { label: "Classes Missed", value: total - attended, icon: XCircle, color: "#FF5C5C" },
             { label: "Total Classes", value: total, icon: Grid3X3, color: "#6C63FF" },
           ].map((s) => (
-            <div key={s.label} className="flex items-center gap-2.5 bg-input border border-line rounded-input px-3 py-2">
+            <div key={s.label} className="flex items-center gap-2 clay-inset rounded-input px-2.5 py-1.5">
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] text-ink-dim font-semibold">{s.label}</p>
-                <p className="text-base font-black tabular-nums leading-tight">{s.value}</p>
+                <p className="text-[9px] text-ink-dim font-semibold">{s.label}</p>
+                <p className="text-sm font-black tabular-nums leading-tight">{s.value}</p>
               </div>
-              <s.icon className="h-4.5 w-4.5 shrink-0" style={{ color: s.color, height: 18, width: 18 }} />
+              <s.icon className="h-3.5 w-3.5 shrink-0" style={{ color: s.color }} />
             </div>
           ))}
         </div>
@@ -65,7 +66,7 @@ export function OverallCard({ subjects }: { subjects: Subject[] }) {
 
       {/* Banner */}
       <div
-        className={`mt-4 flex items-center gap-2 rounded-btn px-3.5 py-2.5 text-xs font-bold ${
+        className={`mt-3 flex items-center gap-2 rounded-btn px-3 py-2 text-[11px] font-bold ${
           pct >= required ? "bg-success-dim text-success" : "bg-danger-dim text-danger"
         }`}
       >

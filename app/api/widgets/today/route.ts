@@ -5,7 +5,7 @@ import { attendancePercent, formatINR, nowIST, todayIST } from "@/lib/utils";
 export const dynamic = "force-dynamic";
 
 /**
- * Data feed for the "Pulse Today" PWA widget (adaptive card template at
+ * Data feed for the "DockIn Today" PWA widget (adaptive card template at
  * /widgets/pulse-today.json). Uses the session cookie; returns placeholders
  * when signed out so the widget never breaks.
  */
@@ -13,7 +13,7 @@ export async function GET() {
   const fallback = {
     attendance: "—",
     todaySpend: "₹0",
-    nextClass: "Open Pulse to set up",
+    nextClass: "Open DockIn to set up",
     pulseScore: 0,
     warningSubject: "",
   };

@@ -47,6 +47,72 @@ html.amoled {
   --chart-bar: 34 34 34;
 }
 
+/* ============================================================
+   DockIn "clay" claymorphism — theme-aware soft 3D shadows.
+   Light theme is the reference look (dual light/dark neumorphic
+   shadows); dark + amoled get adapted shadows so raised surfaces
+   still read as raised on near-black backgrounds.
+   ============================================================ */
+html.light {
+  --clay-shadow: 6px 6px 16px rgba(160, 150, 200, 0.3),
+    -6px -6px 16px rgba(255, 255, 255, 0.92),
+    inset 1px 1px 1px rgba(255, 255, 255, 0.6);
+  --clay-shadow-soft: 4px 4px 12px rgba(160, 150, 200, 0.22),
+    -4px -4px 12px rgba(255, 255, 255, 0.85);
+  --clay-inset: inset 3px 3px 7px rgba(160, 150, 200, 0.35),
+    inset -3px -3px 7px rgba(255, 255, 255, 0.9);
+  --clay-page: linear-gradient(160deg, #efeafb 0%, #f5f3fb 45%, #eaf0fb 100%);
+}
+:root,
+html.dark {
+  --clay-shadow: 6px 6px 16px rgba(0, 0, 0, 0.55),
+    -4px -4px 14px rgba(70, 64, 104, 0.16),
+    inset 1px 1px 1px rgba(255, 255, 255, 0.04);
+  --clay-shadow-soft: 4px 4px 12px rgba(0, 0, 0, 0.45),
+    -3px -3px 10px rgba(70, 64, 104, 0.12);
+  --clay-inset: inset 3px 3px 7px rgba(0, 0, 0, 0.55),
+    inset -3px -3px 7px rgba(70, 64, 104, 0.14);
+  --clay-page: radial-gradient(120% 80% at 50% 0%, #16121f 0%, rgb(var(--bg)) 60%);
+}
+html.amoled {
+  --clay-shadow: 5px 5px 14px rgba(0, 0, 0, 0.85),
+    -3px -3px 10px rgba(40, 40, 46, 0.35),
+    inset 1px 1px 1px rgba(255, 255, 255, 0.03);
+  --clay-shadow-soft: 4px 4px 12px rgba(0, 0, 0, 0.75),
+    -2px -2px 8px rgba(40, 40, 46, 0.3);
+  --clay-inset: inset 3px 3px 7px rgba(0, 0, 0, 0.9),
+    inset -3px -3px 7px rgba(44, 44, 50, 0.3);
+  --clay-page: #000000;
+}
+
+@layer utilities {
+  /* Raised clay card */
+  .clay {
+    background: rgb(var(--card));
+    box-shadow: var(--clay-shadow);
+  }
+  .clay-soft {
+    background: rgb(var(--card));
+    box-shadow: var(--clay-shadow-soft);
+  }
+  /* Pressed / inset well */
+  .clay-inset {
+    box-shadow: var(--clay-inset);
+  }
+  /* Signature violet gradient button */
+  .clay-purple-btn {
+    background: linear-gradient(145deg, #8b6bff, #6c4fe8);
+    color: #fff;
+    box-shadow: 4px 4px 12px rgba(124, 92, 252, 0.4),
+      -3px -3px 10px rgba(255, 255, 255, 0.12),
+      inset 1px 1px 2px rgba(255, 255, 255, 0.35);
+  }
+  /* Soft page background for full-screen clay pages */
+  .clay-page {
+    background: var(--clay-page);
+  }
+}
+
 /* Subtle card shadow on light theme only (design spec) */
 html.light .bg-card.border {
   box-shadow: 0 2px 12px -4px rgba(13, 13, 20, 0.08);

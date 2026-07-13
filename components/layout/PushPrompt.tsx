@@ -17,7 +17,7 @@ export function PushPrompt() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 40 }}
           transition={{ type: "spring", damping: 26, stiffness: 300 }}
-          className="fixed bottom-20 md:bottom-6 inset-x-4 md:inset-x-auto md:right-6 md:w-80 z-40 bg-card border border-line rounded-card p-4 shadow-2xl"
+          className="fixed bottom-20 md:bottom-6 inset-x-4 md:inset-x-auto md:right-6 md:w-80 z-40 clay rounded-card p-4 shadow-2xl"
         >
           <div className="flex gap-3">
             <div className="h-10 w-10 shrink-0 rounded-btn bg-primary/15 grid place-items-center">

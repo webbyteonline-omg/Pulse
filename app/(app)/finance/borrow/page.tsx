@@ -105,13 +105,13 @@ export default function BorrowLendPage() {
       </p>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 bg-card border border-line rounded-btn p-1 mb-4">
+      <div className="flex items-center gap-1 clay-soft rounded-btn p-1 mb-4">
         {TABS.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`flex-1 h-10 rounded-input text-xs font-bold transition-colors ${
-              tab === t.id ? "bg-primary text-white" : "text-ink-dim hover:text-ink"
+              tab === t.id ? "clay-purple-btn" : "text-ink-dim hover:text-ink"
             }`}
           >
             {t.label}
@@ -229,7 +229,7 @@ export default function BorrowLendPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-card border border-line rounded-full px-4 py-2.5 text-xs font-bold shadow-2xl whitespace-nowrap"
+            className="clay fixed bottom-24 left-1/2 -translate-x-1/2 z-50 rounded-full px-4 py-2.5 text-xs font-bold whitespace-nowrap"
             role="status"
           >
             {toast}
@@ -295,7 +295,7 @@ function AddEntrySheet({ open, onClose }: { open: boolean; onClose: () => void }
     <Modal open={open} onClose={onClose} title="Add entry">
       <form onSubmit={submit} className="space-y-4">
         {/* Lent / Borrowed toggle */}
-        <div className="flex items-center gap-1 bg-input border border-line rounded-btn p-1">
+        <div className="flex items-center gap-1 clay-inset rounded-btn p-1">
           {(["lent", "borrowed"] as const).map((t) => (
             <button
               key={t}
@@ -315,7 +315,7 @@ function AddEntrySheet({ open, onClose }: { open: boolean; onClose: () => void }
         </div>
 
         {/* Amount */}
-        <div className="bg-bg border border-line rounded-card p-4">
+        <div className="clay rounded-card p-4">
           <label htmlFor="bl-amount" className="block text-xs font-medium text-ink-dim mb-1.5">
             Amount
           </label>
@@ -349,7 +349,7 @@ function AddEntrySheet({ open, onClose }: { open: boolean; onClose: () => void }
             maxLength={50}
           />
           {suggestions.length > 0 && (
-            <div className="absolute z-10 inset-x-0 top-full mt-1 bg-card border border-line rounded-input overflow-hidden shadow-xl">
+            <div className="clay absolute z-10 inset-x-0 top-full mt-1 rounded-input overflow-hidden">
               {suggestions.slice(0, 4).map((f) => (
                 <button
                   key={f.id}

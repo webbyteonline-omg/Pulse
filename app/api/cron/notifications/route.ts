@@ -204,7 +204,7 @@ export async function GET(request: Request) {
         ? `💸 ${entry.person_name} still owes you ₹${Number(entry.amount).toFixed(0)}`
         : `⏰ You owe ${entry.person_name} ₹${Number(entry.amount).toFixed(0)}`,
       body: lent
-        ? "It's past the due date — send them a reminder from Pulse."
+        ? "It's past the due date — send them a reminder from DockIn."
         : "It's past the due date — settle up when you can.",
       url: "/finance/borrow",
       tag: `bl-${entry.id}`,

@@ -173,7 +173,7 @@ export default function ActivityPage() {
         <EmptyState
           illustration="generic"
           title="No activity yet"
-          description="Everything you do in Pulse — marking attendance, adding expenses, creating polls — gets recorded here."
+          description="Everything you do in DockIn — marking attendance, adding expenses, creating polls — gets recorded here."
         />
       ) : (
         <>
@@ -211,7 +211,7 @@ export default function ActivityPage() {
               onClick={() => setPage((p) => Math.max(0, p - 1))}
               disabled={page === 0}
               aria-label="Previous page"
-              className="h-11 w-11 grid place-items-center rounded-btn bg-card border border-line text-ink-dim disabled:opacity-40"
+              className="h-11 w-11 grid place-items-center rounded-btn clay text-ink-dim disabled:opacity-40"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -222,7 +222,7 @@ export default function ActivityPage() {
               onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
               disabled={page >= totalPages - 1}
               aria-label="Next page"
-              className="h-11 w-11 grid place-items-center rounded-btn bg-card border border-line text-ink-dim disabled:opacity-40"
+              className="h-11 w-11 grid place-items-center rounded-btn clay text-ink-dim disabled:opacity-40"
             >
               <ChevronRight className="h-4 w-4" />
             </button>

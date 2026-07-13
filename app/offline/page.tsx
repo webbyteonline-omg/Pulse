@@ -16,7 +16,7 @@ export default function OfflinePage() {
       </svg>
       <h1 className="text-xl font-bold">You&apos;re offline</h1>
       <p className="text-sm text-ink-dim max-w-xs">
-        Pulse works offline for pages you&apos;ve already visited. Reconnect to sync new
+        DockIn works offline for pages you&apos;ve already visited. Reconnect to sync new
         data — anything you add meanwhile will sync automatically.
       </p>
     </main>

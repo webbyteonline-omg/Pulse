@@ -29,7 +29,7 @@ export default function AcademicsPage() {
     <div>
       <Header title="Academics" />
 
-      <div className="flex gap-2 overflow-x-auto no-scrollbar mb-6" style={{ padding: "0 0 4px" }}>
+      <div className="flex gap-2 overflow-x-auto no-scrollbar mb-4" style={{ padding: "0 0 4px" }}>
         {TABS.map((t) => (
           <button
             key={t.id}

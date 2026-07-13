@@ -125,14 +125,14 @@ export function CreateGroupForm() {
         </div>
         <p className="text-xs text-ink-dim">Tap to change</p>
 
-        <div className="flex items-center gap-1 bg-card border border-line rounded-btn p-1 mt-2">
+        <div className="flex items-center gap-1 clay rounded-btn p-1 mt-2">
           {(["emoji", "photo"] as const).map((mode) => (
             <button
               key={mode}
               type="button"
               onClick={() => setAvatarMode(mode)}
               className={`px-4 h-8 rounded-input text-xs font-bold transition-colors ${
-                avatarMode === mode ? "bg-primary text-white" : "text-ink-dim"
+                avatarMode === mode ? "clay-purple-btn" : "text-ink-dim"
               }`}
             >
               {mode === "emoji" ? "Emoji" : "Photo"}

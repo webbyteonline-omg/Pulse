@@ -72,8 +72,8 @@ export default function ProfilePage() {
 
   const share = async () => {
     const data = {
-      title: "Pulse",
-      text: "College life, one screen — attendance, money, friends & more. Join me on Pulse!",
+      title: "DockIn",
+      text: "College life, one screen — attendance, money, friends & more. Join me on DockIn!",
       url: window.location.origin,
     };
     if (navigator.share) await navigator.share(data).catch(() => undefined);
@@ -87,7 +87,7 @@ export default function ProfilePage() {
         showAvatar={false}
         action={
           <Link href="/settings" aria-label="Settings">
-            <span className="grid place-items-center h-11 w-11 rounded-btn bg-card border border-line text-ink-dim">
+            <span className="grid place-items-center h-11 w-11 rounded-btn clay text-ink-dim">
               <Settings className="h-[18px] w-[18px]" />
             </span>
           </Link>
@@ -98,7 +98,7 @@ export default function ProfilePage() {
       <Card className="p-5 mb-4 flex items-center gap-4">
         <motion.button whileTap={{ scale: 0.9 }} onClick={() => setPickerOpen(true)} aria-label="Change avatar" className="relative shrink-0">
           <Avatar name={displayName} userId={user?.id} size={80} src={profile?.avatar_url} />
-          <span className="absolute -bottom-0.5 -right-0.5 grid place-items-center h-7 w-7 rounded-full bg-primary text-white border-[3px] border-card">
+          <span className="absolute -bottom-0.5 -right-0.5 grid place-items-center h-7 w-7 rounded-full clay-purple-btn border-[3px] border-card">
             <Pencil className="h-3 w-3" />
           </span>
         </motion.button>
@@ -118,14 +118,14 @@ export default function ProfilePage() {
         {[
           { icon: BookOpen, color: "#6C63FF", value: String(attended), label: "Classes" },
           { icon: CheckCircle2, color: "#43D98C", value: avgAtt !== null ? `${avgAtt}%` : "—", label: "Attendance" },
-          { icon: Star, color: "#FFD700", value: String((breakdown?.total ?? profile?.pulse_score ?? 0) * 10), label: "Pulse Points" },
+          { icon: Star, color: "#FFD700", value: String((breakdown?.total ?? profile?.pulse_score ?? 0) * 10), label: "DockIn Points" },
         ].map((s, i) => (
           <motion.div
             key={s.label}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 * i }}
-            className="bg-card border border-line rounded-card p-3.5 flex flex-col items-center text-center"
+            className="clay rounded-card p-3.5 flex flex-col items-center text-center"
           >
             <s.icon className="h-5 w-5 mb-1.5" style={{ color: s.color }} />
             <p className="text-lg font-black tabular-nums leading-tight">{s.value}</p>
@@ -146,7 +146,7 @@ export default function ProfilePage() {
             <Crown className="h-5 w-5" fill="#fff" />
           </span>
           <div className="flex-1 min-w-0">
-            <p className="font-black">Bring your squad to Pulse</p>
+            <p className="font-black">Bring your squad to DockIn</p>
             <p className="text-xs opacity-85 mt-0.5">Polls, leaderboards & streaks are better with friends</p>
           </div>
           <span className="px-3.5 py-2 rounded-full bg-white text-primary text-xs font-black shrink-0">Invite</span>
@@ -156,7 +156,7 @@ export default function ProfilePage() {
       {/* Quick links */}
       <div className="grid grid-cols-3 gap-2 mb-5">
         {MORE_LINKS.map((l) => (
-          <Link key={l.label} href={l.href} className="flex flex-col items-center gap-1.5 bg-card border border-line rounded-card py-3">
+          <Link key={l.label} href={l.href} className="flex flex-col items-center gap-1.5 clay rounded-card py-3">
             <l.icon className="h-5 w-5 text-primary" />
             <span className="text-[10px] font-bold text-ink-dim">{l.label}</span>
           </Link>
@@ -190,7 +190,7 @@ export default function ProfilePage() {
           <span className="flex-1 text-sm font-semibold">Help Center</span>
           <ChevronRight className="h-4 w-4 text-ink-faint" />
         </a>
-        <a href={`mailto:feedback@pulse.app?subject=Pulse feedback from ${displayName}`} className="flex items-center gap-3.5 px-4 py-3.5 last:rounded-b-card">
+        <a href={`mailto:feedback@pulse.app?subject=DockIn feedback from ${displayName}`} className="flex items-center gap-3.5 px-4 py-3.5 last:rounded-b-card">
           <span className="grid place-items-center h-10 w-10 rounded-btn bg-success-dim shrink-0">
             <MessageSquare style={{ height: 18, width: 18, color: "#43D98C" }} />
           </span>

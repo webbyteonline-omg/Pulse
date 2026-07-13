@@ -106,7 +106,7 @@ export default function DashboardPage() {
       </AnimatePresence>
 
       <PageHeader
-        title="Pulse"
+        title="DockIn"
         showGreeting
         showBell
         onBellClick={() => setNotificationsOpen(true)}

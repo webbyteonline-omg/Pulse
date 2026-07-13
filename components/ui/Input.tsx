@@ -32,10 +32,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           id={inputId}
           aria-invalid={!!error}
           className={cn(
-            "w-full h-11 px-3.5 rounded-input bg-input border text-sm text-ink",
-            "placeholder:text-ink-faint transition-colors",
-            "focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50",
-            error ? "border-danger/60" : "border-line",
+            "clay-inset w-full h-11 px-3.5 rounded-input bg-input text-sm text-ink",
+            "placeholder:text-ink-faint transition-shadow",
+            "focus:outline-none focus:ring-2 focus:ring-clay-purple/40",
+            error && "ring-2 ring-clay-red/50",
             rightSlot ? "pr-11" : null,
             className
           )}
@@ -79,10 +79,10 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
         id={inputId}
         aria-invalid={!!error}
         className={cn(
-          "w-full min-h-[96px] p-3.5 rounded-input bg-input border text-sm text-ink resize-y",
-          "placeholder:text-ink-faint transition-colors",
-          "focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50",
-          error ? "border-danger/60" : "border-line",
+          "clay-inset w-full min-h-[96px] p-3.5 rounded-input bg-input text-sm text-ink resize-y",
+          "placeholder:text-ink-faint transition-shadow",
+          "focus:outline-none focus:ring-2 focus:ring-clay-purple/40",
+          error && "ring-2 ring-clay-red/50",
           className
         )}
         {...props}

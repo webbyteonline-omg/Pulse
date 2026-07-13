@@ -22,7 +22,7 @@ export function AttendanceSection() {
         <EmptyState
           illustration="subjects"
           title="No subjects yet"
-          description="Add your subjects and mark attendance after each class — Pulse will tell you exactly how many you can bunk."
+          description="Add your subjects and mark attendance after each class — DockIn will tell you exactly how many you can bunk."
           actionLabel="Add your first subject"
           onAction={() => setShowAdd(true)}
         />
@@ -35,8 +35,8 @@ export function AttendanceSection() {
     <>
       <OverallCard subjects={subjects} />
 
-      <div className="flex items-center justify-between mt-6 mb-3">
-        <span className="text-base font-semibold text-ink">Your Subjects</span>
+      <div className="flex items-center justify-between mt-4 mb-2.5">
+        <span className="text-[15px] font-semibold text-ink">Your Subjects</span>
         <button
           onClick={() => setShowAdd(true)}
           className="min-h-[44px] flex items-center gap-1 px-0 text-[13px] font-medium text-primary"
@@ -45,7 +45,7 @@ export function AttendanceSection() {
         </button>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         {subjects.map((subject, i) => (
           <SubjectCard key={subject.id} subject={subject} index={i} />
         ))}

@@ -38,7 +38,7 @@ export function FriendCard({ profile, index = 0 }: { profile: UserProfile; index
               {profile.pulse_score}
             </p>
             <p className="text-[9px] text-ink-faint font-bold uppercase tracking-wider mt-0.5">
-              Pulse
+              DockIn
             </p>
           </div>
         </Link>

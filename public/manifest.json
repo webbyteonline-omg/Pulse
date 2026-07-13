@@ -1,6 +1,6 @@
 {
-  "name": "Pulse — College Life Dashboard",
-  "short_name": "Pulse",
+  "name": "DockIn — College Life Dashboard",
+  "short_name": "DockIn",
   "description": "Attendance, academic calendar and money — everything a college student needs, in one place.",
   "start_url": "/dashboard",
   "id": "/dashboard",
@@ -61,7 +61,7 @@
   ],
   "widgets": [
     {
-      "name": "Pulse Today",
+      "name": "DockIn Today",
       "description": "Today's attendance, spend and classes at a glance",
       "tag": "pulse-today",
       "template": "pulse-today-widget",

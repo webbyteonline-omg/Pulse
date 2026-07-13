@@ -100,7 +100,7 @@ export default function PulseScorePage() {
               })}
             </div>
             <p className="mt-4 text-[11px] text-ink-faint">
-              Attendance ≥80% earns full points · stay under budget · open Pulse daily for
+              Attendance ≥80% earns full points · stay under budget · open DockIn daily for
               your streak · log your mood each day.
             </p>
           </Card>

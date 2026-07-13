@@ -21,7 +21,7 @@ function timeAgo(iso: string): string {
 
 function activityLine(stats: UserStats | undefined, online: boolean): string {
   if (online) return "Online now";
-  if (!stats) return "Joined Pulse";
+  if (!stats) return "Joined DockIn";
   if (stats.steps_week > 0) return `Logged ${stats.steps_week.toLocaleString("en-IN")} steps this week`;
   if (stats.streak > 1) return `On a ${stats.streak}-day streak 🔥`;
   return `Pulse Score ${stats.pulse_score}`;

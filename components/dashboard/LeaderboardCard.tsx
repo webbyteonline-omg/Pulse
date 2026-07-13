@@ -22,7 +22,7 @@ export function LeaderboardCard() {
 
   if (isLoading) {
     return (
-      <div className="rounded-[20px] p-4 mb-5 border border-primary/20 bg-card">
+      <div className="clay rounded-[20px] p-4 mb-5">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <span>🏆</span>

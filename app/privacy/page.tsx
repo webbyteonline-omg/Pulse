@@ -17,7 +17,7 @@ export default function PrivacyPolicy() {
       <section style={{ marginBottom: 24 }}>
         <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>What we collect</h2>
         <p style={{ color: "#CCCCCC", fontSize: 14, lineHeight: 1.7 }}>
-          Pulse collects your email address for authentication, and academic data you manually
+          DockIn collects your email address for authentication, and academic data you manually
           enter (attendance, assignments, quizzes, exams, expenses). Location data is collected
           only when you enable location sharing, and is only ever shared with friends you&apos;ve
           accepted.
@@ -38,7 +38,7 @@ export default function PrivacyPolicy() {
         <p style={{ color: "#CCCCCC", fontSize: 14, lineHeight: 1.7 }}>
           Location sharing is off by default and fully opt-in. When enabled, your approximate
           position updates periodically and is visible only to friends you&apos;ve mutually
-          accepted — never to the public or to Pulse&apos;s operators for any purpose beyond
+          accepted — never to the public or to DockIn&apos;s operators for any purpose beyond
           serving the feature. You can turn sharing off at any time from Friends or Settings, and
           your last known location is cleared when you do.
         </p>

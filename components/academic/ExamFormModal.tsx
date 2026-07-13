@@ -81,7 +81,7 @@ export function ExamFormModal({ open, onClose, subjects }: ExamFormModalProps) {
                 type="button"
                 onClick={() => setExamType(t.id)}
                 className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-colors ${
-                  examType === t.id ? "bg-primary text-white border-primary" : "border-line text-ink-dim"
+                  examType === t.id ? "clay-purple-btn border-primary" : "border-line text-ink-dim"
                 }`}
               >
                 {t.label}
@@ -98,7 +98,7 @@ export function ExamFormModal({ open, onClose, subjects }: ExamFormModalProps) {
                 type="button"
                 onClick={() => setSubjectId(null)}
                 className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-colors ${
-                  subjectId === null ? "bg-primary text-white border-primary" : "border-line text-ink-dim"
+                  subjectId === null ? "clay-purple-btn border-primary" : "border-line text-ink-dim"
                 }`}
               >
                 None

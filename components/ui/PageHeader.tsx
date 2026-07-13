@@ -123,7 +123,7 @@ export function PageHeader({
                 transition={{ duration: 0.15 }}
                 className={cn("font-semibold truncate text-ink", scrolled ? "font-medium" : "font-semibold")}
               >
-                {showGreeting ? "Pulse" : title}
+                {showGreeting ? "DockIn" : title}
               </motion.h1>
             )}
           </AnimatePresence>
@@ -137,7 +137,7 @@ export function PageHeader({
               whileTap={{ scale: 0.9 }}
               onClick={onSearchClick}
               aria-label="Search"
-              className="grid place-items-center h-10 w-10 rounded-btn bg-card border border-line text-ink-dim hover:text-ink transition-colors"
+              className="clay grid place-items-center h-10 w-10 rounded-btn text-ink-dim hover:text-ink transition-colors"
             >
               <Search className="h-[18px] w-[18px]" />
             </motion.button>
@@ -148,7 +148,7 @@ export function PageHeader({
               whileTap={{ scale: 0.85 }}
               onClick={onBellClick}
               aria-label="Notifications"
-              className="relative grid place-items-center h-10 w-10 rounded-btn bg-card border border-line text-ink-dim hover:text-ink transition-colors"
+              className="clay relative grid place-items-center h-10 w-10 rounded-btn text-ink-dim hover:text-ink transition-colors"
             >
               <Bell className="h-[18px] w-[18px]" />
               {pendingCount > 0 && (

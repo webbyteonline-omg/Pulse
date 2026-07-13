@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 type CookieToSet = { name: string; value: string; options: CookieOptions };
 
-const PUBLIC_PATHS = ["/login", "/signup", "/offline"];
+const PUBLIC_PATHS = ["/welcome", "/login", "/signup", "/offline"];
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -50,7 +50,7 @@ export async function middleware(request: NextRequest) {
 
   if (!user && pathname === "/") {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
+    url.pathname = "/welcome";
     return NextResponse.redirect(url);
   }
 

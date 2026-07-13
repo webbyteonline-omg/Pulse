@@ -35,7 +35,7 @@ export function QuizCard({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: 40 }}
       transition={{ delay: Math.min(0.3, 0.03 * index) }}
-      className="flex items-center gap-3.5 bg-card border border-line rounded-card p-4"
+      className="flex items-center gap-3.5 clay rounded-card p-4"
       style={{ borderLeftColor: meta.color, borderLeftWidth: 3 }}
     >
       <div className="flex-1 min-w-0">

@@ -95,7 +95,7 @@ export function Header({ title, subtitle, action, mobileAction, showBell, showAv
             <Link href="/friends?tab=requests" aria-label="Notifications">
               <motion.span
                 whileTap={{ scale: 0.85 }}
-                className="relative grid place-items-center h-11 w-11 rounded-btn bg-card border border-line text-ink-dim hover:text-ink transition-colors"
+                className="clay relative grid place-items-center h-11 w-11 rounded-btn text-ink-dim hover:text-ink transition-colors"
               >
                 <Bell className="h-[18px] w-[18px]" />
                 {pendingCount > 0 && (

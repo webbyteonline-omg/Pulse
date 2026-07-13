@@ -205,7 +205,7 @@ export function CalendarUpload() {
                 return (
                   <div
                     key={`${event.date}-${i}`}
-                    className="flex items-center gap-2.5 rounded-input bg-input border border-line px-3 py-2"
+                    className="flex items-center gap-2.5 rounded-input clay-inset px-3 py-2"
                   >
                     <Badge color={meta.color}>{meta.label}</Badge>
                     <span className="flex-1 min-w-0 text-xs font-medium truncate">{event.title}</span>

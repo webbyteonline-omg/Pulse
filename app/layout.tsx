@@ -1,24 +1,25 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 
-const inter = Inter({
+const poppins = Poppins({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-inter",
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-poppins",
 });
 
 export const metadata: Metadata = {
-  title: { default: "Pulse", template: "%s · Pulse" },
+  title: { default: "DockIn", template: "%s · DockIn" },
   description:
-    "Attendance, academic calendar and money — everything a college student needs, in one place.",
+    "The social hub for Bennettians — attendance, academics, finance, friends and more, all in one place.",
   manifest: "/manifest.json",
-  applicationName: "Pulse",
+  applicationName: "DockIn",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Pulse",
+    title: "DockIn",
   },
   icons: {
     icon: [
@@ -58,7 +59,7 @@ const supabaseOrigin = (() => {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`dark ${inter.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`dark ${poppins.variable}`} suppressHydrationWarning>
       <head>
         {supabaseOrigin && (
           <>

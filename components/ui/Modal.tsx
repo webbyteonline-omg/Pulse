@@ -21,16 +21,31 @@ export interface ModalProps {
 export function Modal({ open, onClose, title, titleAction, children, variant = "sheet", className }: ModalProps) {
   const bodyRef = useRef<HTMLDivElement>(null);
 
+  // Callers frequently pass an inline `onClose={() => ...}` — a fresh
+  // function identity on every one of THEIR re-renders, which may have
+  // nothing to do with this modal's own open/close lifecycle (e.g. a
+  // parent that re-renders on scroll). Keeping onClose in a ref means the
+  // effects below only ever depend on `open` itself, so an unrelated
+  // parent re-render can't re-fire the history push/pop-state effect
+  // mid-open (that re-fire was pushing a new history entry and then
+  // immediately calling history.back() in its own cleanup — which made
+  // every tap inside an open sheet get lost in a churn of history
+  // navigation instead of registering).
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onCloseRef.current();
     document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
-  }, [open, onClose]);
+  }, [open]);
 
   // Android back button / edge-swipe fix: without this, there's no history
   // entry for "sheet open" so the hardware/gesture back falls through to
@@ -42,7 +57,7 @@ export function Modal({ open, onClose, title, titleAction, children, variant = "
   useEffect(() => {
     if (!open) return;
     window.history.pushState({ pulseSheet: true }, "");
-    const onPopState = () => onClose();
+    const onPopState = () => onCloseRef.current();
     window.addEventListener("popstate", onPopState);
     return () => {
       window.removeEventListener("popstate", onPopState);
@@ -53,7 +68,7 @@ export function Modal({ open, onClose, title, titleAction, children, variant = "
       // no-op instead of leaving the page.
       if (window.history.state?.pulseSheet) window.history.back();
     };
-  }, [open, onClose]);
+  }, [open]);
 
   return (
     <AnimatePresence>
@@ -89,7 +104,7 @@ export function Modal({ open, onClose, title, titleAction, children, variant = "
             }}
             className={cn(
               "relative w-full sm:max-w-md max-h-[92dvh] overflow-y-auto",
-              "bg-card border border-line shadow-2xl",
+              "clay",
               variant === "sheet"
                 ? "rounded-t-card sm:rounded-card pb-safe"
                 : "rounded-card mx-4",

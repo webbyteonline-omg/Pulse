@@ -131,7 +131,7 @@ export default function HealthPage() {
                   setLogOpen(g.id);
                   setLogValue("");
                 }}
-                className="bg-card border border-line rounded-card p-4 text-left"
+                className="clay rounded-card p-4 text-left"
               >
                 <span className="grid place-items-center h-9 w-9 rounded-full mb-2" style={{ backgroundColor: `${g.color}22` }}>
                   <g.icon className="h-4.5 w-4.5" style={{ color: g.color, height: 18, width: 18 }} />
@@ -173,7 +173,7 @@ export default function HealthPage() {
                 key={a.label}
                 whileTap={{ scale: 0.96 }}
                 onClick={() => setTimer({ label: a.label, seconds: a.seconds, color: a.color })}
-                className="bg-card border border-line rounded-card p-4 text-left"
+                className="clay rounded-card p-4 text-left"
               >
                 <span className="grid place-items-center h-9 w-9 rounded-full mb-2" style={{ backgroundColor: `${a.color}22` }}>
                   <a.icon style={{ color: a.color, height: 18, width: 18 }} />
@@ -188,7 +188,7 @@ export default function HealthPage() {
                 setJournalText("");
                 setJournalOpen(true);
               }}
-              className="bg-card border border-line rounded-card p-4 text-left"
+              className="clay rounded-card p-4 text-left"
             >
               <span className="grid place-items-center h-9 w-9 rounded-full mb-2 bg-warning-dim">
                 <NotebookPen style={{ color: "#FFB347", height: 18, width: 18 }} />
@@ -221,7 +221,7 @@ export default function HealthPage() {
             placeholder={logOpen === "water" ? "ml (e.g. 1600)" : logOpen === "sleep" ? "hours (e.g. 7.5)" : logOpen === "calories" ? "kcal burned" : "steps"}
             value={logValue}
             onChange={(e) => setLogValue(e.target.value)}
-            className="w-full h-14 px-4 rounded-input bg-input border border-line text-2xl font-black tabular-nums focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="w-full h-14 px-4 rounded-input clay-inset text-2xl font-black tabular-nums focus:outline-none focus:ring-2 focus:ring-primary/50"
           />
           <Button size="lg" className="w-full" onClick={saveLog} loading={save.isPending} disabled={!logValue.trim()}>
             Save
@@ -235,7 +235,7 @@ export default function HealthPage() {
           value={journalText}
           onChange={(e) => setJournalText(e.target.value)}
           placeholder="How was today, really?"
-          className="w-full min-h-[140px] p-3.5 rounded-input bg-input border border-line text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+          className="w-full min-h-[140px] p-3.5 rounded-input clay-inset text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
         />
         <p className="text-[11px] text-ink-faint mt-2">Encrypted on your device — nobody else can read this.</p>
         <Button

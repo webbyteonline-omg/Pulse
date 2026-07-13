@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
 import { BellRing, Check, Plus } from "lucide-react";
-import { PulseLogo } from "@/components/auth/AuthCard";
+import { DockInLogo } from "@/components/auth/AuthCard";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -31,7 +31,7 @@ function Dots({ step }: { step: number }) {
         <motion.span
           key={i}
           animate={{ width: i === step ? 20 : 6 }}
-          className={`h-1.5 rounded-full ${i <= step ? "bg-primary" : "bg-line"}`}
+          className={`h-1.5 rounded-full ${i <= step ? "bg-clay-purple" : "bg-line"}`}
         />
       ))}
     </div>
@@ -102,7 +102,9 @@ export function OnboardingFlow() {
         transition={{ type: "spring", damping: 12, stiffness: 160 }}
         className="flex justify-center mb-6"
       >
-        <PulseLogo size={72} />
+        <div className="clay-purple-btn flex size-[76px] items-center justify-center rounded-clay">
+          <DockInLogo size={40} />
+        </div>
       </motion.div>
       <motion.h1
         initial={{ opacity: 0, y: 12 }}
@@ -110,7 +112,7 @@ export function OnboardingFlow() {
         transition={{ delay: 0.25 }}
         className="text-2xl font-black tracking-tight"
       >
-        Welcome to Pulse
+        Welcome to DockIn
       </motion.h1>
       <motion.p
         initial={{ opacity: 0, y: 12 }}
@@ -147,7 +149,7 @@ export function OnboardingFlow() {
     <div key="subjects">
       <h2 className="text-xl font-bold text-center">Add your subjects</h2>
       <p className="mt-1.5 text-sm text-ink-dim text-center mb-5">
-        Pulse tracks attendance per subject and tells you exactly how many classes you can bunk.
+        DockIn tracks attendance per subject and tells you exactly how many classes you can bunk.
       </p>
       <div className="flex gap-2 mb-3">
         <Input
@@ -186,7 +188,7 @@ export function OnboardingFlow() {
       {(subjects ?? []).length > 0 && (
         <div className="space-y-1.5 mb-4">
           {(subjects ?? []).map((subject) => (
-            <div key={subject.id} className="flex items-center gap-2.5 rounded-input bg-card border border-line px-3 py-2.5">
+            <div key={subject.id} className="clay-soft flex items-center gap-2.5 rounded-input px-3 py-2.5">
               <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: subject.color }} />
               <span className="flex-1 text-sm font-medium">{subject.name}</span>
               <Check className="h-4 w-4 text-success" />
@@ -248,7 +250,8 @@ export function OnboardingFlow() {
   ];
 
   return (
-    <div className="min-h-dvh flex flex-col justify-center max-w-sm mx-auto px-5 py-10">
+    <div className="clay-page min-h-dvh flex flex-col justify-center px-5 py-10">
+      <div className="clay mx-auto w-full max-w-sm rounded-clay-lg p-6">
       {finishing ? (
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -275,6 +278,7 @@ export function OnboardingFlow() {
           </AnimatePresence>
         </>
       )}
+      </div>
     </div>
   );
 }

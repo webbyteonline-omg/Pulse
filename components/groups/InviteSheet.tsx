@@ -41,7 +41,7 @@ export function InviteSheet({ open, onClose, group }: InviteSheetProps) {
   const share = async () => {
     if (navigator.share) {
       try {
-        await navigator.share({ title: `Join ${group.name} on Pulse`, url: link });
+        await navigator.share({ title: `Join ${group.name} on DockIn`, url: link });
       } catch {
         // User cancelled the share sheet — not an error.
       }
@@ -83,7 +83,7 @@ export function InviteSheet({ open, onClose, group }: InviteSheetProps) {
 
       <div className="mb-5">
         <p className="text-xs font-medium text-ink-dim mb-2">Invite link</p>
-        <div className="bg-input border border-line rounded-input px-3.5 py-2.5 mb-2 overflow-hidden">
+        <div className="clay-inset rounded-input px-3.5 py-2.5 mb-2 overflow-hidden">
           <p className="text-xs font-mono text-ink truncate">{link}</p>
         </div>
         <div className="flex gap-2">

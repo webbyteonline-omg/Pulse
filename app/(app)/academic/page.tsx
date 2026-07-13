@@ -107,13 +107,13 @@ function AcademicContent() {
       <CalendarUpload />
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 bg-card border border-line rounded-btn p-1 mb-3">
+      <div className="flex items-center gap-1 clay-soft rounded-btn p-1 mb-3">
         {TABS.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`flex-1 h-8 rounded-input text-xs font-bold transition-colors ${
-              tab === t.id ? "bg-primary text-white" : "text-ink-dim hover:text-ink"
+              tab === t.id ? "clay-purple-btn" : "text-ink-dim hover:text-ink"
             }`}
           >
             {t.label}
@@ -151,7 +151,7 @@ function AcademicContent() {
           title={tab === "past" ? "No past events" : "Nothing scheduled"}
           description={
             events.length === 0
-              ? "Upload your academic calendar PDF above, or add events manually — Pulse will remind you before each one."
+              ? "Upload your academic calendar PDF above, or add events manually — DockIn will remind you before each one."
               : "No events match this filter."
           }
           actionLabel={events.length === 0 ? "Add an event" : undefined}

@@ -49,7 +49,7 @@ export function FriendSearch() {
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
-            className="mt-2 bg-card border border-line rounded-card divide-y divide-line/60 overflow-hidden"
+            className="mt-2 clay rounded-card divide-y divide-line/60 overflow-hidden"
           >
             {searchQuery.isLoading ? (
               <p className="p-4 text-sm text-ink-dim">Searching…</p>

@@ -91,7 +91,7 @@ export function WrappedShell({
       if (!blob) return;
       const file = new File([blob], `pulse-${type}-wrapped.png`, { type: "image/png" });
       if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], title: "My Pulse Wrapped" });
+        await navigator.share({ files: [file], title: "My DockIn Wrapped" });
       } else {
         downloadBlob(blob);
       }
@@ -158,7 +158,7 @@ export function WrappedShell({
               />
             </svg>
             <span className="text-xs font-bold tracking-widest uppercase opacity-90">
-              Pulse Wrapped
+              DockIn Wrapped
             </span>
           </div>
           <h2 className="text-2xl font-black tracking-tight">{title}</h2>
@@ -186,7 +186,7 @@ export function WrappedShell({
           </div>
 
           <p className="mt-5 text-center text-[10px] opacity-70">
-            made with Pulse · your college life, one screen
+            made with DockIn · your college life, one screen
           </p>
         </motion.div>
 
