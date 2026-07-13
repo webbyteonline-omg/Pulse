@@ -80,6 +80,25 @@ function FriendsContent() {
 
       {tab === "friends" ? (
         <>
+          {/* Prominent Add Friends CTA */}
+          <button
+            onClick={() => setAddOpen(true)}
+            className="clay-purple-btn mb-5 flex w-full items-center gap-3 rounded-clay px-4 py-3.5 text-left"
+          >
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white/20">
+              <UserPlus className="size-5" strokeWidth={2.4} />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-extrabold">Add Friends</span>
+              <span className="block text-xs opacity-85">Find classmates by username &amp; grow your circle</span>
+            </span>
+            {pendingCount > 0 && (
+              <span className="rounded-full bg-white/25 px-2.5 py-1 text-[11px] font-bold">
+                {pendingCount} request{pendingCount > 1 ? "s" : ""}
+              </span>
+            )}
+          </button>
+
           {/* Your Groups — horizontal scroll */}
           {(groupsQuery.data ?? []).length > 0 && (
             <div className="mb-6">

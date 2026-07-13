@@ -372,6 +372,15 @@ export type DirectMessage = {
 };
 export type DirectMessageInsert = InsertOf<DirectMessage, "id" | "created_at" | "read_at">;
 
+// --- Anonymous campus confessions ---
+export type Confession = {
+  id: string;
+  author_id: string;
+  body: string;
+  created_at: string;
+};
+export type ConfessionInsert = InsertOf<Confession, "id" | "created_at">;
+
 export type Database = {
   public: {
     Tables: {
@@ -558,6 +567,12 @@ export type Database = {
         Row: DirectMessage;
         Insert: DirectMessageInsert;
         Update: Partial<DirectMessage>;
+        Relationships: [];
+      };
+      confessions: {
+        Row: Confession;
+        Insert: ConfessionInsert;
+        Update: Partial<Confession>;
         Relationships: [];
       };
     };

@@ -23,6 +23,7 @@ import {
   Star,
   UserRound,
   Users,
+  Wallet,
   Zap,
 } from "lucide-react";
 import { Header } from "@/components/layout/Header";
@@ -42,6 +43,7 @@ const ACCOUNT_LINKS = [
 ];
 
 const MORE_LINKS = [
+  { href: "/chats", label: "Chats", icon: MessageSquare },
   { href: "/friends", label: "Friends", icon: Users },
   { href: "/profile/wrapped", label: "Wrapped", icon: Sparkles },
   { href: "/profile/pulse-score", label: "Pulse Score", icon: Zap },
@@ -134,11 +136,27 @@ export default function ProfilePage() {
         ))}
       </div>
 
+      {/* Quick access — academics / finance / health moved off the bottom nav */}
+      <h2 className="mb-2.5 text-sm font-bold text-ink">Quick Access</h2>
+      <div className="mb-5 grid grid-cols-4 gap-2.5">
+        {[
+          { href: "/academic", label: "Academics", icon: BookOpen, color: "#6C63FF" },
+          { href: "/finance", label: "Finance", icon: Wallet, color: "#43D98C" },
+          { href: "/health", label: "Health", icon: HeartPulse, color: "#FF6584" },
+          { href: "/settings", label: "Settings", icon: Settings, color: "#FFB347" },
+        ].map((q) => (
+          <Link key={q.label} href={q.href} className="clay flex flex-col items-center gap-1.5 rounded-card py-3.5">
+            <q.icon className="size-5" style={{ color: q.color }} />
+            <span className="text-[10px] font-bold text-ink-dim">{q.label}</span>
+          </Link>
+        ))}
+      </div>
+
       {/* Invite card (design's "Pro" slot — real action: share) */}
       <motion.button
         whileTap={{ scale: 0.98 }}
         onClick={() => void share()}
-        className="w-full text-left relative overflow-hidden rounded-hero p-5 mb-5 bg-pulse-gradient text-white"
+        className="w-full text-left relative overflow-hidden rounded-hero p-5 mb-5 bg-clay-violet text-white"
       >
         <div aria-hidden className="absolute -right-6 -top-8 h-28 w-28 rounded-full bg-white/15 blur-2xl" />
         <div className="flex items-center gap-3">
