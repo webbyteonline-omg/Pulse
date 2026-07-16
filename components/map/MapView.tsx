@@ -181,7 +181,7 @@ export function MapView() {
 
       {/* Bottom cards: Next Class + Weather */}
       <div className="grid grid-cols-2 gap-3 mt-4">
-        <Link href="/timetable">
+        <Link href="/attendance">
           <Card interactive className="p-4 h-full">
             <span className="grid place-items-center h-9 w-9 rounded-btn bg-primary-dim mb-2">
               <BookOpen className="h-4 w-4 text-primary" />

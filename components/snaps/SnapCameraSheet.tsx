@@ -160,13 +160,13 @@ export function SnapCameraSheet({ open, onClose }: { open: boolean; onClose: () 
             <button
               onClick={send}
               disabled={selected.size === 0 || sendSnap.isPending}
-              className="clay-purple-btn mt-4 flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold disabled:opacity-50"
+              className="genz-gradient-btn mt-4 flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold disabled:opacity-50"
             >
               {sendSnap.isPending ? (
                 <Loader2 className="size-5 animate-spin" />
               ) : (
                 <>
-                  Send Snap{selected.size > 0 ? ` (${selected.size})` : ""} <Send className="size-5" strokeWidth={2.4} />
+                  Bhej de{selected.size > 0 ? ` (${selected.size})` : ""} <Send className="size-5" strokeWidth={2.4} />
                 </>
               )}
             </button>

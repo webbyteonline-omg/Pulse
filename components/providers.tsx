@@ -9,9 +9,7 @@ import { useAuthStore } from "@/store/authStore";
 import { useSettingsStore } from "@/store/settingsStore";
 import { attendanceKeys } from "@/hooks/useAttendance";
 import { academicKeys } from "@/hooks/useAcademic";
-import { financeKeys } from "@/hooks/useFinance";
 import { PROFILE_COLUMNS } from "@/lib/supabase/columns";
-import { nowIST } from "@/lib/utils";
 
 function ServiceWorkerRegistrar() {
   useEffect(() => {
@@ -73,13 +71,6 @@ function DashboardPrefetcher() {
     primed.current = user.id;
 
     const supabase = getSupabaseBrowser();
-    const now = nowIST();
-    const month = now.getMonth() + 1;
-    const year = now.getFullYear();
-    const mm = String(month).padStart(2, "0");
-    const lastDay = new Date(Date.UTC(year, month, 0)).getUTCDate();
-    const monthStart = `${year}-${mm}-01`;
-    const monthEnd = `${year}-${mm}-${String(lastDay).padStart(2, "0")}`;
 
     void Promise.all([
       queryClient.prefetchQuery({
@@ -104,32 +95,6 @@ function DashboardPrefetcher() {
               "id,user_id,title,event_type,date,description,subject_id,notified_3day,notified_1day,created_at"
             )
             .order("date", { ascending: true });
-          if (error) throw error;
-          return data;
-        },
-      }),
-      queryClient.prefetchQuery({
-        queryKey: financeKeys.expenses(month, year),
-        queryFn: async () => {
-          const { data, error } = await supabase
-            .from("expenses")
-            .select("id,user_id,amount,merchant,category,note,date,source,transaction_type,created_at")
-            .gte("date", monthStart)
-            .lte("date", monthEnd)
-            .order("date", { ascending: false })
-            .order("created_at", { ascending: false });
-          if (error) throw error;
-          return data;
-        },
-      }),
-      queryClient.prefetchQuery({
-        queryKey: financeKeys.budgets(month, year),
-        queryFn: async () => {
-          const { data, error } = await supabase
-            .from("budgets")
-            .select("id,user_id,month,year,category,amount")
-            .eq("month", month)
-            .eq("year", year);
           if (error) throw error;
           return data;
         },

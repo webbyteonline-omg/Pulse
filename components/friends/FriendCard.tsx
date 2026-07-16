@@ -9,12 +9,15 @@ import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import { Avatar } from "./OnlineIndicator";
 import { useUnfriend } from "@/hooks/useFriends";
-import { scoreColor } from "@/lib/pulseScore";
+import { useIsOnline } from "@/lib/realtime";
+import { vibeStatus } from "@/lib/utils";
 import type { UserProfile } from "@/lib/supabase/types";
 
 export function FriendCard({ profile, index = 0 }: { profile: UserProfile; index?: number }) {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const unfriend = useUnfriend();
+  const online = useIsOnline(profile.id);
+  const dnd = profile.pulse_score < 30;
 
   return (
     <motion.div
@@ -28,13 +31,12 @@ export function FriendCard({ profile, index = 0 }: { profile: UserProfile; index
           <Avatar name={profile.display_name ?? profile.username} userId={profile.id} src={profile.avatar_url} />
           <div className="flex-1 min-w-0">
             <p className="font-semibold truncate">{profile.display_name ?? profile.username}</p>
-            <p className="text-[11px] text-ink-dim">@{profile.username}</p>
+            <p className="text-[11px] text-ink-dim truncate">
+              {dnd ? "exam mode 💀" : online ? vibeStatus(profile.id) : `@${profile.username}`}
+            </p>
           </div>
           <div className="text-center shrink-0">
-            <p
-              className="text-lg font-black tabular-nums leading-none"
-              style={{ color: scoreColor(profile.pulse_score) }}
-            >
+            <p className="text-lg font-black tabular-nums leading-none genz-gradient-text">
               {profile.pulse_score}
             </p>
             <p className="text-[9px] text-ink-faint font-bold uppercase tracking-wider mt-0.5">

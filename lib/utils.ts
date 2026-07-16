@@ -4,6 +4,26 @@ export function cn(...classes: Array<string | false | null | undefined>): string
   return classes.filter(Boolean).join(" ");
 }
 
+/** Casual Gen-Z "what they're up to" flavor text — no real status data exists
+ * in the DB, so this is deterministic per user id (same friend always shows
+ * the same vibe within a session) rather than random/fabricated per render. */
+const VIBE_STATUSES = [
+  "down for FIFA",
+  "library grind",
+  "gym then mess",
+  "exam mode 💀",
+  "chai break ☕",
+  "netflix & ignore",
+  "assignment hell",
+  "touch grass rn",
+];
+
+export function vibeStatus(id: string): string {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+  return VIBE_STATUSES[hash % VIBE_STATUSES.length]!;
+}
+
 const IST_TZ = "Asia/Kolkata";
 
 /** Today's date in IST as YYYY-MM-DD (all dates stored as dates, displayed IST). */

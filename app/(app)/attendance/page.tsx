@@ -34,12 +34,11 @@ export default function AcademicsPage() {
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className="shrink-0 min-h-[32px] px-4 py-1.5 rounded-full text-[13px] font-medium transition-colors"
-            style={{
-              backgroundColor: tab === t.id ? "#6C63FF" : "rgba(108,99,255,0.12)",
-              color: tab === t.id ? "#FFFFFF" : "#9B97FF",
-              border: tab === t.id ? "1px solid transparent" : "1px solid rgba(108,99,255,0.2)",
-            }}
+            className={
+              tab === t.id
+                ? "genz-gradient shrink-0 min-h-[32px] rounded-full border border-transparent px-4 py-1.5 text-[13px] font-bold text-white transition-colors"
+                : "shrink-0 min-h-[32px] rounded-full border border-primary/20 bg-primary-dim px-4 py-1.5 text-[13px] font-medium text-primary transition-colors"
+            }
           >
             {t.label}
           </button>

@@ -6,13 +6,12 @@ import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   BookOpen,
-  HeartPulse,
   House,
   LogOut,
   Map,
   User,
   Users,
-  Wallet,
+  Users2,
 } from "lucide-react";
 import { PulseLogo } from "@/components/auth/AuthCard";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
@@ -22,20 +21,19 @@ import { useAuthStore } from "@/store/authStore";
 export const NAV_ITEMS = [
   { href: "/dashboard", label: "Home", icon: House, match: ["/dashboard"] },
   {
-    href: "/attendance",
-    label: "Academics",
-    icon: BookOpen,
-    match: ["/academic", "/attendance", "/timetable"],
-  },
-  { href: "/finance", label: "Finance", icon: Wallet, match: ["/finance"] },
-  {
     href: "/friends",
     label: "Friends",
     icon: Users,
-    match: ["/friends", "/polls", "/leaderboard"],
+    match: ["/friends", "/chats", "/snaps"],
+  },
+  { href: "/groups", label: "Groups", icon: Users2, match: ["/groups"] },
+  {
+    href: "/attendance",
+    label: "Academics",
+    icon: BookOpen,
+    match: ["/academic", "/attendance"],
   },
   { href: "/map", label: "Campus Map", icon: Map, match: ["/map"] },
-  { href: "/health", label: "Health", icon: HeartPulse, match: ["/health"] },
   {
     href: "/profile",
     label: "Profile",

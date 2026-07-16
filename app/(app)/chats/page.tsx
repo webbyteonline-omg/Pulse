@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Header } from "@/components/layout/Header";
+import { PenSquare } from "lucide-react";
 import { Avatar } from "@/components/friends/OnlineIndicator";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { RowSkeleton } from "@/components/ui/Skeleton";
@@ -31,7 +31,19 @@ export default function ChatsPage() {
 
   return (
     <div>
-      <Header title="Chats" subtitle="Message your DockIn friends" />
+      <div className="mb-1 flex items-center justify-between">
+        <h1 className="relative text-[32px] font-extrabold tracking-tight text-ink">
+          Chats
+          <span className="genz-gradient absolute -bottom-1 left-0 h-[3px] w-10 rounded-full" />
+        </h1>
+        <button
+          aria-label="New message"
+          className="clay flex size-11 items-center justify-center rounded-full text-ink-dim"
+        >
+          <PenSquare className="size-[18px]" />
+        </button>
+      </div>
+      <p className="mb-5 mt-2 text-sm text-ink-dim">Message your DockIn friends</p>
 
       {/* Quick-start row */}
       {quickStart.length > 0 && (
@@ -53,7 +65,7 @@ export default function ChatsPage() {
       ) : convs.length === 0 ? (
         <EmptyState
           illustration="generic"
-          title="No chats yet"
+          title="Itna shy kyun hai? 😭"
           description="Start a conversation with a friend from the row above, or add friends to begin."
         />
       ) : (
@@ -76,7 +88,7 @@ export default function ChatsPage() {
                 <div className="flex flex-col items-end gap-1">
                   <span className="text-[11px] text-ink-faint">{msgTime(c.lastMessage.created_at)}</span>
                   {c.unread > 0 && (
-                    <span className="clay-purple-btn flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-bold">
+                    <span className="genz-gradient flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-bold text-white">
                       {c.unread > 9 ? "9+" : c.unread}
                     </span>
                   )}

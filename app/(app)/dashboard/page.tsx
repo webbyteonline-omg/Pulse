@@ -17,21 +17,15 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { useEvents } from "@/hooks/useAcademic";
 import { useAssignments } from "@/hooks/useAcademicWork";
 import { useSubjects } from "@/hooks/useAttendance";
-import { useExpenses } from "@/hooks/useFinance";
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
-import { attendancePercent, formatINR, nowIST } from "@/lib/utils";
+import { attendancePercent } from "@/lib/utils";
 
 export default function DashboardPage() {
   const queryClient = useQueryClient();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
 
-  const now = nowIST();
-  const month = now.getMonth() + 1;
-  const year = now.getFullYear();
-
   const subjectsQuery = useSubjects();
   const eventsQuery = useEvents();
-  const expensesQuery = useExpenses(month, year);
   const assignmentsQuery = useAssignments();
 
   const { ref, pull, refreshing } = usePullToRefresh(async () => {
@@ -40,7 +34,6 @@ export default function DashboardPage() {
 
   const subjects = useMemo(() => subjectsQuery.data ?? [], [subjectsQuery.data]);
   const events = useMemo(() => eventsQuery.data ?? [], [eventsQuery.data]);
-  const expenses = useMemo(() => expensesQuery.data ?? [], [expensesQuery.data]);
 
   const tracked = subjects.filter((s) => s.total_classes > 0);
   const avgAttendance =
@@ -49,12 +42,9 @@ export default function DashboardPage() {
         tracked.length
       : null;
 
-  const monthSpend = expenses
-    .filter((e) => e.transaction_type !== "income")
-    .reduce((sum, e) => sum + Number(e.amount), 0);
   const pendingAssignments = (assignmentsQuery.data ?? []).filter((a) => a.status === "pending").length;
 
-  const hasUtility = subjects.length > 0 || events.length > 0 || expenses.length > 0;
+  const hasUtility = subjects.length > 0 || events.length > 0;
   const loadingSocial = subjectsQuery.isLoading && eventsQuery.isLoading;
 
   return (
@@ -99,7 +89,6 @@ export default function DashboardPage() {
           <QuickStats
             attendancePct={avgAttendance}
             pendingAssignments={pendingAssignments}
-            spentThisMonth={formatINR(monthSpend)}
           />
           <TodayClasses />
         </>

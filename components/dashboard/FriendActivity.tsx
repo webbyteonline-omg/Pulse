@@ -4,9 +4,8 @@ import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
 import { USER_STATS_COLUMNS } from "@/lib/supabase/columns";
-import { Card } from "@/components/ui/Card";
-import { Avatar } from "@/components/friends/OnlineIndicator";
 import { useFriends } from "@/hooks/useFriends";
+import { useFriendLocations } from "@/hooks/useFriendLocations";
 import { useRealtime } from "@/lib/realtime";
 import type { UserStats } from "@/lib/supabase/types";
 
@@ -19,18 +18,19 @@ function timeAgo(iso: string): string {
   return `${Math.floor(hours / 24)}d ago`;
 }
 
-function activityLine(stats: UserStats | undefined, online: boolean): string {
-  if (online) return "Online now";
-  if (!stats) return "Joined DockIn";
-  if (stats.steps_week > 0) return `Logged ${stats.steps_week.toLocaleString("en-IN")} steps this week`;
-  if (stats.streak > 1) return `On a ${stats.streak}-day streak 🔥`;
-  return `Pulse Score ${stats.pulse_score}`;
+function activityLine(stats: UserStats | undefined, online: boolean, onCampus: boolean): string {
+  if (online && onCampus) return "on campus rn";
+  if (online) return "online now";
+  if (!stats) return "just joined DockIn";
+  if (stats.streak > 1) return `on a ${stats.streak}-day streak 🔥`;
+  return "around campus";
 }
 
-/** Dashboard "Friend Activity" section — real data from friends' stats + presence. */
+/** Dashboard "Friend Activity" section — real presence + campus location, no fabricated data. */
 export function FriendActivity() {
   const { data: friends } = useFriends();
   const { onlineIds } = useRealtime();
+  const { data: locations } = useFriendLocations();
 
   const ids = (friends ?? []).map((f) => f.id);
   const { data: stats } = useQuery({
@@ -51,6 +51,7 @@ export function FriendActivity() {
   if (!friends || friends.length === 0) return null;
 
   const statsById = new Map((stats ?? []).map((s) => [s.user_id, s]));
+  const locationById = new Map((locations ?? []).map((l) => [l.userId, l]));
   const sorted = [...friends]
     .sort((a, b) => {
       const aOnline = onlineIds.has(a.id) ? 1 : 0;
@@ -60,47 +61,39 @@ export function FriendActivity() {
       const bTime = statsById.get(b.id)?.updated_at ?? "";
       return bTime.localeCompare(aTime);
     })
-    .slice(0, 3);
+    .slice(0, 4);
 
   return (
-    <section className="mb-6">
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-bold text-ink-dim uppercase tracking-wider">
-          Friend Activity
-        </h2>
+    <section className="mb-5">
+      <div className="mb-2.5 flex items-center justify-between">
+        <h2 className="text-sm font-bold text-ink-dim uppercase tracking-wider">Friends Live</h2>
         <Link href="/friends" className="text-xs font-semibold text-primary hover:underline">
           See All
         </Link>
       </div>
-      <Card className="divide-y divide-line/60">
+      <div className="space-y-2.5">
         {sorted.map((friend) => {
           const s = statsById.get(friend.id);
           const online = onlineIds.has(friend.id);
+          const loc = locationById.get(friend.id);
+          const onCampus = loc?.area === "campus";
           return (
-            <Link
-              key={friend.id}
-              href={`/friends/${friend.id}`}
-              className="flex items-center gap-3 px-4 py-3 hover:bg-card-hover transition-colors first:rounded-t-card last:rounded-b-card"
-            >
-              <Avatar
-                name={friend.display_name ?? friend.username}
-                userId={friend.id}
-                size={38}
-                src={friend.avatar_url}
+            <Link key={friend.id} href={`/friends/${friend.id}`} className="flex items-center gap-2 text-sm">
+              <span
+                className={`size-2 shrink-0 rounded-full ${online ? "bg-success" : "bg-ink-faint/40"}`}
               />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold truncate">
-                  {friend.display_name ?? friend.username}
-                </p>
-                <p className="text-[11px] text-ink-dim truncate">{activityLine(s, online)}</p>
-              </div>
-              <span className="text-[10px] text-ink-faint shrink-0">
-                {online ? "" : s ? timeAgo(s.updated_at) : ""}
+              <span className="font-semibold text-ink">{friend.display_name ?? friend.username}</span>
+              <span className="truncate text-ink-dim">
+                {" "}
+                is {activityLine(s, online, onCampus)}
               </span>
+              {!online && s && (
+                <span className="ml-auto shrink-0 text-[10px] text-ink-faint">{timeAgo(s.updated_at)}</span>
+              )}
             </Link>
           );
         })}
-      </Card>
+      </div>
     </section>
   );
 }

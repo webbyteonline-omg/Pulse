@@ -46,6 +46,24 @@ export function useUnreadSnapCount() {
   return data?.length ?? 0;
 }
 
+/** Lifetime count of snaps sent by me — for profile stats, not the inbox badge. */
+export function useSentSnapCount() {
+  const user = useAuthStore((s) => s.user);
+  return useQuery({
+    queryKey: ["snaps", "sent-count"],
+    enabled: !!user,
+    queryFn: async (): Promise<number> => {
+      const supabase = getSupabaseBrowser();
+      const { count, error } = await supabase
+        .from("snaps")
+        .select("id", { count: "exact", head: true })
+        .eq("sender_id", user!.id);
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+}
+
 export function useSendSnap() {
   const user = useAuthStore((s) => s.user);
   const queryClient = useQueryClient();

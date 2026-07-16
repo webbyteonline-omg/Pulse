@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Camera, ChevronUp, Users } from "lucide-react";
+import { ChevronUp } from "lucide-react";
 import { DockInLogo } from "@/components/auth/AuthCard";
 import { Avatar } from "@/components/friends/OnlineIndicator";
 import { useMyProfile, useTodayCheckin } from "@/hooks/useProfile";
@@ -25,6 +25,23 @@ function moodEmoji(m: number | null | undefined): string {
       return "😴";
     default:
       return "👋";
+  }
+}
+
+function moodText(m: number | null | undefined): string {
+  switch (m) {
+    case 5:
+      return "on top of the world";
+    case 4:
+      return "vibing today";
+    case 3:
+      return "meh, surviving";
+    case 2:
+      return "kinda done tbh";
+    case 1:
+      return "buried in assignments";
+    default:
+      return "living my best life";
   }
 }
 
@@ -96,52 +113,67 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, y: -60 }}
           transition={{ duration: 0.38 }}
-          className="clay-page fixed inset-0 z-[9999] flex cursor-pointer flex-col items-center justify-center px-8"
+          className="fixed inset-0 z-[9999] flex cursor-pointer flex-col items-center overflow-hidden bg-[radial-gradient(120%_80%_at_50%_0%,#2a1a3d_0%,#0d0714_55%,#0a0610_100%)] px-6 pt-16"
         >
-          {/* Avatar with mood */}
+          {/* Top pills */}
+          <div className="flex w-full flex-col items-start gap-2.5">
+            <motion.span
+              initial={{ opacity: 0, x: -12 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.15 }}
+              className="genz-gradient rounded-full px-4 py-2 text-xs font-bold text-white shadow-lg"
+            >
+              {moodEmoji(mood)} Mood: {moodText(mood)}
+            </motion.span>
+            <motion.span
+              initial={{ opacity: 0, x: -12 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.25 }}
+              className="flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-bold text-[#0F0A1E] shadow-lg"
+            >
+              <span className="size-2 rounded-full bg-success" /> {online} online · {snaps} new snap{snaps === 1 ? "" : "s"}
+            </motion.span>
+          </div>
+
+          {/* Floating avatar */}
           <motion.div
             initial={{ scale: 0.7, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: "spring", damping: 13, stiffness: 150 }}
-            className="relative"
+            animate={{
+              scale: 1,
+              opacity: 1,
+              y: [0, -10, 0],
+            }}
+            transition={{
+              scale: { type: "spring", damping: 13, stiffness: 150 },
+              opacity: { duration: 0.4 },
+              y: { repeat: Infinity, duration: 3, ease: "easeInOut", delay: 0.6 },
+            }}
+            className="relative mt-16 shrink-0"
           >
-            <div className="clay grid size-40 place-items-center rounded-full">
-              <Avatar name={name} size={148} src={profileQuery.data?.avatar_url} showOnline={false} />
+            <div className="genz-gradient grid size-40 place-items-center rounded-full p-1 shadow-2xl">
+              <div className="grid size-full place-items-center rounded-full bg-[#0d0714]">
+                <Avatar name={name} size={148} src={profileQuery.data?.avatar_url} showOnline={false} />
+              </div>
             </div>
-            <span className="clay absolute -bottom-1 -right-1 grid size-14 place-items-center rounded-full text-3xl">
+            <span className="absolute -bottom-1 -right-1 grid size-12 place-items-center rounded-full bg-white text-2xl shadow-lg">
               {moodEmoji(mood)}
             </span>
           </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="mt-7 text-2xl font-black tracking-tight text-ink"
-          >
-            Hey {name} 👋
-          </motion.h1>
+          {/* Spacer pushes hero text toward bottom third like reference */}
+          <div className="flex-1" />
 
-          {/* Friend activity hints */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35 }}
-            className="mt-4 flex flex-wrap items-center justify-center gap-2"
+            transition={{ delay: 0.2 }}
+            className="mb-2 w-full"
           >
-            {online > 0 && (
-              <span className="clay-soft flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-bold text-ink">
-                <Users className="size-3.5 text-clay-green" /> {online} online
-              </span>
-            )}
-            {snaps > 0 && (
-              <span className="clay-soft flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-bold text-ink">
-                <Camera className="size-3.5 text-clay-purple" /> {snaps} new snap{snaps > 1 ? "s" : ""}
-              </span>
-            )}
-            {online === 0 && snaps === 0 && (
-              <span className="text-sm text-ink-dim">Your campus, all in one place</span>
-            )}
+            <p className="text-lg font-bold text-white/70">Hey, {name}</p>
+            <h1 className="text-[42px] font-extrabold leading-[0.95] tracking-tight text-white">
+              Dock <span className="genz-gradient-text">in.</span>
+            </h1>
+            <p className="mt-2 italic text-sm text-white/60">ur bestie&apos;s already here</p>
           </motion.div>
 
           {/* Swipe-up affordance */}
@@ -149,9 +181,9 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, y: [0, -8, 0] }}
             transition={{ opacity: { delay: 0.6 }, y: { repeat: Infinity, duration: 1.6, ease: "easeInOut" } }}
-            className="absolute bottom-[calc(env(safe-area-inset-bottom,0px)+40px)] flex flex-col items-center gap-1 text-ink-dim"
+            className="mb-[calc(env(safe-area-inset-bottom,0px)+28px)] flex flex-col items-center gap-1 text-white/70"
           >
-            <ChevronUp className="size-6 text-clay-purple" strokeWidth={2.6} />
+            <ChevronUp className="size-5" strokeWidth={2.6} />
             <span className="text-xs font-semibold">Swipe up to enter</span>
           </motion.div>
         </motion.div>

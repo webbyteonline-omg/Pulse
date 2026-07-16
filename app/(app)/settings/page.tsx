@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Check, ChevronRight, Download, KeyRound, ListChecks, Lock, LogOut, MapPin, Trash2, Upload } from "lucide-react";
+import { Check, ChevronRight, KeyRound, ListChecks, Lock, LogOut, MapPin, Trash2, Upload } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -11,12 +11,10 @@ import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 import { Toggle } from "@/components/ui/Toggle";
 import { ThemeSelector } from "@/components/ui/ThemeSelector";
-import { useAllExpenses } from "@/hooks/useFinance";
 import { usePushNotifications } from "@/hooks/useNotifications";
 import { useMyProfile, useUpdateProfile } from "@/hooks/useProfile";
 import { exportKeyFile, hasKey, importKeyFile } from "@/lib/encryption";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
-import { downloadCSV } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
 import { useSettingsStore, type NotificationPrefs, type PrivacyPrefs } from "@/store/settingsStore";
 
@@ -57,7 +55,6 @@ export default function SettingsPage() {
 
   const settings = useSettingsStore();
   const push = usePushNotifications();
-  const expensesQuery = useAllExpenses();
   const profileQuery = useMyProfile();
   const updateProfile = useUpdateProfile();
 
@@ -101,19 +98,6 @@ export default function SettingsPage() {
     await getSupabaseBrowser().auth.signOut();
     router.replace("/login");
     router.refresh();
-  };
-
-  const exportExpenses = () => {
-    const rows = (expensesQuery.data ?? []).map((e) => ({
-      date: e.date,
-      type: e.transaction_type,
-      amount: e.amount,
-      category: e.category ?? "others",
-      merchant: e.merchant ?? "",
-      note: e.note?.startsWith("enc:") ? "(encrypted)" : (e.note ?? ""),
-      source: e.source ?? "manual",
-    }));
-    downloadCSV(`pulse-transactions-${new Date().toISOString().slice(0, 10)}.csv`, rows);
   };
 
   const setCampusHere = () => {
@@ -362,9 +346,6 @@ export default function SettingsPage() {
       {/* Data */}
       <SectionTitle>Data</SectionTitle>
       <Card className="p-4 space-y-3">
-        <Button variant="secondary" className="w-full" onClick={exportExpenses} disabled={expensesQuery.isLoading}>
-          <Download className="h-4 w-4" /> Export expenses (CSV)
-        </Button>
         <Link href="/profile/activity" className="block">
           <Button variant="secondary" className="w-full">
             <ListChecks className="h-4 w-4" /> My activity log <ChevronRight className="h-3.5 w-3.5" />

@@ -28,7 +28,12 @@ function GoogleGlyph() {
   );
 }
 
-export function GoogleButton() {
+export interface GoogleButtonProps {
+  /** Compact icon+label variant for side-by-side layouts (e.g. next to an Apple button). */
+  compact?: boolean;
+}
+
+export function GoogleButton({ compact }: GoogleButtonProps = {}) {
   const [loading, setLoading] = useState(false);
 
   const signIn = async () => {
@@ -51,7 +56,7 @@ export function GoogleButton() {
       className="clay-soft flex w-full items-center justify-center gap-3 rounded-2xl py-3.5 text-[15px] font-semibold text-ink disabled:opacity-60"
     >
       {loading ? <Loader2 className="size-5 animate-spin text-clay-purple" /> : <GoogleGlyph />}
-      Continue with Google
+      {compact ? "Google" : "Continue with Google"}
     </motion.button>
   );
 }

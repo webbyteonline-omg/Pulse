@@ -28,7 +28,7 @@ export function TodayClasses() {
         <h2 className="text-sm font-bold text-ink-dim uppercase tracking-wider">
           Upcoming Classes
         </h2>
-        <Link href="/timetable" className="text-xs font-semibold text-primary hover:underline">
+        <Link href="/attendance" className="text-xs font-semibold text-primary hover:underline">
           See All
         </Link>
       </div>
@@ -49,7 +49,7 @@ export function TodayClasses() {
           return (
             <Link
               key={slot.id}
-              href={subject ? `/attendance/${subject.id}` : "/timetable"}
+              href={subject ? `/attendance/${subject.id}` : "/attendance"}
               className="flex items-center gap-3 px-4 py-3 hover:bg-card-hover transition-colors first:rounded-t-card last:rounded-b-card"
             >
               <span

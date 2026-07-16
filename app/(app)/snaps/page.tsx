@@ -50,7 +50,7 @@ export default function SnapsPage() {
         <RowSkeleton rows={3} />
       ) : inbox.length === 0 ? (
         <div className="clay mb-6 rounded-card p-6 text-center">
-          <p className="text-sm font-semibold text-ink">No new snaps</p>
+          <p className="text-sm font-semibold text-ink">Boring mat ban 📸</p>
           <p className="mt-1 text-xs text-ink-dim">Snaps from friends will appear here — tap to view once.</p>
         </div>
       ) : (
@@ -82,7 +82,7 @@ export default function SnapsPage() {
       {friends.length === 0 ? (
         <EmptyState
           illustration="generic"
-          title="Add friends first"
+          title="Dost banana hai? 🤙"
           description="Once you have friends on DockIn, snap them a photo that disappears after one view."
         />
       ) : (

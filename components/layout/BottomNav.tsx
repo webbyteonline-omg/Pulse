@@ -22,24 +22,14 @@ const TABS = [
     href: "/friends",
     label: "Friends",
     icon: Users,
-    match: ["/friends", "/chats", "/snaps", "/leaderboard", "/polls"],
+    match: ["/friends", "/chats", "/snaps"],
   },
   { href: "/groups", label: "Groups", icon: Users2, match: ["/groups"] },
   {
     href: "/profile",
     label: "Me",
     icon: UserRound,
-    match: [
-      "/profile",
-      "/settings",
-      "/health",
-      "/academic",
-      "/attendance",
-      "/timetable",
-      "/finance",
-      "/map",
-      "/privacy",
-    ],
+    match: ["/profile", "/settings", "/academic", "/attendance", "/map", "/privacy"],
   },
 ] as const;
 
@@ -75,21 +65,21 @@ function NavTab({
         {active && (
           <motion.span
             layoutId="nav-glow"
-            className="absolute -inset-2.5 rounded-full bg-clay-purple/20 blur-[2px]"
+            className="genz-gradient absolute -inset-2.5 rounded-full opacity-20 blur-[2px]"
             transition={{ type: "spring", stiffness: 500, damping: 34 }}
           />
         )}
         <Icon
           className={cn(
             "relative h-[23px] w-[23px] transition-colors duration-150",
-            active ? "text-clay-purple" : "text-ink-dim"
+            active ? "text-secondary" : "text-ink-dim"
           )}
           strokeWidth={active ? 2.4 : 2}
         />
         {active && (
           <motion.span
             layoutId="nav-label"
-            className="relative text-[10px] font-bold text-clay-purple leading-none"
+            className="relative text-[10px] font-bold text-secondary leading-none"
           >
             {label}
           </motion.span>
@@ -138,7 +128,7 @@ export function BottomNav() {
               whileTap={{ scale: 0.9 }}
               onClick={openSnap}
               aria-label="New snap"
-              className="clay-purple-btn absolute -top-6 flex size-16 items-center justify-center rounded-full ring-4 ring-bg"
+              className="genz-gradient-btn absolute -top-6 flex size-16 items-center justify-center rounded-full ring-4 ring-bg"
             >
               <Camera className="size-7" strokeWidth={2.2} />
             </motion.button>

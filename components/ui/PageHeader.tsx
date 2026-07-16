@@ -121,7 +121,10 @@ export function PageHeader({
                 }}
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ duration: 0.15 }}
-                className={cn("font-semibold truncate text-ink", scrolled ? "font-medium" : "font-semibold")}
+                className={cn(
+                  "truncate text-ink",
+                  showGreeting ? "font-extrabold" : scrolled ? "font-medium" : "font-semibold"
+                )}
               >
                 {showGreeting ? "DockIn" : title}
               </motion.h1>

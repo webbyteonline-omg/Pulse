@@ -1,17 +1,17 @@
 {
-  "name": "DockIn — College Life Dashboard",
+  "name": "DockIn — Your Campus, All in One Place",
   "short_name": "DockIn",
-  "description": "Attendance, academic calendar and money — everything a college student needs, in one place.",
+  "description": "Snaps, chats, groups and campus life for Bennett students — attendance and academics too.",
   "start_url": "/dashboard",
   "id": "/dashboard",
   "scope": "/",
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone"],
   "orientation": "portrait",
-  "background_color": "#0D0D14",
-  "theme_color": "#0D0D14",
+  "background_color": "#F5F3FF",
+  "theme_color": "#7C3AED",
   "lang": "en",
-  "categories": ["education", "productivity", "finance"],
+  "categories": ["education", "social", "productivity"],
   "prefer_related_applications": false,
   "icons": [
     {
@@ -47,15 +47,15 @@
       "icons": [{ "src": "/icons/attendance.png", "sizes": "96x96" }]
     },
     {
-      "name": "Add Expense",
-      "short_name": "Expense",
-      "url": "/finance/add",
+      "name": "Friends",
+      "short_name": "Friends",
+      "url": "/friends",
       "icons": [{ "src": "/icons/finance.png", "sizes": "96x96" }]
     },
     {
-      "name": "Today's Classes",
-      "short_name": "Classes",
-      "url": "/timetable",
+      "name": "Chats",
+      "short_name": "Chats",
+      "url": "/chats",
       "icons": [{ "src": "/icons/academic.png", "sizes": "96x96" }]
     }
   ],

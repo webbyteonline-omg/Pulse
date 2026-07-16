@@ -44,7 +44,7 @@ export function Avatar({
         />
       ) : (
         <div
-          className="w-full h-full rounded-full bg-primary/20 text-primary grid place-items-center font-bold"
+          className="w-full h-full rounded-full genz-gradient text-white grid place-items-center font-bold"
           style={{ fontSize: size * 0.4 }}
         >
           {(name || "?").charAt(0).toUpperCase()}

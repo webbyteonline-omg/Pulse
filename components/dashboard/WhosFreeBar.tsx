@@ -1,39 +1,40 @@
 "use client";
 
 import Link from "next/link";
-import { Sparkles, ChevronRight } from "lucide-react";
 import { useFriends } from "@/hooks/useFriends";
 import { useRealtime } from "@/lib/realtime";
 
-/** Broadcast bar — surfaces who's online to hang out right now. */
+/** Broadcast bar — dark gradient card surfacing who's online to hang out right now. */
 export function WhosFreeBar() {
   const friendsQuery = useFriends();
   const { onlineIds } = useRealtime();
   const friends = friendsQuery.data ?? [];
-  const onlineCount = friends.filter((f) => onlineIds.has(f.id)).length;
+  const online = friends.filter((f) => onlineIds.has(f.id));
+  const names = online.slice(0, 3).map((f) => f.display_name?.split(" ")[0] ?? f.username);
 
   return (
-    <Link
-      href="/friends"
-      className="clay mb-5 flex items-center gap-3 rounded-clay px-4 py-3.5"
-    >
-      <span className="clay-purple-btn flex size-10 shrink-0 items-center justify-center rounded-full">
-        <Sparkles className="size-5" strokeWidth={2.2} />
-      </span>
-      <div className="min-w-0 flex-1">
-        <p className="text-sm font-extrabold text-ink">Who&apos;s free right now?</p>
-        <p className="text-xs text-ink-dim">
-          {onlineCount > 0
-            ? `${onlineCount} ${onlineCount === 1 ? "friend" : "friends"} online — say hi 👋`
-            : "See who's around campus"}
-        </p>
-      </div>
-      {onlineCount > 0 && (
-        <span className="flex items-center gap-1 rounded-full bg-clay-green-dim px-2.5 py-1 text-xs font-bold text-clay-green">
-          <span className="size-1.5 rounded-full bg-clay-green" /> {onlineCount}
+    <div className="relative mb-5 overflow-hidden rounded-clay bg-[#1a1225] px-4 py-4 text-white">
+      <span
+        aria-hidden
+        className="genz-gradient absolute -right-6 -top-8 h-28 w-28 rounded-full opacity-40 blur-2xl"
+      />
+      {online.length > 0 && (
+        <span className="absolute right-4 top-4 rounded-full bg-danger px-2 py-0.5 text-[9px] font-black uppercase tracking-wider">
+          Live
         </span>
       )}
-      <ChevronRight className="size-4 shrink-0 text-ink-faint" />
-    </Link>
+      <p className="text-[15px] font-extrabold">Who&apos;s free right now?</p>
+      <p className="mt-1 text-xs leading-relaxed text-white/70">
+        {online.length > 0
+          ? `${online.length} ${online.length === 1 ? "friend is" : "friends are"} free — ${names.join(", ")}`
+          : "Sab so rahe hain kya? 💤"}
+      </p>
+      <Link
+        href="/friends"
+        className="genz-gradient mt-3 inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-black"
+      >
+        I&apos;m free
+      </Link>
+    </div>
   );
 }

@@ -57,7 +57,7 @@ export function EventFormModal({
       await create.mutateAsync(parsed.data);
       onClose();
     } catch (err) {
-      setErrors({ form: err instanceof Error ? err.message : "Something went wrong" });
+      setErrors({ form: err instanceof Error ? err.message : "Kuch toh gadbad hai 💀" });
     }
   };
 

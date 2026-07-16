@@ -11,6 +11,7 @@ import {
   useSendMessage,
   useThread,
 } from "@/hooks/useChats";
+import { useIsOnline } from "@/lib/realtime";
 import { useAuthStore } from "@/store/authStore";
 
 function bubbleTime(iso: string): string {
@@ -35,6 +36,7 @@ export default function ChatThreadPage() {
   const messages = threadQuery.data ?? [];
   const friend = friendQuery.data?.profile;
   const name = friend?.display_name ?? friend?.username ?? "Chat";
+  const online = useIsOnline(friendId);
 
   // Scroll to newest whenever the thread changes.
   useEffect(() => {
@@ -72,7 +74,10 @@ export default function ChatThreadPage() {
           <ArrowLeft className="size-5" strokeWidth={2.4} />
         </button>
         <Avatar name={name} size={40} src={friend?.avatar_url} showOnline userId={friendId} />
-        <p className="text-base font-bold text-ink">{name}</p>
+        <div>
+          <p className="text-base font-bold text-ink">{name}</p>
+          {online && <p className="text-[11px] font-semibold text-success">Active now</p>}
+        </div>
       </header>
 
       {/* Messages */}
@@ -88,7 +93,7 @@ export default function ChatThreadPage() {
             <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
               <div
                 className={`max-w-[78%] rounded-2xl px-3.5 py-2.5 ${
-                  mine ? "clay-purple-btn rounded-br-md" : "clay-soft rounded-bl-md text-ink"
+                  mine ? "genz-gradient text-white rounded-br-md" : "bg-card shadow-md rounded-bl-md text-ink"
                 }`}
               >
                 <p className="whitespace-pre-wrap break-words text-[15px] leading-snug">{m.body}</p>
@@ -121,7 +126,7 @@ export default function ChatThreadPage() {
           onClick={send}
           disabled={!text.trim() || sendMessage.isPending}
           aria-label="Send"
-          className="clay-purple-btn flex size-11 shrink-0 items-center justify-center rounded-full disabled:opacity-50"
+          className="genz-gradient-btn flex size-11 shrink-0 items-center justify-center rounded-full disabled:opacity-50"
         >
           <Send className="size-5" strokeWidth={2.4} />
         </button>

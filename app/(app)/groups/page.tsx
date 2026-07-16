@@ -1,9 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { BarChart3, ChevronRight } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { FAB } from "@/components/ui/FAB";
@@ -12,19 +10,16 @@ import { GroupSearchBar } from "@/components/groups/GroupSearchBar";
 import { GroupCardWithRank } from "@/components/groups/GroupCardWithRank";
 import { ConfessionFeed } from "@/components/groups/ConfessionFeed";
 import { useMyGroups } from "@/hooks/useGroups";
-import { usePolls } from "@/hooks/usePolls";
 
 type Tab = "groups" | "confessions";
 
 export default function GroupsPage() {
   const router = useRouter();
   const groupsQuery = useMyGroups();
-  const pollsQuery = usePolls();
   const [search, setSearch] = useState("");
   const [tab, setTab] = useState<Tab>("groups");
 
   const groups = groupsQuery.data ?? [];
-  const openPolls = (pollsQuery.data ?? []).length;
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
     if (!term) return groups;
@@ -59,20 +54,6 @@ export default function GroupsPage() {
         <ConfessionFeed />
       ) : (
         <>
-          {/* Active polls */}
-          <Link href="/polls" className="clay mb-4 flex items-center gap-3 rounded-card px-4 py-3">
-            <span className="clay-purple-btn flex size-9 shrink-0 items-center justify-center rounded-full">
-              <BarChart3 style={{ height: 18, width: 18 }} />
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-sm font-bold text-ink">Active Polls</span>
-              <span className="block text-xs text-ink-dim">
-                {openPolls > 0 ? `${openPolls} running — cast your vote` : "Create a poll for your squad"}
-              </span>
-            </span>
-            <ChevronRight className="size-4 shrink-0 text-ink-faint" />
-          </Link>
-
           <div className="mb-4">
             <GroupSearchBar value={search} onChange={setSearch} />
           </div>
@@ -82,9 +63,9 @@ export default function GroupsPage() {
           ) : groups.length === 0 ? (
             <EmptyState
               illustration="generic"
-              title="No groups yet"
-              description="Create a group with your friends to track attendance, run polls and share a leaderboard."
-              actionLabel="Create your first group"
+              title="Akela? Gang banao 🤙"
+              description="Ek group bana apni gang ke saath — attendance track karo, saath mein rho."
+              actionLabel="Gang banao"
               onAction={() => router.push("/groups/create")}
             />
           ) : (

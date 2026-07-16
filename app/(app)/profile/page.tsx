@@ -3,15 +3,13 @@
 import Link from "next/link";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 import {
   Bell,
   BookOpen,
   CalendarClock,
-  CalendarDays,
-  CheckCircle2,
   ChevronRight,
   Crown,
-  HeartPulse,
   HelpCircle,
   ListChecks,
   Lock,
@@ -20,19 +18,17 @@ import {
   Pencil,
   Settings,
   Sparkles,
-  Star,
   UserRound,
   Users,
-  Wallet,
   Zap,
 } from "lucide-react";
-import { Header } from "@/components/layout/Header";
 import { Card } from "@/components/ui/Card";
 import { Avatar } from "@/components/friends/OnlineIndicator";
 import { AvatarPicker } from "@/components/profile/AvatarPicker";
-import { useSubjects } from "@/hooks/useAttendance";
-import { useLivePulseScore, useMyProfile } from "@/hooks/useProfile";
-import { attendancePercent } from "@/lib/utils";
+import { useFriends } from "@/hooks/useFriends";
+import { useMyProfile } from "@/hooks/useProfile";
+import { useSentSnapCount } from "@/hooks/useSnaps";
+import { getSupabaseBrowser } from "@/lib/supabase/client";
 import { useAuthStore } from "@/store/authStore";
 
 const ACCOUNT_LINKS = [
@@ -49,28 +45,41 @@ const MORE_LINKS = [
   { href: "/profile/pulse-score", label: "Pulse Score", icon: Zap },
   { href: "/profile/activity", label: "My Activity", icon: ListChecks },
   { href: "/map", label: "Campus Map", icon: Map },
-  { href: "/health", label: "Health", icon: HeartPulse },
-  { href: "/timetable", label: "Timetable", icon: CalendarDays },
   { href: "/academic", label: "Academic Calendar", icon: CalendarClock },
+];
+
+const BADGES = [
+  { emoji: "🌅", label: "Early Bird", color: "#FB923C" },
+  { emoji: "🍽️", label: "Mess MVP", color: "#F43F5E" },
+  { emoji: "🦉", label: "Night Owl", color: "#7C3AED" },
 ];
 
 export default function ProfilePage() {
   const user = useAuthStore((s) => s.user);
   const displayName = useAuthStore((s) => s.displayName)();
   const profileQuery = useMyProfile();
-  const { breakdown } = useLivePulseScore();
-  const subjectsQuery = useSubjects();
+  const friendsQuery = useFriends();
+  const snapCountQuery = useSentSnapCount();
   const [pickerOpen, setPickerOpen] = useState(false);
 
+  const { data: myStats } = useQuery({
+    queryKey: ["my-streak"],
+    enabled: !!user,
+    queryFn: async () => {
+      const supabase = getSupabaseBrowser();
+      const { data } = await supabase
+        .from("user_stats")
+        .select("streak")
+        .eq("user_id", user!.id)
+        .maybeSingle();
+      return data;
+    },
+  });
+
   const profile = profileQuery.data;
-  const subjects = subjectsQuery.data ?? [];
-  const attended = subjects.reduce((s, x) => s + x.attended_classes, 0);
-  const tracked = subjects.filter((s) => s.total_classes > 0);
-  const avgAtt =
-    tracked.length > 0
-      ? Math.round(tracked.reduce((s, x) => s + attendancePercent(x.attended_classes, x.total_classes), 0) / tracked.length)
-      : null;
-  const studentId = `PLS${(user?.id ?? "00000").replace(/-/g, "").slice(0, 5).toUpperCase()}`;
+  const friendCount = (friendsQuery.data ?? []).length;
+  const streak = myStats?.streak ?? 0;
+  const level = Math.max(1, Math.floor((profile?.pulse_score ?? 0) / 8));
 
   const share = async () => {
     const data = {
@@ -84,66 +93,94 @@ export default function ProfilePage() {
 
   return (
     <div>
-      <Header
-        title="Profile"
-        showAvatar={false}
-        action={
-          <Link href="/settings" aria-label="Settings">
-            <span className="grid place-items-center h-11 w-11 rounded-btn clay text-ink-dim">
-              <Settings className="h-[18px] w-[18px]" />
-            </span>
+      {/* Full-bleed gradient hero */}
+      <div className="relative -mx-4 -mt-4 overflow-hidden bg-genz-hero px-4 pb-14 pt-4 text-white md:-mx-8">
+        <div className="flex items-center justify-between">
+          <span aria-hidden className="text-lg">✨</span>
+          <Link
+            href="/settings"
+            className="rounded-full bg-white/90 px-3.5 py-1.5 text-xs font-bold text-ink"
+          >
+            Edit
           </Link>
-        }
-      />
+        </div>
+      </div>
 
-      {/* Profile hero */}
-      <Card className="p-5 mb-4 flex items-center gap-4">
-        <motion.button whileTap={{ scale: 0.9 }} onClick={() => setPickerOpen(true)} aria-label="Change avatar" className="relative shrink-0">
-          <Avatar name={displayName} userId={user?.id} size={80} src={profile?.avatar_url} />
-          <span className="absolute -bottom-0.5 -right-0.5 grid place-items-center h-7 w-7 rounded-full clay-purple-btn border-[3px] border-card">
+      {/* Avatar overlapping hero */}
+      <div className="-mt-10 mb-4 flex items-end gap-3 px-1">
+        <motion.button
+          whileTap={{ scale: 0.9 }}
+          onClick={() => setPickerOpen(true)}
+          aria-label="Change avatar"
+          className="relative shrink-0"
+        >
+          <span className="block rounded-full border-[4px] border-bg">
+            <Avatar name={displayName} userId={user?.id} size={80} src={profile?.avatar_url} />
+          </span>
+          <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-ink px-2 py-0.5 text-[9px] font-black text-white">
+            Lvl {level}
+          </span>
+          <span className="absolute -bottom-0.5 -right-0.5 grid place-items-center h-6 w-6 rounded-full genz-gradient-btn border-2 border-bg">
             <Pencil className="h-3 w-3" />
           </span>
         </motion.button>
-        <div className="flex-1 min-w-0">
-          <h2 className="text-xl font-bold truncate">{displayName}</h2>
-          <p className="text-xs text-ink-dim truncate">{user?.email}</p>
-          <div className="mt-2 flex items-center gap-2">
-            <span className="px-2.5 py-1 rounded-full bg-primary-dim text-primary text-[10px] font-black">Student</span>
-            <span className="text-[10px] text-ink-faint font-semibold">ID: {studentId}</span>
-          </div>
+        <div className="min-w-0 flex-1 pb-1">
+          <h2 className="text-xl font-extrabold truncate text-ink">{displayName}</h2>
+          <p className="truncate text-xs text-ink-dim">@{profile?.username ?? "you"} · {user?.email}</p>
         </div>
-        <ChevronRight className="h-4 w-4 text-ink-faint shrink-0" />
-      </Card>
+      </div>
 
       {/* Stats row */}
       <div className="grid grid-cols-3 gap-3 mb-4">
-        {[
-          { icon: BookOpen, color: "#6C63FF", value: String(attended), label: "Classes" },
-          { icon: CheckCircle2, color: "#43D98C", value: avgAtt !== null ? `${avgAtt}%` : "—", label: "Attendance" },
-          { icon: Star, color: "#FFD700", value: String((breakdown?.total ?? profile?.pulse_score ?? 0) * 10), label: "DockIn Points" },
-        ].map((s, i) => (
-          <motion.div
-            key={s.label}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 * i }}
-            className="clay rounded-card p-3.5 flex flex-col items-center text-center"
-          >
-            <s.icon className="h-5 w-5 mb-1.5" style={{ color: s.color }} />
-            <p className="text-lg font-black tabular-nums leading-tight">{s.value}</p>
-            <p className="text-[10px] text-ink-dim font-semibold">{s.label}</p>
-          </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="genz-gradient rounded-card p-3.5 flex flex-col items-center text-center text-white"
+        >
+          <p className="text-lg font-black tabular-nums leading-tight">{streak}</p>
+          <p className="text-[10px] font-semibold">Streak</p>
+          <p className="text-[9px] italic opacity-85">{streak > 0 ? "on fire" : "start today"}</p>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="clay rounded-card p-3.5 flex flex-col items-center text-center"
+        >
+          <p className="text-lg font-black tabular-nums leading-tight text-ink">{friendCount}</p>
+          <p className="text-[10px] text-ink-dim font-semibold">Friends</p>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="clay rounded-card p-3.5 flex flex-col items-center text-center"
+        >
+          <p className="text-lg font-black tabular-nums leading-tight text-ink">{snapCountQuery.data ?? 0}</p>
+          <p className="text-[10px] text-ink-dim font-semibold">Snaps</p>
+        </motion.div>
+      </div>
+
+      {/* Badges row */}
+      <div className="mb-5 flex gap-4">
+        {BADGES.map((b) => (
+          <div key={b.label} className="flex flex-col items-center gap-1.5">
+            <span
+              className="grid size-11 place-items-center rounded-full text-xl"
+              style={{ backgroundColor: b.color }}
+            >
+              {b.emoji}
+            </span>
+            <span className="text-center text-[10px] font-semibold leading-tight text-ink-dim">{b.label}</span>
+          </div>
         ))}
       </div>
 
-      {/* Quick access — academics / finance / health moved off the bottom nav */}
-      <h2 className="mb-2.5 text-sm font-bold text-ink">Quick Access</h2>
-      <div className="mb-5 grid grid-cols-4 gap-2.5">
+      {/* Quick access — academics + settings only */}
+      <div className="mb-5 grid grid-cols-2 gap-2.5">
         {[
-          { href: "/academic", label: "Academics", icon: BookOpen, color: "#6C63FF" },
-          { href: "/finance", label: "Finance", icon: Wallet, color: "#43D98C" },
-          { href: "/health", label: "Health", icon: HeartPulse, color: "#FF6584" },
-          { href: "/settings", label: "Settings", icon: Settings, color: "#FFB347" },
+          { href: "/academic", label: "Academics", icon: BookOpen, color: "#7C3AED" },
+          { href: "/settings", label: "Settings", icon: Settings, color: "#FB923C" },
         ].map((q) => (
           <Link key={q.label} href={q.href} className="clay flex flex-col items-center gap-1.5 rounded-card py-3.5">
             <q.icon className="size-5" style={{ color: q.color }} />
@@ -152,11 +189,11 @@ export default function ProfilePage() {
         ))}
       </div>
 
-      {/* Invite card (design's "Pro" slot — real action: share) */}
+      {/* Invite card */}
       <motion.button
         whileTap={{ scale: 0.98 }}
         onClick={() => void share()}
-        className="w-full text-left relative overflow-hidden rounded-hero p-5 mb-5 bg-clay-violet text-white"
+        className="w-full text-left relative overflow-hidden rounded-hero p-5 mb-5 bg-genz-hero text-white"
       >
         <div aria-hidden className="absolute -right-6 -top-8 h-28 w-28 rounded-full bg-white/15 blur-2xl" />
         <div className="flex items-center gap-3">
@@ -165,7 +202,7 @@ export default function ProfilePage() {
           </span>
           <div className="flex-1 min-w-0">
             <p className="font-black">Bring your squad to DockIn</p>
-            <p className="text-xs opacity-85 mt-0.5">Polls, leaderboards & streaks are better with friends</p>
+            <p className="text-xs opacity-85 mt-0.5">Snaps, streaks & chaos are better with friends</p>
           </div>
           <span className="px-3.5 py-2 rounded-full bg-white text-primary text-xs font-black shrink-0">Invite</span>
         </div>

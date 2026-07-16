@@ -21,7 +21,6 @@ const MAIN_ITEMS: MenuItem[] = [
   { icon: MessageCircle, label: "Chats", onTap: (nav) => nav("/chats") },
   { icon: Users, label: "Groups", onTap: (nav) => nav("/groups") },
   { icon: MapPin, label: "Campus Map", onTap: (nav) => nav("/map") },
-  { icon: Sparkles, label: "Health", onTap: (nav) => nav("/health") },
   { icon: UserCircle, label: "Profile", onTap: (nav) => nav("/profile") },
 ];
 

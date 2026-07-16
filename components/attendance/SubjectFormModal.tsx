@@ -53,7 +53,7 @@ export function SubjectFormModal({ open, onClose, subject }: SubjectFormModalPro
       }
       onClose();
     } catch (err) {
-      setErrors({ form: err instanceof Error ? err.message : "Something went wrong" });
+      setErrors({ form: err instanceof Error ? err.message : "Kuch toh gadbad hai 💀" });
     }
   };
 

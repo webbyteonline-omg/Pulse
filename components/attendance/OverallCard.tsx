@@ -17,8 +17,8 @@ export function OverallCard({ subjects }: { subjects: Subject[] }) {
     subjects.reduce((s, x) => s + x.required_percentage, 0) / Math.max(1, subjects.length)
   );
   const { canMiss } = bunkStats(attended, total, required);
-  const color = pct >= required + 5 ? "#43D98C" : pct >= required ? "#FFB347" : "#FF5C5C";
-  const status = pct >= required + 5 ? "Good" : pct >= required ? "On edge" : "At risk";
+  const color = pct >= required + 5 ? "#10B981" : pct >= required ? "#FFB347" : "#FF5C5C";
+  const status = pct >= required + 5 ? "Good 🎉" : pct >= required ? "On edge 😬" : "Maar khayega 💀";
 
   const r = 40;
   const c = 2 * Math.PI * r;
@@ -49,9 +49,9 @@ export function OverallCard({ subjects }: { subjects: Subject[] }) {
         {/* Stat rows */}
         <div className="flex-1 space-y-1.5">
           {[
-            { label: "Classes Attended", value: attended, icon: CheckCircle2, color: "#43D98C" },
+            { label: "Classes Attended", value: attended, icon: CheckCircle2, color: "#10B981" },
             { label: "Classes Missed", value: total - attended, icon: XCircle, color: "#FF5C5C" },
-            { label: "Total Classes", value: total, icon: Grid3X3, color: "#6C63FF" },
+            { label: "Total Classes", value: total, icon: Grid3X3, color: "#7C3AED" },
           ].map((s) => (
             <div key={s.label} className="flex items-center gap-2 clay-inset rounded-input px-2.5 py-1.5">
               <div className="flex-1 min-w-0">

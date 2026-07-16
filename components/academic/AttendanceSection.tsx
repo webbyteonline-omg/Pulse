@@ -4,6 +4,7 @@ import { useState } from "react";
 import { RowSkeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { OverallCard } from "@/components/attendance/OverallCard";
+import { BunkCalculatorCard } from "@/components/attendance/BunkCalculatorCard";
 import { SubjectCard } from "@/components/attendance/SubjectCard";
 import { SubjectFormModal } from "@/components/attendance/SubjectFormModal";
 import { useSubjects } from "@/hooks/useAttendance";
@@ -21,7 +22,7 @@ export function AttendanceSection() {
       <>
         <EmptyState
           illustration="subjects"
-          title="No subjects yet"
+          title="Subjects add kar pehle 📚"
           description="Add your subjects and mark attendance after each class — DockIn will tell you exactly how many you can bunk."
           actionLabel="Add your first subject"
           onAction={() => setShowAdd(true)}
@@ -34,6 +35,7 @@ export function AttendanceSection() {
   return (
     <>
       <OverallCard subjects={subjects} />
+      <BunkCalculatorCard subjects={subjects} />
 
       <div className="flex items-center justify-between mt-4 mb-2.5">
         <span className="text-[15px] font-semibold text-ink">Your Subjects</span>

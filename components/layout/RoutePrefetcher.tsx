@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
  * already does this for its full nav item list; this is a lightweight,
  * layout-level belt-and-suspenders pass scoped to just the 4 bottom-nav
  * destinations so it stays cheap even before Sidebar/BottomNav mount. */
-const CORE_ROUTES = ["/dashboard", "/attendance", "/finance", "/friends"] as const;
+const CORE_ROUTES = ["/dashboard", "/attendance", "/friends", "/groups"] as const;
 
 export function RoutePrefetcher() {
   const router = useRouter();

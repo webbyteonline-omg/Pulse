@@ -113,13 +113,13 @@ export function SendSnapSheet({
         <button
           onClick={send}
           disabled={!file || sendSnap.isPending}
-          className="clay-purple-btn mt-4 flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold disabled:opacity-50"
+          className="genz-gradient-btn mt-4 flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold disabled:opacity-50"
         >
           {sendSnap.isPending ? (
             <Loader2 className="size-5 animate-spin" />
           ) : (
             <>
-              Send Snap <Send className="size-5" strokeWidth={2.4} />
+              Bhej de <Send className="size-5" strokeWidth={2.4} />
             </>
           )}
         </button>

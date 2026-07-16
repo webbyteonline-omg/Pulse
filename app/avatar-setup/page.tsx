@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Check, Loader2, Shirt } from "lucide-react";
+import { ArrowRight, Camera, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
 import { useSaveCheckin, useUpdateProfile } from "@/hooks/useProfile";
@@ -30,12 +30,17 @@ const MOODS = [
   { emoji: "😴", label: "Tired", value: 2 },
 ];
 
-const OUTFITS = [
-  { color: "text-clay-purple" },
-  { color: "text-clay-blue" },
-  { color: "text-clay-orange" },
-  { color: "text-clay-green" },
+// Gradient swatches for the avatar ring color — cosmetic only, stashed on
+// user metadata alongside avatar_outfit (no dedicated DB column exists).
+const RING_GRADIENTS = [
+  "linear-gradient(135deg,#7C3AED,#F43F5E)",
+  "linear-gradient(135deg,#FB923C,#F43F5E)",
+  "linear-gradient(135deg,#4F86F7,#7C3AED)",
+  "linear-gradient(135deg,#2FBF87,#4F86F7)",
 ];
+
+const BATCHES = ["CS - Batch 2027", "ECE - Batch 2027", "Mech - Batch 2026"];
+const HOSTELS = ["Hostel A", "Hostel B", "Hostel C", "Hostel D"];
 
 export default function AvatarSetupPage() {
   const router = useRouter();
@@ -43,17 +48,24 @@ export default function AvatarSetupPage() {
   const saveCheckin = useSaveCheckin();
 
   const [avatar, setAvatar] = useState(0);
-  const [mood, setMood] = useState(0);
-  const [outfit, setOutfit] = useState(0);
+  const [ring, setRing] = useState(0);
+  const [batch, setBatch] = useState<number | null>(null);
+  const [hostel, setHostel] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
 
   const finish = async () => {
     setSaving(true);
     try {
       await updateProfile.mutateAsync({ avatar_url: AVATARS[avatar] });
-      saveCheckin.mutate({ mood: MOODS[mood]!.value });
-      // Outfit is cosmetic — stash it on the auth user metadata, best-effort.
-      void getSupabaseBrowser().auth.updateUser({ data: { avatar_outfit: outfit } });
+      saveCheckin.mutate({ mood: 3 });
+      // Cosmetic-only fields — stashed on auth user metadata, best-effort.
+      void getSupabaseBrowser().auth.updateUser({
+        data: {
+          avatar_ring: ring,
+          batch: batch !== null ? BATCHES[batch] : undefined,
+          hostel: hostel !== null ? HOSTELS[hostel] : undefined,
+        },
+      });
     } catch {
       // Non-blocking — profile can be completed later in Settings.
     }
@@ -62,18 +74,47 @@ export default function AvatarSetupPage() {
   };
 
   return (
-    <main className="clay-page min-h-dvh">
+    <main className="min-h-dvh bg-bg">
       <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-6 pb-safe pt-safe">
-        <h1 className="mt-6 text-center text-[24px] font-extrabold tracking-tight text-ink">
-          Almost There! <span className="align-middle">🎉</span>
-        </h1>
-        <p className="mx-auto mt-1 max-w-[16rem] text-center text-sm leading-relaxed text-ink-dim">
-          Let&apos;s create your DockIn avatar to get you started.
-        </p>
+        {/* Step progress */}
+        <div className="mt-4 flex gap-1.5">
+          <span className="genz-gradient h-1 flex-1 rounded-full" />
+          <span className="genz-gradient h-1 flex-1 rounded-full" />
+          <span className="h-1 flex-1 rounded-full bg-line" />
+        </div>
 
-        {/* 1 — Avatar */}
-        <h2 className="mt-6 text-sm font-bold text-ink">1. Choose Your Avatar</h2>
-        <div className="mt-3 grid grid-cols-4 gap-2.5">
+        <h1 className="mt-6 text-[32px] font-extrabold leading-[1.05] tracking-tight text-ink">
+          Show your face<span className="genz-gradient-text">.</span>
+        </h1>
+        <p className="mt-2 text-sm text-ink-dim">Friends recognize snaps, not usernames.</p>
+
+        {/* Avatar upload circle */}
+        <div className="relative mx-auto mt-7">
+          <button
+            type="button"
+            className="relative grid size-32 place-items-center rounded-full border-[3px] border-dashed"
+            style={{ borderImage: `${RING_GRADIENTS[ring]} 1` }}
+          >
+            <div className="genz-gradient grid size-28 place-items-center overflow-hidden rounded-full">
+              <Image
+                src={AVATARS[avatar]!}
+                alt="Your avatar"
+                width={112}
+                height={112}
+                className="size-full object-cover"
+              />
+            </div>
+            <span className="absolute -bottom-1 -right-1 grid size-9 place-items-center rounded-full bg-white shadow-lg">
+              <Camera className="size-4 text-ink" />
+            </span>
+          </button>
+          <span className="genz-gradient absolute -top-1 -right-3 rounded-full px-2.5 py-1 text-[10px] font-black text-white shadow-lg">
+            lookin&apos; 👀
+          </span>
+        </div>
+
+        {/* Avatar picker grid */}
+        <div className="mt-5 grid grid-cols-4 gap-2.5">
           {AVATARS.map((src, i) => (
             <button
               key={src}
@@ -86,54 +127,63 @@ export default function AvatarSetupPage() {
             >
               <Image src={src} alt={`Avatar ${i + 1}`} fill className="object-cover" />
               {avatar === i && (
-                <span className="clay-purple-btn absolute bottom-1 right-1 flex size-5 items-center justify-center rounded-full">
-                  <Check className="size-3" strokeWidth={3} />
+                <span className="genz-gradient absolute bottom-1 right-1 flex size-5 items-center justify-center rounded-full">
+                  <Check className="size-3 text-white" strokeWidth={3} />
                 </span>
               )}
             </button>
           ))}
         </div>
 
-        {/* 2 — Mood */}
-        <h2 className="mt-6 text-sm font-bold text-ink">2. How are you feeling today?</h2>
-        <div className="mt-3 grid grid-cols-5 gap-2">
-          {MOODS.map((m, i) => (
+        {/* Ring color picker — gradient swatches */}
+        <h2 className="mt-6 text-sm font-bold text-ink">Avatar ring color</h2>
+        <div className="mt-3 flex gap-3">
+          {RING_GRADIENTS.map((g, i) => (
             <button
-              key={m.label}
+              key={g}
               type="button"
-              onClick={() => setMood(i)}
+              onClick={() => setRing(i)}
               className={cn(
-                "flex flex-col items-center gap-1 rounded-2xl py-2.5 transition",
-                mood === i ? "clay-inset bg-clay-purple-dim" : "clay-soft"
+                "size-10 rounded-full transition",
+                ring === i && "ring-2 ring-offset-2 ring-offset-bg ring-ink"
+              )}
+              style={{ background: g }}
+              aria-label={`Ring color ${i + 1}`}
+            />
+          ))}
+        </div>
+
+        {/* Batch + hostel chips */}
+        <h2 className="mt-6 text-sm font-bold text-ink">Your batch</h2>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {BATCHES.map((b, i) => (
+            <button
+              key={b}
+              type="button"
+              onClick={() => setBatch(i)}
+              className={cn(
+                "rounded-full border px-3.5 py-2 text-xs font-bold transition",
+                batch === i ? "genz-gradient border-transparent text-white" : "border-line text-ink-dim"
               )}
             >
-              <span className="text-2xl leading-none">{m.emoji}</span>
-              <span className={cn("text-[11px] font-semibold", mood === i ? "text-clay-purple" : "text-ink-dim")}>
-                {m.label}
-              </span>
+              {b}
             </button>
           ))}
         </div>
 
-        {/* 3 — Outfit */}
-        <h2 className="mt-6 text-sm font-bold text-ink">3. Pick an Outfit</h2>
-        <div className="mt-3 grid grid-cols-4 gap-2.5">
-          {OUTFITS.map((o, i) => (
+        <h2 className="mt-4 text-sm font-bold text-ink">Your hostel</h2>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {HOSTELS.map((h, i) => (
             <button
-              key={i}
+              key={h}
               type="button"
-              onClick={() => setOutfit(i)}
+              onClick={() => setHostel(i)}
               className={cn(
-                "clay-soft relative flex aspect-square items-center justify-center rounded-2xl transition",
-                outfit === i && "ring-2 ring-clay-purple"
+                "rounded-full border px-3.5 py-2 text-xs font-bold transition",
+                hostel === i ? "genz-gradient border-transparent text-white" : "border-line text-ink-dim"
               )}
             >
-              <Shirt className={cn("size-9", o.color)} strokeWidth={1.8} />
-              {outfit === i && (
-                <span className="clay-purple-btn absolute bottom-1 right-1 flex size-5 items-center justify-center rounded-full">
-                  <Check className="size-3" strokeWidth={3} />
-                </span>
-              )}
+              {h}
             </button>
           ))}
         </div>
@@ -143,14 +193,13 @@ export default function AvatarSetupPage() {
           whileTap={{ scale: 0.98 }}
           onClick={finish}
           disabled={saving}
-          className="clay-purple-btn mt-7 flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold disabled:opacity-70"
+          className="genz-gradient-btn mt-7 flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold disabled:opacity-70"
         >
           {saving ? (
             <Loader2 className="size-5 animate-spin" />
           ) : (
             <>
-              Let&apos;s Go! <span>🚀</span>
-              <ArrowRight className="size-5" strokeWidth={2.5} />
+              Continue <ArrowRight className="size-5" strokeWidth={2.5} />
             </>
           )}
         </motion.button>

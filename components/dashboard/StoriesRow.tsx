@@ -41,11 +41,11 @@ export function StoriesRow() {
         >
           <span className="relative">
             <Avatar name={myName} size={60} src={profileQuery.data?.avatar_url} showOnline={false} />
-            <span className="clay-purple-btn absolute -bottom-0.5 -right-0.5 flex size-6 items-center justify-center rounded-full ring-2 ring-bg">
-              <Plus className="size-3.5" strokeWidth={3} />
+            <span className="genz-gradient absolute -bottom-0.5 -right-0.5 flex size-6 items-center justify-center rounded-full ring-2 ring-bg">
+              <Plus className="size-3.5 text-white" strokeWidth={3} />
             </span>
           </span>
-          <span className="text-[11px] font-semibold text-ink">Your Story</span>
+          <span className="text-[11px] font-semibold text-ink">You</span>
         </button>
 
         {stories.map((snap) => {
@@ -56,7 +56,7 @@ export function StoriesRow() {
               onClick={() => setViewing(snap)}
               className="flex w-16 shrink-0 flex-col items-center gap-1.5"
             >
-              <span className="rounded-full bg-gradient-to-tr from-clay-pink to-clay-purple p-[2.5px]">
+              <span className="genz-gradient rounded-full p-[2.5px]">
                 <span className="block rounded-full bg-bg p-[2px]">
                   <Avatar name={name} size={54} src={snap.sender?.avatar_url} showOnline={false} />
                 </span>

@@ -1,27 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Crown, Footprints, MapPin, Vote } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { Avatar } from "./OnlineIndicator";
-import { Card } from "@/components/ui/Card";
 import { useFriends } from "@/hooks/useFriends";
-import { useLeaderboard } from "@/hooks/useLeaderboard";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
 import { useRealtime } from "@/lib/realtime";
 import { useAuthStore } from "@/store/authStore";
 
-const MEDALS = ["#FFD700", "#C0C0C0", "#CD7F32"];
-
-/** Friends "Overview" tab — avatar activity rail, streak card, quick actions, leaderboard preview. */
+/** Friends "Overview" tab — avatar activity rail, streak card, quick actions. */
 export function FriendsOverview() {
-  const router = useRouter();
   const user = useAuthStore((s) => s.user);
   const { data: friends } = useFriends();
   const { onlineIds } = useRealtime();
-  const leaderboard = useLeaderboard("pulse");
 
   const { data: myStats } = useQuery({
     queryKey: ["my-streak"],
@@ -41,12 +34,7 @@ export function FriendsOverview() {
 
   const quickActions = [
     { label: "Share Location", color: "#43D98C", icon: MapPin, href: "/map" },
-    { label: "Share Steps", color: "#4FACFE", icon: Footprints, href: "/health" },
-    { label: "Create Poll", color: "#FF5C5C", icon: Vote, href: "/polls?create=1" },
-    { label: "Leaderboard", color: "#6C63FF", icon: Crown, href: "/leaderboard" },
   ];
-
-  const top = (leaderboard.data ?? []).slice(0, 4);
 
   return (
     <div className="mb-6 space-y-6">
@@ -105,12 +93,6 @@ export function FriendsOverview() {
               </span>
             )}
           </div>
-          <button
-            onClick={() => router.push("/leaderboard")}
-            className="px-3.5 py-2 rounded-full bg-white/20 text-xs font-bold"
-          >
-            View Leaderboard →
-          </button>
         </div>
       </motion.div>
 
@@ -128,41 +110,6 @@ export function FriendsOverview() {
           ))}
         </div>
       </section>
-
-      {/* Leaderboard preview */}
-      {top.length > 0 && (
-        <section>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold">Friend Leaderboard</h2>
-            <Link href="/leaderboard" className="text-xs font-semibold text-primary">This Week</Link>
-          </div>
-          <Card className="divide-y divide-line/60">
-            {top.map((entry, i) => (
-              <div
-                key={entry.profile.id}
-                className={`flex items-center gap-3 px-4 py-3 ${entry.isMe ? "bg-primary/[0.07]" : ""} first:rounded-t-card last:rounded-b-card`}
-              >
-                <span className="w-6 text-center">
-                  {i < 3 ? (
-                    <Crown className="h-4.5 w-4.5 mx-auto" style={{ color: MEDALS[i], height: 18, width: 18 }} fill={MEDALS[i]} />
-                  ) : (
-                    <span className="text-xs font-black text-ink-faint">{i + 1}</span>
-                  )}
-                </span>
-                <Avatar name={entry.profile.display_name ?? entry.profile.username} size={34} src={entry.profile.avatar_url} userId={entry.profile.id} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold truncate">
-                    {entry.profile.display_name ?? entry.profile.username}
-                    {entry.isMe && <span className="text-primary"> (you)</span>}
-                  </p>
-                  <p className="text-[10px] text-ink-dim">Pulse Score: {entry.stats.pulse_score}</p>
-                </div>
-                <span className="text-sm font-black text-primary tabular-nums">💎 {entry.stats.pulse_score * 10}</span>
-              </div>
-            ))}
-          </Card>
-        </section>
-      )}
     </div>
   );
 }

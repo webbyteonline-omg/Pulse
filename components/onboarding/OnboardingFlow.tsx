@@ -203,9 +203,9 @@ export function OnboardingFlow() {
 
     // 4 — First friend
     <div key="friends">
-      <h2 className="text-xl font-bold text-center">Add your first friend</h2>
+      <h2 className="text-xl font-bold text-center">Dost banana hai? 🤙</h2>
       <p className="mt-1.5 text-sm text-ink-dim text-center mb-5">
-        Compare attendance, vote in polls, and race the weekly leaderboard together.
+        Snaps, chats, groups & campus life — better with your squad.
       </p>
       <FriendSearch />
       <Button size="lg" className="w-full mt-5" onClick={next}>
@@ -225,7 +225,7 @@ export function OnboardingFlow() {
       </div>
       <h2 className="text-xl font-bold">Never miss what matters</h2>
       <p className="mt-1.5 text-sm text-ink-dim mb-6">
-        Exam reminders 3 days and 1 day before · low attendance warnings · budget alerts —
+        Exam reminders 3 days and 1 day before · low attendance warnings —
         all as push notifications.
       </p>
       <Button

@@ -203,6 +203,18 @@ step). A `next build` was attempted but fails in this sandbox ONLY because
 of a network restriction (can't fetch Google Fonts "Inter") — that's a
 sandbox limitation, not a real bug; don't chase it.
 
+## Post-handoff note
+
+- `components/dashboard/LeaderboardCard.tsx` was edited again after this
+  doc was first written — its loading-state wrapper now uses a `clay`
+  utility class (`className="clay rounded-[20px] p-4 mb-5"`) instead of the
+  plain `bg-card` div this session originally wrote. This looks like a
+  design-system class (likely a claymorphism/soft-shadow utility defined
+  somewhere in globals.css or tailwind.config.ts) applied by the user or a
+  linter/formatter — treat it as intentional, don't revert it, and check
+  whether other cards in the app use the same `clay` class before assuming
+  it's a one-off.
+
 ## Known outstanding item (not yet done, not requested yet either)
 
 - Migration `0009_fix_group_members_rls_recursion.sql` exists in the repo

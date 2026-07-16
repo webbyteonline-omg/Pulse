@@ -43,6 +43,5 @@ export function SubTabs({ tabs, layoutId }: { tabs: SubTab[]; layoutId: string }
 
 export const SOCIAL_TABS: SubTab[] = [
   { href: "/friends", label: "Friends" },
-  { href: "/polls", label: "Polls" },
-  { href: "/leaderboard", label: "Leaderboard" },
+  { href: "/groups", label: "Groups" },
 ];

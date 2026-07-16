@@ -38,22 +38,13 @@ export async function GET(request: Request) {
   const in1 = addDaysIST(1);
   const in3 = addDaysIST(3);
   const today = todayIST();
-  const [ty, tm] = today.split("-").map(Number);
 
   // ---- Gather everything in bulk ------------------------------------------
-  const [{ data: events3 }, { data: events1 }, { data: subjects }, { data: budgets }, { data: expenses }] =
-    await Promise.all([
-      admin.from("academic_events").select("*").eq("date", in3).eq("notified_3day", false),
-      admin.from("academic_events").select("*").eq("date", in1).eq("notified_1day", false),
-      admin.from("subjects").select("*").gt("total_classes", 0),
-      admin.from("budgets").select("*").eq("month", tm ?? 1).eq("year", ty ?? 2026),
-      admin
-        .from("expenses")
-        .select("user_id, amount, category, date")
-        .eq("transaction_type", "expense")
-        .gte("date", `${today.slice(0, 7)}-01`)
-        .lte("date", today),
-    ]);
+  const [{ data: events3 }, { data: events1 }, { data: subjects }] = await Promise.all([
+    admin.from("academic_events").select("*").eq("date", in3).eq("notified_3day", false),
+    admin.from("academic_events").select("*").eq("date", in1).eq("notified_1day", false),
+    admin.from("subjects").select("*").gt("total_classes", 0),
+  ]);
 
   // Per-user notification items
   const itemsByUser = new Map<string, NotificationItem[]>();
@@ -126,35 +117,6 @@ export async function GET(request: Request) {
     }
   }
 
-  // ---- Budgets at 80%+ ------------------------------------------------------
-  const spentByUserCategory = new Map<string, number>();
-  for (const expense of expenses ?? []) {
-    const key = `${expense.user_id}:${expense.category ?? "others"}`;
-    spentByUserCategory.set(key, (spentByUserCategory.get(key) ?? 0) + Number(expense.amount));
-  }
-  for (const budget of budgets ?? []) {
-    const limit = Number(budget.amount);
-    if (limit <= 0) continue;
-    const spent = spentByUserCategory.get(`${budget.user_id}:${budget.category}`) ?? 0;
-    const pct = Math.round((spent / limit) * 100);
-    if (pct >= 80) {
-      add(
-        budget.user_id,
-        {
-          emoji: "💸",
-          title: `${budget.category} budget at ${pct}%`,
-          detail: `₹${spent.toFixed(0)} of ₹${limit.toFixed(0)} spent this month.`,
-        },
-        {
-          title: `💸 ${budget.category} budget at ${pct}%`,
-          body: `₹${spent.toFixed(0)} of ₹${limit.toFixed(0)} used. Ease off a little?`,
-          url: "/finance",
-          tag: `budget-${budget.id}`,
-        }
-      );
-    }
-  }
-
   // ---- Send push + email per user -------------------------------------------
   const userIds = [...new Set([...itemsByUser.keys()])];
   let pushCount = 0;
@@ -188,33 +150,6 @@ export async function GET(request: Request) {
   }
   if (ids1.length > 0) {
     await admin.from("academic_events").update({ notified_1day: true }).in("id", ids1);
-  }
-
-  // ---- Overdue borrow/lend reminders ---------------------------------------------
-  const { data: overdue } = await admin
-    .from("borrow_lend")
-    .select("*")
-    .eq("status", "pending")
-    .eq("notified_overdue", false)
-    .lt("due_date", today);
-  for (const entry of overdue ?? []) {
-    const lent = entry.type === "lent";
-    await sendPushToUser(admin, entry.user_id, {
-      title: lent
-        ? `💸 ${entry.person_name} still owes you ₹${Number(entry.amount).toFixed(0)}`
-        : `⏰ You owe ${entry.person_name} ₹${Number(entry.amount).toFixed(0)}`,
-      body: lent
-        ? "It's past the due date — send them a reminder from DockIn."
-        : "It's past the due date — settle up when you can.",
-      url: "/finance/borrow",
-      tag: `bl-${entry.id}`,
-    });
-  }
-  if ((overdue ?? []).length > 0) {
-    await admin
-      .from("borrow_lend")
-      .update({ notified_overdue: true })
-      .in("id", (overdue ?? []).map((e) => e.id));
   }
 
   // ---- Daily pulse score for every user ----------------------------------------

@@ -21,11 +21,9 @@ const PRECACHE_ROUTES = [
   "/dashboard",
   "/attendance",
   "/academic",
-  "/finance",
   "/friends",
-  "/timetable",
-  "/leaderboard",
-  "/polls",
+  "/groups",
+  "/chats",
 ];
 
 function precacheRoutes() {

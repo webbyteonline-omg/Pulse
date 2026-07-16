@@ -21,9 +21,10 @@ const config: Config = {
         input: v("input"),
         "chart-bar": v("chart-bar"),
         sky: { DEFAULT: "#4FACFE", dim: "#4FACFE26" },
-        primary: { DEFAULT: "#6C63FF", dim: "#6C63FF26" },
-        accent: { DEFAULT: "#FF6584", dim: "#FF658426" },
-        success: { DEFAULT: "#43D98C", dim: "#43D98C26" },
+        primary: { DEFAULT: "#7C3AED", dim: "#7C3AED26" },
+        secondary: { DEFAULT: "#F43F5E", dim: "#F43F5E26" },
+        accent: { DEFAULT: "#FB923C", dim: "#FB923C26" },
+        success: { DEFAULT: "#10B981", dim: "#10B98126" },
         warning: { DEFAULT: "#FFB347", dim: "#FFB34726" },
         danger: { DEFAULT: "#FF5C5C", dim: "#FF5C5C26" },
         ink: { DEFAULT: v("ink"), dim: v("ink-dim"), faint: v("ink-faint") },
@@ -61,6 +62,10 @@ const config: Config = {
         // DockIn signature violet gradient (buttons, logo, accents)
         "clay-violet": "linear-gradient(145deg, #8B6BFF, #6C4FE8)",
         "clay-violet-h": "linear-gradient(90deg, #8B6BFF, #6C4FE8)",
+        // Gen-Z signature gradient — violet to hot pink (CTAs, hero moments)
+        "genz-gradient": "linear-gradient(135deg, #7C3AED, #F43F5E)",
+        "genz-gradient-h": "linear-gradient(90deg, #7C3AED, #F43F5E)",
+        "genz-hero": "linear-gradient(135deg, #FB923C, #F43F5E, #7C3AED)",
       },
       fontFamily: {
         sans: ["var(--font-poppins)", "var(--font-inter)", "system-ui", "sans-serif"],

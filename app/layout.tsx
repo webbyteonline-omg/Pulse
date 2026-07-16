@@ -13,7 +13,7 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: { default: "DockIn", template: "%s · DockIn" },
   description:
-    "The social hub for Bennettians — attendance, academics, finance, friends and more, all in one place.",
+    "The social hub for Bennettians — snaps, chats, groups, friends, attendance and academics, all in one place.",
   manifest: "/manifest.json",
   applicationName: "DockIn",
   appleWebApp: {
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0D0D14",
+  themeColor: "#7C3AED",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,

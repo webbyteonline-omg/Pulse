@@ -23,15 +23,15 @@ html.dark {
 
 html.light {
   color-scheme: light;
-  --bg: 240 240 250; /* #F0F0FA */
+  --bg: 245 243 255; /* #F5F3FF — soft warm white-violet, Gen-Z light base */
   --card: 255 255 255; /* #FFFFFF */
-  --card-hover: 246 246 250;
-  --line: 228 228 238; /* ≈ rgba(0,0,0,.06) blended */
-  --input: 244 244 250;
-  --ink: 13 13 20; /* #0D0D14 */
-  --ink-dim: 102 102 128; /* #666680 */
-  --ink-faint: 158 158 180;
-  --chart-bar: 210 210 226;
+  --card-hover: 248 246 255;
+  --line: 229 231 235; /* #E5E7EB */
+  --input: 247 245 255;
+  --ink: 15 10 30; /* #0F0A1E — near black */
+  --ink-dim: 107 114 128; /* #6B7280 */
+  --ink-faint: 163 168 180;
+  --chart-bar: 224 220 244;
 }
 
 html.amoled {
@@ -54,14 +54,14 @@ html.amoled {
    still read as raised on near-black backgrounds.
    ============================================================ */
 html.light {
-  --clay-shadow: 6px 6px 16px rgba(160, 150, 200, 0.3),
-    -6px -6px 16px rgba(255, 255, 255, 0.92),
-    inset 1px 1px 1px rgba(255, 255, 255, 0.6);
-  --clay-shadow-soft: 4px 4px 12px rgba(160, 150, 200, 0.22),
-    -4px -4px 12px rgba(255, 255, 255, 0.85);
-  --clay-inset: inset 3px 3px 7px rgba(160, 150, 200, 0.35),
+  --clay-shadow: 6px 6px 16px rgba(124, 58, 237, 0.12),
+    -6px -6px 16px rgba(255, 255, 255, 0.95),
+    inset 1px 1px 1px rgba(255, 255, 255, 0.7);
+  --clay-shadow-soft: 4px 4px 12px rgba(124, 58, 237, 0.09),
+    -4px -4px 12px rgba(255, 255, 255, 0.9);
+  --clay-inset: inset 3px 3px 7px rgba(124, 58, 237, 0.14),
     inset -3px -3px 7px rgba(255, 255, 255, 0.9);
-  --clay-page: linear-gradient(160deg, #efeafb 0%, #f5f3fb 45%, #eaf0fb 100%);
+  --clay-page: linear-gradient(160deg, #f5f3ff 0%, #f7f4ff 45%, #f3f0ff 100%);
 }
 :root,
 html.dark {
@@ -106,6 +106,21 @@ html.amoled {
     box-shadow: 4px 4px 12px rgba(124, 92, 252, 0.4),
       -3px -3px 10px rgba(255, 255, 255, 0.12),
       inset 1px 1px 2px rgba(255, 255, 255, 0.35);
+  }
+  /* Gen-Z signature gradient — violet to hot pink, for hero CTAs, badges, underlines */
+  .genz-gradient {
+    background: linear-gradient(135deg, #7c3aed, #f43f5e);
+  }
+  .genz-gradient-text {
+    background: linear-gradient(135deg, #7c3aed, #f43f5e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .genz-gradient-btn {
+    background: linear-gradient(135deg, #7c3aed, #f43f5e);
+    color: #fff;
+    box-shadow: 4px 4px 14px rgba(124, 58, 237, 0.35);
   }
   /* Soft page background for full-screen clay pages */
   .clay-page {

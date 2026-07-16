@@ -288,7 +288,7 @@ export function CreateGroupForm() {
       )}
 
       <Button size="lg" className="w-full" onClick={submit} disabled={!canSubmit} loading={createGroup.isPending}>
-        Create Group
+        Gang banao 🤙
       </Button>
     </div>
   );

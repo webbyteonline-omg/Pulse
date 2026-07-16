@@ -58,27 +58,25 @@ function useOpenStreak(): number {
 export interface QuickStatsProps {
   attendancePct: number | null;
   pendingAssignments: number;
-  spentThisMonth: string;
 }
 
-/** 2x2 at-a-glance stats grid on the dashboard. */
-export function QuickStats({ attendancePct, pendingAssignments, spentThisMonth }: QuickStatsProps) {
+/** 3-across at-a-glance stats row on the dashboard. */
+export function QuickStats({ attendancePct, pendingAssignments }: QuickStatsProps) {
   const streak = useOpenStreak();
 
   return (
-    <div className="grid grid-cols-2 gap-2.5 mb-5">
+    <div className="grid grid-cols-3 gap-2.5 mb-5">
       <StatCard
         emoji="📚"
         label="Attendance"
         value={attendancePct === null ? "—" : `${Math.round(attendancePct)}%`}
-        warning={attendancePct !== null && attendancePct < 75 ? "Below 75%" : undefined}
+        warning={attendancePct !== null && attendancePct < 75 ? "Teri attendance gayi bhai" : undefined}
       />
       <StatCard
         emoji="📋"
-        label="Pending Assignments"
+        label="Pending"
         value={String(pendingAssignments)}
       />
-      <StatCard emoji="💰" label="Spent This Month" value={spentThisMonth} />
       <StatCard emoji="🔥" label="Streak" value={`${streak} ${streak === 1 ? "day" : "days"}`} />
     </div>
   );

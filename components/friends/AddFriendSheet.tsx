@@ -51,7 +51,7 @@ export function AddFriendSheet({ open, onClose }: { open: boolean; onClose: () =
   const shareInvite = async () => {
     const shareData = {
       title: "Join me on DockIn",
-      text: "Track attendance, budgets, and campus life together on DockIn.",
+      text: "Snaps, chats, groups & campus life — all on DockIn.",
       url: inviteLink,
     };
     if (navigator.share) {
@@ -72,7 +72,7 @@ export function AddFriendSheet({ open, onClose }: { open: boolean; onClose: () =
   };
 
   return (
-    <Modal open={open} onClose={onClose} title="Add Friend">
+    <Modal open={open} onClose={onClose} title="Dost banana hai? 🤙">
       <div className="space-y-5">
         <Input
           placeholder="Search by username or name…"
